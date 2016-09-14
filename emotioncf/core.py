@@ -7,11 +7,20 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import pearsonr
 from copy import deepcopy
+from emotioncf.algorithms import NNMF, knn_similarity, knn_predict, nmf_multiplicative
 
-class CF(n_train_items=None):
-    def __init__():
+__all__ = ['CF','create_sub_by_item_matrix','get_mse']
+__author__ = ["Luke Chang"]
+__license__ = "MIT"
+
+class CF(object):
+    def __init__(self,
+                ratings,
+                n_train_items=None):
+
         if not isinstance(ratings,pd.DataFrame):
             raise ValueError('ratings must be a pandas dataframe instance')            
+        self.ratings = ratings
 
         if n_train_items is None:
             self.n_train_items = None
@@ -24,7 +33,15 @@ class CF(n_train_items=None):
         self.H = None
         self.W = None
         self.nnmf_sgd = None
-        
+    
+    def __repr__(self):
+        return '%s.%s(rating=%s, n_train_items=%s)' % (
+            self.__class__.__module__,
+            self.__class__.__name__,
+            self.ratings.shape,
+            self.n_train_items
+            )
+
     def train_test_split(self, n_train_items=20):
         ''' Split ratings matrix into train and test items
 
@@ -48,7 +65,7 @@ class CF(n_train_items=None):
             self.test.loc[sub, sub_train_rating_item] = np.nan
         assert(~np.any(self.train==self.test))
 
-    def train(method=None, params=None):
+    def fit(method=None, params=None):
         if self.train is not None:
             raise ValueError('Make sure you have run train_test_split() method.')
         
@@ -57,6 +74,7 @@ class CF(n_train_items=None):
 
         if method is 'nnmf_multiplicative':
             self.W, self.H = nmf_multiplicative(self.train, n_components=params['n_factors'], max_iter=params['max_iterations'])
+        
         if method is 'nnmf_sgd':
             self.nnmf_sgd = NNMF(self.train, 
                             # mask=mask,

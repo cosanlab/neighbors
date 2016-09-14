@@ -1,4 +1,9 @@
-
+__all__ = ['knn_similarity',
+            'knn_predict',
+            'nmf_multiplicative',
+            'NNMF']
+__author__ = ["Luke Chang"]
+__license__ = "MIT"
 
 def knn_similarity(ratings, metric='correlation'):
     ''' Calculate Subject similarity across items
