@@ -27,9 +27,7 @@ class BaseCF(object):
 		self.predicted_ratings = None
 		self.is_fit = False
 		self.is_predict = False
-
-		if mask is not None:
-			self.mask = mask
+		self.mask = mask
 
 	def __repr__(self):
 		return '%s(rating=%s)' % (
