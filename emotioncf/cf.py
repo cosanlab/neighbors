@@ -320,182 +320,45 @@ class NNMF_multiplicative(BaseCF):
 		self.is_predict = True
 
 class NNMF_sgd(BaseCF):
-	def __init__(self, 
-				 ratings,
-				 mask=None,
-				 n_factors=40,
-				 learning='sgd',
-				 item_fact_reg=0.0, 
-				 user_fact_reg=0.0,
-				 item_bias_reg=0.0,
-				 user_bias_reg=0.0,
-				 learning_rate=0.1,
-				 verbose=False):
-		"""
-		Train a matrix factorization model to predict empty 
-		entries in a matrix. The terminology assumes a 
-		ratings matrix which is ~ user x item
+	''' Train non negative matrix factorization model using stochastic gradient descent.  
+		Allows masking to only learn the training weights.
 
 		This code is based off of Ethan Rosenthal's excellent tutorial 
 		on collaborative filtering https://blog.insightdatascience.com/
 		explicit-matrix-factorization-als-sgd-and-all-that-jazz-b00e4d9b21ea#.kkr7mzvr2
-		
-		Params
-		======
-		ratings : (ndarray)
-			User x Item matrix with corresponding ratings
-		
-		mask: (ndarray)
-			Boolean matrix indicating missing values
-		n_factors : (int)
-			Number of latent factors to use in matrix 
-			factorization model.  If None, will use full feature set
-		learning : (str)
-			Method of optimization. Options include 
-			'sgd' or 'als'.
-		
-		item_fact_reg : (float)
-			Regularization term for item latent factors
-		
-		user_fact_reg : (float)
-			Regularization term for user latent factors
-			
-		item_bias_reg : (float)
-			Regularization term for item biases
-		
-		user_bias_reg : (float)
-			Regularization term for user biases
-		
-		verbose : (bool)
-			Whether or not to printout training progress
-		"""
-		
-
-		self.ratings = ratings
-		self.mask = mask
-		self.n_users, self.n_items = ratings.shape
-		if n_factors is not None:
-			self.n_factors = n_factors
-		else:
-			self.n_factors = self.n_items
-		self.item_fact_reg = item_fact_reg
-		self.user_fact_reg = user_fact_reg
-		self.item_bias_reg = item_bias_reg
-		self.user_bias_reg = user_bias_reg
-		self.learning = learning
-		if self.learning == 'sgd':
-			self.learning_rate = learning_rate
-
-			if self.mask is not None:
-				self.sample_row, self.sample_col = self.mask.nonzero()
-			else:
-				self.sample_row, self.sample_col = self.ratings.nonzero()
-			self.n_samples = len(self.sample_row)
-		self._v = verbose
-
-		self.initialize()
-		
-	def initialize(self):
-		""" Initialize variables for matrix factorization """
-		
-		# initialize latent vectors		
-		self.user_vecs = np.random.normal(scale=1./self.n_factors,
-										  size=(self.n_users, self.n_factors))
-		self.item_vecs = np.random.normal(scale=1./self.n_factors,
-										  size=(self.n_items, self.n_factors))
-		# Initialize biases
-		if self.learning == 'sgd':
-			self.user_bias = np.zeros(self.n_users)
-			self.item_bias = np.zeros(self.n_items)
-			if self.mask is not None:
-				self.global_bias = np.mean(self.ratings[~mask])
-			else:
-				self.global_bias = np.mean(self.ratings[np.where(self.ratings != 0)])
-				
-	def als_step(self,
-				 latent_vectors,
-				 fixed_vecs,
-				 ratings,
-				 _lambda,
-				 type='user'):
-		"""
-		One of the two ALS steps. Solve for the latent vectors
-		specified by type.
-		"""
-		if type == 'user':
-			# Precompute
-			YTY = fixed_vecs.T.dot(fixed_vecs)
-			lambdaI = np.eye(YTY.shape[0]) * _lambda
-
-			for u in xrange(latent_vectors.shape[0]):
-				latent_vectors[u, :] = solve((YTY + lambdaI), 
-											 ratings[u, :].dot(fixed_vecs))
-		elif type == 'item':
-			# Precompute
-			XTX = fixed_vecs.T.dot(fixed_vecs)
-			lambdaI = np.eye(XTX.shape[0]) * _lambda
-			
-			for i in xrange(latent_vectors.shape[0]):
-				latent_vectors[i, :] = solve((XTX + lambdaI), 
-											 ratings[:, i].T.dot(fixed_vecs))
-		return latent_vectors
 	
-	def train(self, n_iter=10):
-		""" Train model for n_iter iterations. Can be called multiple times for further training."""
-		ctr = 1
-		while ctr <= n_iter:
-			if ctr % 10 == 0 and self._v:
-				print('\tcurrent iteration: {}'.format(ctr))
-			if self.learning == 'als':
-				self.user_vecs = self.als_step(self.user_vecs, 
-											   self.item_vecs, 
-											   self.ratings, 
-											   self.user_fact_reg, 
-											   type='user')
-				self.item_vecs = self.als_step(self.item_vecs, 
-											   self.user_vecs, 
-											   self.ratings, 
-											   self.item_fact_reg, 
-											   type='item')
-			elif self.learning == 'sgd':
-				self.training_indices = np.arange(self.n_samples)
-				np.random.shuffle(self.training_indices)
-				self.sgd()
-			ctr += 1
+	'''
+	
+	def __init__(self, ratings):
+		super(NNMF_sgd, self).__init__(ratings)
 
-	def sgd(self):
-		for idx in self.training_indices:
-			u = self.sample_row[idx]
-			i = self.sample_col[idx]
-		prediction = self.predict(u, i)
 
-		e = (self.ratings[u,i] - prediction) # error
-		
-		# Update biases
-		self.user_bias[u] += (self.learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
-		self.item_bias[i] += (self.learning_rate * (e - self.item_bias_reg * self.item_bias[i]))
-		
-		# Update latent factors
-		self.user_vecs[u, :] += (self.learning_rate * (e * self.item_vecs[i, :] - 
-								 self.user_fact_reg * self.user_vecs[u,:]))
-		self.item_vecs[i, :] += (self.learning_rate *
-								(e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i,:]))
+	def fit(self, 
+		n_factors=None, 
+		max_iterations=100,
+		error_limit=1e-6, 
+		fit_error_limit=1e-6, 
+		verbose=False,
+		**kwargs):
 
-	def predict_single(self, u, i):
-		""" Single user and item prediction."""
-		if self.learning == 'als':
-			return self.user_vecs[u, :].dot(self.item_vecs[i, :].T)
-		elif self.learning == 'sgd':
-			prediction = self.global_bias + self.user_bias[u] + self.item_bias[i]
-			prediction += self.user_vecs[u, :].dot(self.item_vecs[i, :].T)
-			return prediction
+		''' Fit NNMF collaborative filtering model to training data using multiplicative updating.
 
-	def predict(self):
-		""" Predict ratings for every user and item."""
-		predictions = np.zeros((self.user_vecs.shape[0], 
-								self.item_vecs.shape[0]))
-		for u in xrange(self.user_vecs.shape[0]):
-			for i in xrange(self.item_vecs.shape[0]):
-				predictions[u, i] = self.predict_single(u, i)
-		return predictions
+		Args:
+			n_factors (int): Number of factors or components
+			max_iterations (int):  maximum number of interations (default=100)
+			error_limit (float): error tolerance (default=1e-6)
+			fit_error_limit (float): fit error tolerance (default=1e-6)
+			verbose (bool): verbose output during fitting procedure (default=True)
+		'''
+
+	def predict(self, **kwargs):
+
+		''' Predict Subject's missing items using NNMF with multiplicative updating
+
+			Args:
+				ratings: pandas dataframe instance of ratings
+				k: number of closest neighbors to use
+			Returns:
+				predicted_rating: (pd.DataFrame instance) adds field to object instance
+		'''
 
