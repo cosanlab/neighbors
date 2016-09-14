@@ -8,7 +8,9 @@ from copy import deepcopy
 
 
 __all__ = ['Mean',
-			'KNN']
+			'KNN',
+			'NNMF_multiplicative',
+			'NNMF_sgd']
 __author__ = ["Luke Chang"]
 __license__ = "MIT"
 
@@ -273,7 +275,7 @@ class NNMF_multiplicative(BaseCF):
 		# Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_factors)
 		avg = np.sqrt(np.nanmean(self.ratings)/n_factors)
 		self.H = avg*np.random.rand(n_features, n_factors) # H = Y
-		self.W = avg*np.random.rand(n_samples, n_factors)   # W = A
+		self.W = avg*np.random.rand(n_samples, n_factors)	# W = A
 		masked_X = mask * self.ratings.values
 		X_est_prev = np.dot(self.W, self.H)
 
@@ -332,14 +334,16 @@ class NNMF_sgd(BaseCF):
 	def __init__(self, ratings):
 		super(NNMF_sgd, self).__init__(ratings)
 
-
 	def fit(self, 
 		n_factors=None, 
-		max_iterations=100,
-		error_limit=1e-6, 
-		fit_error_limit=1e-6, 
-		verbose=False,
-		**kwargs):
+		mask=None,
+		item_fact_reg=0.0, 
+		user_fact_reg=0.0,
+		item_bias_reg=0.0,
+		user_bias_reg=0.0,
+		learning_rate=0.01,
+		n_iterations=10,
+		verbose=False):
 
 		''' Fit NNMF collaborative filtering model to training data using multiplicative updating.
 
@@ -351,9 +355,65 @@ class NNMF_sgd(BaseCF):
 			verbose (bool): verbose output during fitting procedure (default=True)
 		'''
 
+		# initialize variables
+		n_users, n_items = self.ratings.shape
+		if n_factors is  None:
+			n_factors = n_items
+
+		if self.mask is not None:
+			sample_row, sample_col = self.mask.nonzero()
+		else:
+			sample_row, sample_col = self.ratings.values.nonzero()
+		n_samples = len(sample_row)
+
+		# initialize latent vectors		
+		self.user_vecs = np.random.normal(scale=1./n_factors,size=(n_users, n_factors))
+		self.item_vecs = np.random.normal(scale=1./n_factors,size=(n_items, n_factors))
+
+		# Initialize biases
+		self.user_bias = np.zeros(n_users)
+		self.item_bias = np.zeros(n_items)
+		self.item_fact_reg = item_fact_reg
+		self.user_fact_reg = user_fact_reg
+		self.item_bias_reg = item_bias_reg
+		self.user_bias_reg = user_bias_reg
+
+		if self.mask is not None:
+			self.global_bias = np.mean(self.ratings[~mask])
+		else:
+			# self.global_bias = np.mean(self.ratings[np.where(self.ratings != 0)])
+			self.global_bias = self.ratings[~self.ratings.isnull()].mean().mean()
+
+		# train weights
+		ctr = 1
+		while ctr <= n_iterations:
+			if ctr % 10 == 0 and verbose:
+				print('\tcurrent iteration: {}'.format(ctr))
+
+			training_indices = np.arange(n_samples)
+			np.random.shuffle(training_indices)
+
+			# Check to make sure this is correct.  Seems weird that u and i are outside loop
+			for idx in training_indices:
+				u = sample_row[idx]
+				i = sample_col[idx]
+			prediction = self._predict_single(u,i)
+
+			e = (self.ratings.loc[u,i] - prediction) # error
+			
+			# Update biases
+			self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
+			self.item_bias[i] += (learning_rate * (e - self.item_bias_reg * self.item_bias[i]))
+			
+			# Update latent factors
+			self.user_vecs[u, :] += (learning_rate * (e * self.item_vecs[i, :] - self.user_fact_reg * self.user_vecs[u,:]))
+			self.item_vecs[i, :] += (learning_rate * (e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i,:]))
+			ctr += 1
+		self.is_fit = True
+
 	def predict(self, **kwargs):
 
-		''' Predict Subject's missing items using NNMF with multiplicative updating
+		''' Predict Subject's missing items using NNMF with stochastic gradient descent
 
 			Args:
 				ratings: pandas dataframe instance of ratings
@@ -361,4 +421,17 @@ class NNMF_sgd(BaseCF):
 			Returns:
 				predicted_rating: (pd.DataFrame instance) adds field to object instance
 		'''
+		self.predicted_ratings = self.ratings.copy()
+		# self.predicted_ratings = np.zeros((self.user_vecs.shape[0], self.item_vecs.shape[0]))
+		for u in xrange(self.user_vecs.shape[0]):
+			for i in xrange(self.item_vecs.shape[0]):
+				self.predicted_ratings.loc[u, i] = self._predict_single(u, i)
+		self.is_predict = True
+
+	def _predict_single(self, u, i):
+			""" Single user and item prediction."""
+			prediction = self.global_bias + self.user_bias[u] + self.item_bias[i]
+			prediction += self.user_vecs[u, :].dot(self.item_vecs[i, :].T)
+			return prediction
+
 

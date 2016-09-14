@@ -66,5 +66,15 @@ def test_cf_nnmf_multiplicative():
     cf.fit()
     cf.predict()
     basecf_method_tests(cf=cf)
-
+    
+def test_cf_nnmf_sgd():
+    cf = NNMF_sgd(simulate_data(data_type='data_wide'))
+    cf.fit(n_iterations = 100,
+           user_fact_reg=1,
+           item_fact_reg=.001,
+           user_bias_reg=0,
+           item_bias_reg=0,
+           learning_rate=.001)
+    cf.predict()
+    basecf_method_tests(cf=cf)
 
