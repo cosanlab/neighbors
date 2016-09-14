@@ -7,7 +7,8 @@ import numpy as np
 # import seaborn as sns
 from scipy.stats import pearsonr
 from copy import deepcopy
-from emotioncf.algorithms import NNMF, knn_similarity, knn_predict, nmf_multiplicative
+from emotioncf.algorithms import NNMF, knn_similarity, knn_predict
+from emotioncf.algorithms import nmf_multiplicative_fit, nmf_multiplicative_predict
 
 __all__ = ['CF','create_sub_by_item_matrix','get_mse']
 __author__ = ["Luke Chang"]

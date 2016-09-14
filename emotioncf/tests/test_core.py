@@ -33,5 +33,7 @@ def test_CF():
     # Test train_test_split()
     assert np.sum(np.sum(cf.test.isnull(),axis=1))/cf.test.shape[0] == n_train_items
     assert np.sum(np.sum(cf.train.isnull(),axis=1))/cf.train.shape[0] == 100-n_train_items
-    
+    assert(~np.any(cf.train==cf.test))
+   
+
 
