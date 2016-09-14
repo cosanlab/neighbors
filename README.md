@@ -1,5 +1,5 @@
 # emotionCF
-A python ackage to perform collaborative filtering on emotion datasets.
+A python package to perform collaborative filtering on emotion datasets.
 
 ## Installation
 
