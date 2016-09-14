@@ -3,8 +3,8 @@ from scipy import linalg
 import os
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 from scipy.stats import pearsonr
 from copy import deepcopy
 from emotioncf.algorithms import NNMF, knn_similarity, knn_predict, nmf_multiplicative
@@ -29,6 +29,7 @@ class CF(object):
         else:
             self.train_test_split(n_train_items=n_train_items)
         
+        # Initialize
         self.subject_similarity = None
         self.H = None
         self.W = None
@@ -43,14 +44,10 @@ class CF(object):
             )
 
     def train_test_split(self, n_train_items=20):
-        ''' Split ratings matrix into train and test items
+        ''' Split ratings matrix into train and test items.  adds test and train matrices to CF instance.
 
         Args:
             train_items: number of items for test dictionary or list of specific items
-
-        Returns:
-            test: dictionary of test items
-            train: dictionary of train items
 
         '''
         
@@ -65,30 +62,44 @@ class CF(object):
             self.test.loc[sub, sub_train_rating_item] = np.nan
         assert(~np.any(self.train==self.test))
 
-    def fit(method=None, params=None):
-        if self.train is not None:
+    def fit(self, method='nnmf_sgd', **kwargs):
+        ''' Fit collaborative model to training data
+
+        Args:
+            method: type of algorithm to fit ['knn','nnmf_multiplicative','nnmf_sgd']
+            params: dictionary of parameters to pass to algorithm
+
+        '''
+        print(method)
+        print(kwargs)
+        if self.train is None:
             raise ValueError('Make sure you have run train_test_split() method.')
         
         if method is 'knn':
-            self.subject_similarity = knn_similarity(self.train)
+            if 'k' not in kwargs:
+                raise ValueError('Make sure you pass a valid "k".')
+            self.subject_similarity = knn_similarity(self.train, **kwargs)
 
         if method is 'nnmf_multiplicative':
             self.W, self.H = nmf_multiplicative(self.train, n_components=params['n_factors'], max_iter=params['max_iterations'])
         
         if method is 'nnmf_sgd':
+            if 'n_iterations' not in kwargs:
+                raise ValueError('Make sure you pass n_iterations.')
+
             self.nnmf_sgd = NNMF(self.train, 
                             # mask=mask,
-                            n_factors=params['n_factors'], 
                             learning='sgd', 
-                            verbose=True,
-                            user_fact_reg=params['user_fact_reg'],
-                            item_fact_reg=params['item_fact_reg'],
-                            user_bias_reg=params['user_bias_reg'],
-                            item_bias_reg=params['item_bias_reg'],
-                            learning_rate=params['learning_rate'])
-            self.nnmf_sgd.train(params['n_iterations'])
+                            **kwargs)
+            self.nnmf_sgd.train(n_iterations)
 
-    def predict(method=None, params=None):
+    def predict(self, method='nnmf_sgd', **kwargs):
+        ''' Predict new data after fitting collaborative filtering algorithm to data
+        
+        Args:
+            method: type of algorithm to use in prediction ['knn','nnmf_multiplicative','nnmf_sgd']
+
+        '''
 
         if method is 'knn':
             if self.subject_similarity is None:

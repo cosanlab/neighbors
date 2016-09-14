@@ -49,9 +49,12 @@ def knn_predict(ratings, sim, k = None):
             pred.loc[row[0],col[0]] = np.dot(top_subjects,ratings.loc[top_subjects.index,col[0]].T)/len(top_subjects)
     return pred
     
-def nmf_multiplicative(X, n_components=None, max_iter=100, error_limit=1e-6, fit_error_limit=1e-6, verbose=True):
-    ''' Train non negative matrix factorization model using multiplicative updates.  Allows masking to only learn 
-        the training weights.
+def nmf_multiplicative_fit(X, n_components=None, max_iter=100, error_limit=1e-6, fit_error_limit=1e-6, verbose=True):
+    ''' Train non negative matrix factorization model using multiplicative updates.  
+        Allows masking to only learn the training weights.
+
+        Based on http://stackoverflow.com/questions/22767695/
+        python-non-negative-matrix-factorization-that-handles-both-zeros-and-missing-dat
     
     '''
     
@@ -96,6 +99,9 @@ def nmf_multiplicative(X, n_components=None, max_iter=100, error_limit=1e-6, fit
                 break
     return W, H
 
+def nmf_multiplicative_predict():
+    pass
+
 class NNMF():
     def __init__(self, 
                  ratings,
@@ -112,6 +118,10 @@ class NNMF():
         Train a matrix factorization model to predict empty 
         entries in a matrix. The terminology assumes a 
         ratings matrix which is ~ user x item
+
+        This code is based off of Ethan Rosenthal's excellent tutorial 
+        on collaborative filtering https://blog.insightdatascience.com/
+        explicit-matrix-factorization-als-sgd-and-all-that-jazz-b00e4d9b21ea#.kkr7mzvr2
         
         Params
         ======
