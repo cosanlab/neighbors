@@ -92,9 +92,9 @@ def nmf_multiplicative_fit(X, n_components=None, max_iter=100, error_limit=1e-6,
             X_est_prev = X_est
             curRes = linalg.norm(mask * (X - X_est), ord='fro')
             if verbose:
-                print 'Iteration {}:'.format(i),
-                print 'fit residual', np.round(fit_residual, 4),
-                print 'total residual', np.round(curRes, 4)
+                print('Iteration {}:'.format(i)),
+                print('fit residual', np.round(fit_residual, 4)),
+                print('total residual', np.round(curRes, 4))
             if curRes < error_limit or fit_residual < fit_error_limit:
                 break
     return W, H
@@ -228,7 +228,7 @@ class NNMF():
         ctr = 1
         while ctr <= n_iter:
             if ctr % 10 == 0 and self._v:
-                print '\tcurrent iteration: {}'.format(ctr)
+                print('\tcurrent iteration: {}'.format(ctr))
             if self.learning == 'als':
                 self.user_vecs = self.als_step(self.user_vecs, 
                                                self.item_vecs, 
