@@ -1,3 +1,9 @@
+## Status
+* [![Build Status](https://travis-ci.org/ljchang/emotionCF.svg?branch=master)](https://travis-ci.org/ljchang/emotionCF)
+* [![Coverage Status](https://coveralls.io/repos/github/ljchang/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/ljchang/emotionCF?branch=master)
+
+https://travis-ci.org/ljchang/emotionCF.svg?branch=master
+
 # emotionCF
 A python package to perform collaborative filtering on emotion datasets.
 
