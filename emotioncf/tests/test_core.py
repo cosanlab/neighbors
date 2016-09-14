@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from emotioncf.core import CF, create_sub_by_item_matrix
-
+from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
+from emotioncf.data import create_sub_by_item_matrix
 
 def simulate_data(data_type = 'data_long'):
     rat = np.random.rand(50,100)*50
@@ -20,20 +20,51 @@ def simulate_data(data_type = 'data_long'):
     elif data_type is 'data_wide':
         return rat
 
+def basecf_method_tests(cf=None):
+    assert cf.predicted_ratings.shape == (50,100)
+    mse = cf.get_mse()
+    r = cf.get_corr()
+    sub_r = cf.get_sub_corr()
+    assert isinstance(mse,float)
+    assert isinstance(r,float)
+    assert isinstance(sub_r,np.ndarray)
+    assert len(sub_r) == cf.ratings.shape[0]
+    assert mse > 0
+    assert r > 0
+    assert np.mean(sub_r) > 0
+    print(('mse: %s') % mse)
+    print(('r: %s') % r)
+    print(('mean sub r: %s') % np.mean(sub_r))
+
 def test_create_sub_by_item_matrix():
     rating = create_sub_by_item_matrix(simulate_data(data_type='data_long'))
     assert isinstance(rating,pd.DataFrame)
     assert rating.shape == (50,100)
-
-def test_CF():
-    n_train_items = 40
-    cf = CF(simulate_data(data_type='data_wide'),n_train_items=n_train_items)
-    assert cf.n_train_items == n_train_items
     
-    # Test train_test_split()
-    assert np.sum(np.sum(cf.test.isnull(),axis=1))/cf.test.shape[0] == n_train_items
-    assert np.sum(np.sum(cf.train.isnull(),axis=1))/cf.train.shape[0] == 100-n_train_items
-    assert(~np.any(cf.train==cf.test))
-   
+def test_cf_mean():
+    cf = Mean(simulate_data(data_type='data_wide'))
+    cf.fit()
+    cf.predict()
+    basecf_method_tests(cf=cf)
+
+def test_cf_knn():
+    cf = KNN(simulate_data(data_type='data_wide'))
+    cf.fit()
+    cf.predict()
+    basecf_method_tests(cf=cf)
+
+    cf.fit(metric='correlation')
+    cf.predict(k=10)
+    basecf_method_tests(cf=cf)
+
+    cf.fit(metric='cosine')
+    cf.predict(k=10)
+    basecf_method_tests(cf=cf)
+
+def test_cf_nnmf_multiplicative():
+    cf = NNMF_multiplicative(simulate_data(data_type='data_wide'))
+    cf.fit()
+    cf.predict()
+    basecf_method_tests(cf=cf)
 
 
