@@ -20,8 +20,6 @@ def simulate_data(data_type = 'data_long'):
     elif data_type is 'data_wide':
         return rat
 
-rat_w = simulate_data(data_type='data_wide')
-
 def test_create_sub_by_item_matrix():
     rating = create_sub_by_item_matrix(simulate_data(data_type='data_long'))
     assert isinstance(rating,pd.DataFrame)

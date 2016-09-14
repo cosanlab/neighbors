@@ -12,14 +12,10 @@ setup(
     maintainer='Luke Chang',
     maintainer_email='luke.j.chang@dartmouth.edu',
     url='http://github.com/ljchang/emotionCF',
-    install_requires=['numpy', 'scipy', 'pandas', 'matplotlib', 'seaborn'
-                      ],
+    install_requires=['numpy', 'scipy', 'pandas', 'matplotlib', 'seaborn'],
     packages=find_packages(exclude=['emotioncf/tests']),
     license='MIT',
-    package_data={'emotioncf': ['data/*'],
-                  'emotioncf.tests': ['data/*/*']
-                  },
-    download_url='https://github.com/ljchang/emotionCF/archive/%s.tar.gz' %
-    __version__,
+    # download_url='https://github.com/ljchang/emotionCF/archive/%s.tar.gz' %
+    # __version__,
     **extra_setuptools_args
 )
