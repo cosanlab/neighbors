@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
-from emotioncf.core import CF, create_sub_by_item_matrix
-
+from emotioncf.cf import Mean, KNN
 
 def simulate_data(data_type = 'data_long'):
     rat = np.random.rand(50,100)*50
@@ -25,15 +24,17 @@ def test_create_sub_by_item_matrix():
     assert isinstance(rating,pd.DataFrame)
     assert rating.shape == (50,100)
 
-def test_CF():
-    n_train_items = 40
-    cf = CF(simulate_data(data_type='data_wide'),n_train_items=n_train_items)
-    assert cf.n_train_items == n_train_items
-    
-    # Test train_test_split()
-    assert np.sum(np.sum(cf.test.isnull(),axis=1))/cf.test.shape[0] == n_train_items
-    assert np.sum(np.sum(cf.train.isnull(),axis=1))/cf.train.shape[0] == 100-n_train_items
-    assert(~np.any(cf.train==cf.test))
-   
+def test_cf_mean():
+    cf = Mean(simulate_data(data_type='data_wide'))
+    cf.fit()
+    cf.predict()
+    assert cf.predicted_ratings.shape == (50,100)
 
-
+def test_cf_knn():
+    cf = KNN(simulate_data(data_type='data_wide'))
+    cf.fit()
+    cf.predict()
+    assert cf.predicted_ratings.shape == (50,100)
+    cf.fit(metric='cosine')
+    cf.predict(k=10)
+    assert cf.predicted_ratings.shape == (50,100)
