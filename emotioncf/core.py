@@ -155,7 +155,7 @@ class CF(object):
         ax[2].set_ylabel('Predicted Ratings')
         ax[2].set_title('Predicted Ratings')
         r = pearsonr(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
-        print 'Correlation: %s' % r[0]
+        print('Correlation: %s' % r[0])
         return f, r
     
     def subject_correlations(self, mask=None):
