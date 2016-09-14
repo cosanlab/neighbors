@@ -25,6 +25,8 @@ class BaseCF(object):
 			raise ValueError('ratings must be a pandas dataframe instance')			
 		self.ratings = ratings
 		self.predicted_ratings = None
+		self.is_fit = False
+		self.is_predict = False
 
 		if mask is not None:
 			self.mask = mask
@@ -34,6 +36,36 @@ class BaseCF(object):
 			self.__class__.__name__,
 			self.ratings.shape
 			)
+
+	def get_mse(self, mask=None):
+
+		if not self.is_fit:
+			raise ValueError('You must fit() model first before using this method.')
+		if not self.is_predict:
+			raise ValueError('You must predict() model first before using this method.')
+
+		''' Get Mean Squared Error ignoring Missing Values '''
+		if mask is not None:
+			return np.mean((self.predicted_ratings[mask]-self.ratings[mask])**2)
+		else:
+			actual = self.ratings.values.flatten()
+			pred = self.predicted_ratings.values.flatten()
+			return np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2)
+
+	def get_corr(self, mask=None):
+
+		if not self.is_fit:
+			raise ValueError('You must fit() model first before using this method.')
+		if not self.is_predict:
+			raise ValueError('You must predict() model first before using this method.')
+
+		''' Get Correlation ignoring Missing Values '''
+		if mask is not None:
+			return pearsonr(self.predicted_ratings[mask],self.ratings[mask])[0]
+		else:
+			actual = self.ratings.values.flatten()
+			pred = self.predicted_ratings.values.flatten()
+			return pearsonr(pred[(~np.isnan(actual)) & (~np.isnan(pred))], actual[(~np.isnan(actual)) & (~np.isnan(pred))])[0]
 
 class Mean(BaseCF):
 
@@ -52,6 +84,7 @@ class Mean(BaseCF):
 		'''
 
 		self.mean = self.ratings.mean(skipna=True, axis=0)
+		self.is_fit = True
 
 	def predict(self, **kwargs):
 
@@ -66,6 +99,7 @@ class Mean(BaseCF):
 		self.predicted_ratings = self.ratings.copy()
 		for row in self.ratings.iterrows():
 			self.predicted_ratings.loc[row[0]] = self.mean
+		self.is_predict = True
 
 class KNN(BaseCF):
 
@@ -91,11 +125,12 @@ class KNN(BaseCF):
 			for x in self.ratings.iterrows():
 				for y in self.ratings.iterrows():
 					sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
-			self.subject_similarity = sim
 		elif metric is 'cosine':
 			sim = self.ratings.dot(self.ratings.T)
 			norms = np.array([np.sqrt(np.diagonal(sim.values))])
-			self.subject_similarity = (sim.values / norms / norms.T)
+			sim.loc[:,:] = (sim.values / norms / norms.T)
+		self.subject_similarity = sim
+		self.is_fit = True
 
 	def predict(self, k=None, **kwargs):
 
@@ -118,4 +153,4 @@ class KNN(BaseCF):
 			for col in self.ratings.iteritems():
 				pred.loc[row[0],col[0]] = np.dot(top_subjects,self.ratings.loc[top_subjects.index,col[0]].T)/len(top_subjects)
 		self.predicted_ratings = pred
-
+		self.is_predict = True

@@ -1,8 +1,12 @@
+import pandas as pd
+import numpy as np
 
+__all__ = ['create_sub_by_item_matrix']
+__author__ = ["Luke Chang"]
+__license__ = "MIT"
 
-
-class Ratings(object):
-    def __init__():
+# class Ratings(object):
+#     def __init__():
 
 
 def create_sub_by_item_matrix(df):
