@@ -85,7 +85,7 @@ class BaseCF(object):
 		else:
 			r = []
 			for i,sub in enumerate(self.ratings.index):
-				r.append(pearsonr(self.ratings.loc[sub,:],self.predicted_ratings[i,:])[0])
+				r.append(pearsonr(self.ratings.loc[sub,:], self.predicted_ratings.loc[sub,:])[0])
 		return np.array(r)
 
 	def plot_predictions(self, mask=None):
@@ -162,6 +162,9 @@ class Mean(BaseCF):
 				predicted_rating: (pd.DataFrame instance) adds field to object instance
 		'''
 
+		if not self.is_fit:
+			raise ValueError('You must fit() model first before using this method.')
+
 		self.predicted_ratings = self.ratings.copy()
 		for row in self.ratings.iterrows():
 			self.predicted_ratings.loc[row[0]] = self.mean
@@ -208,6 +211,10 @@ class KNN(BaseCF):
 			Returns:
 				predicted_rating: (pd.DataFrame instance) adds field to object instance
 		'''
+
+		if not self.is_fit:
+			raise ValueError('You must fit() model first before using this method.')
+
 		pred = pd.DataFrame(np.zeros(self.ratings.shape))
 		pred.columns = self.ratings.columns
 		pred.index = self.ratings.index
@@ -222,8 +229,6 @@ class KNN(BaseCF):
 		self.is_predict = True
 
 class NNMF_multiplicative(BaseCF):
-
-	def nmf_multiplicative_fit(X, n_components=None, max_iter=100, error_limit=1e-6, fit_error_limit=1e-6, verbose=True):
 	''' Train non negative matrix factorization model using multiplicative updates.  
 		Allows masking to only learn the training weights.
 
@@ -232,49 +237,89 @@ class NNMF_multiplicative(BaseCF):
 	
 	'''
 	
-	mask = ~np.isnan(X.values)
-	train[train.isnull()] = 0
-	X = X.values
+	def __init__(self, ratings):
+		super(NNMF_multiplicative, self).__init__(ratings)
+		self.H = None
+		self.W = None
+	
+	def fit(self, 
+		n_factors=None, 
+		max_iterations=100,
+		error_limit=1e-6, 
+		fit_error_limit=1e-6, 
+		verbose=False,
+		**kwargs):
 
-	eps = 1e-5
+		''' Fit NNMF collaborative filtering model to training data using multiplicative updating.
 
-	n_samples, n_features = X.shape
-	if n_components is None:
-		n_components = n_features
+		Args:
+			n_factors (int): Number of factors or components
+			max_iterations (int):  maximum number of interations (default=100)
+			error_limit (float): error tolerance (default=1e-6)
+			fit_error_limit (float): fit error tolerance (default=1e-6)
+			verbose (bool): verbose output during fitting procedure (default=True)
+		'''
 
-	# Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_components)
-	avg = np.sqrt(np.nanmean(X)/n_components)
-	H = avg*np.random.rand(n_features, n_components) # H = Y
-	W = avg*np.random.rand(n_samples, n_components)   # W = A
-	masked_X = mask * X
-	X_est_prev = np.dot(W, H)
+		mask = ~np.isnan(self.ratings.values)
+		# train[train.isnull()] = 0
+		# X = X.values
 
-	for i in range(1, max_iter + 1):
-		# Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
-		W *= np.dot(masked_X, H.T) / np.dot(mask * np.dot(W,H), H.T)
-#		 W = np.maximum(W, eps)
+		eps = 1e-5
 
-		# Update H: Matlab: Y=Y.*((A'*(W.*X))./(A'*(W.*(A*Y))));
-		H *= np.dot(W.T, masked_X) / np.dot(W.T, mask * dot(W,H))
-#		 H = np.maximum(H, eps)
+		n_samples, n_features = self.ratings.shape
+		if n_factors is None:
+			n_factors = n_features
 
-		# Evaluate
-		if i % 5 == 0 or i == 1 or i == max_iter:
-			X_est = np.dot(W,H)
-			err = mask * (X_est_prev - X_est)
-			fit_residual = np.sqrt(np.sum(err ** 2))
-			X_est_prev = X_est
-			curRes = linalg.norm(mask * (X - X_est), ord='fro')
-			if verbose:
-				print('Iteration {}:'.format(i)),
-				print('fit residual', np.round(fit_residual, 4)),
-				print('total residual', np.round(curRes, 4))
-			if curRes < error_limit or fit_residual < fit_error_limit:
-				break
-	return W, H
+		# Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_factors)
+		avg = np.sqrt(np.nanmean(self.ratings)/n_factors)
+		self.H = avg*np.random.rand(n_features, n_factors) # H = Y
+		self.W = avg*np.random.rand(n_samples, n_factors)   # W = A
+		masked_X = mask * self.ratings.values
+		X_est_prev = np.dot(self.W, self.H)
+
+		for i in range(1, max_iterations + 1):
+			# Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
+			self.W *= np.dot(masked_X, self.H.T) / np.dot(mask * np.dot(self.W,self.H), self.H.T)
+			self.W = np.maximum(self.W, eps)
+
+			# Update H: Matlab: Y=Y.*((A'*(W.*X))./(A'*(W.*(A*Y))));
+			self.H *= np.dot(self.W.T, masked_X) / np.dot(self.W.T, mask * np.dot(self.W,self.H))
+			self.H = np.maximum(self.H, eps)
+
+			# Evaluate
+			if i % 5 == 0 or i == 1 or i == max_iterations:
+				X_est = np.dot(self.W,self.H)
+				err = mask * (X_est_prev - X_est)
+				fit_residual = np.sqrt(np.sum(err ** 2))
+				X_est_prev = X_est
+				curRes = linalg.norm(mask * (self.ratings.values - X_est), ord='fro')
+				if verbose:
+					print('Iteration {}:'.format(i)),
+					print('fit residual', np.round(fit_residual, 4)),
+					print('total residual', np.round(curRes, 4))
+				if curRes < error_limit or fit_residual < fit_error_limit:
+					break
+		self.is_fit = True
+
+	def predict(self, **kwargs):
+
+		''' Predict Subject's missing items using NNMF with multiplicative updating
+
+			Args:
+				ratings: pandas dataframe instance of ratings
+				k: number of closest neighbors to use
+			Returns:
+				predicted_rating: (pd.DataFrame instance) adds field to object instance
+		'''
+
+		if not self.is_fit:
+			raise ValueError('You must fit() model first before using this method.')
+
+		self.predicted_ratings = self.ratings.copy()
+		self.predicted_ratings.loc[:,:] = np.dot(self.W, self.H)
+		self.is_predict = True
 
 class NNMF_sgd(BaseCF):
-	class NNMF():
 	def __init__(self, 
 				 ratings,
 				 mask=None,
@@ -454,4 +499,3 @@ class NNMF_sgd(BaseCF):
 				predictions[u, i] = self.predict_single(u, i)
 		return predictions
 
-		
