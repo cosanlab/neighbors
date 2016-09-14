@@ -30,10 +30,10 @@ before_install:
 
 install:
 - pip install -r requirements.txt
-- pip install coveralls pytest-cov
+- pip install python-coveralls
 
 script:
-- py.test --pyargs emotioncf --cov-report term-missing --cov=emotioncf
+- coverage run --source emotioncf -m py.test
 
 after_success:
 - coveralls
