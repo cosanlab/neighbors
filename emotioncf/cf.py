@@ -20,14 +20,21 @@ class BaseCF(object):
 
 	''' Base Collaborative Filtering Class '''
 
-	def __init__(self, ratings, mask=None):
+	def __init__(self, ratings, mask=None, n_train_items=None):
 		if not isinstance(ratings, pd.DataFrame):
 			raise ValueError('ratings must be a pandas dataframe instance')			
 		self.ratings = ratings
 		self.predicted_ratings = None
 		self.is_fit = False
 		self.is_predict = False
-		self.mask = mask
+		if mask is not None:
+			self.train_mask = mask
+			self.is_mask = True
+		else:
+			self.is_mask = False
+		if n_train_items is not None:
+			self.split_train_test(n_train_items=n_train_items)
+
 
 	def __repr__(self):
 		return '%s(rating=%s)' % (
@@ -35,7 +42,7 @@ class BaseCF(object):
 			self.ratings.shape
 			)
 
-	def get_mse(self, mask=None):
+	def get_mse(self, data='all'):
 
 		''' Get overall mean squared error for predicted compared to actual for all items and subjects. '''
 		
@@ -45,14 +52,19 @@ class BaseCF(object):
 			raise ValueError('You must predict() model first before using this method.')
 
 		''' Get Mean Squared Error ignoring Missing Values '''
-		if mask is not None:
-			return np.mean((self.predicted_ratings[mask]-self.ratings[mask])**2)
-		else:
+		if data is 'all':
 			actual = self.ratings.values.flatten()
 			pred = self.predicted_ratings.values.flatten()
 			return np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2)
+		elif self.is_mask:
+			if data is 'test':
+				return np.mean((self.predicted_ratings.values[~self.train_mask.values]-self.ratings.values[~self.train_mask.values])**2)
+			elif data is 'train':
+				return np.mean((self.predicted_ratings.values[self.train_mask.values]-self.ratings.values[self.train_mask.values])**2)
+		else:
+			raise ValueError('Must run split_train_test() before using this option.')
 
-	def get_corr(self, mask=None):
+	def get_corr(self, data='all'):
 
 		''' Get overall correlation for predicted compared to actual for all items and subjects. '''
 
@@ -62,14 +74,19 @@ class BaseCF(object):
 			raise ValueError('You must predict() model first before using this method.')
 
 		''' Get Correlation ignoring Missing Values '''
-		if mask is not None:
-			return pearsonr(self.predicted_ratings[mask],self.ratings[mask])[0]
-		else:
+		if data is 'all':
 			actual = self.ratings.values.flatten()
 			pred = self.predicted_ratings.values.flatten()
 			return pearsonr(pred[(~np.isnan(actual)) & (~np.isnan(pred))], actual[(~np.isnan(actual)) & (~np.isnan(pred))])[0]
-	
-	def get_sub_corr(self, mask=None):
+		elif self.is_mask:
+			if data is 'test':
+				return pearsonr(self.predicted_ratings.values[~self.train_mask.values], self.ratings.values[~self.train_mask.values])[0]
+			if data is 'train':
+				return pearsonr(self.predicted_ratings.values[self.train_mask.values], self.ratings.values[self.train_mask.values])[0]
+		else:
+			raise ValueError('Must run split_train_test() before using this option.')
+
+	def get_sub_corr(self, data='all'):
 
 		'''Calculate observed/predicted correlation for each subject in matrix'''
 
@@ -78,17 +95,39 @@ class BaseCF(object):
 		if not self.is_predict:
 			raise ValueError('You must predict() model first before using this method.')
 
-		if mask is not None:
-			r = []
-			for i,sub in enumerate(self.ratings.index):
-				r.append(pearsonr(self.ratings.loc[sub,mask[i,:]],self.predicted_ratings[i,mask[i,:]])[0])
+		r = []
+		if data is 'all':
+			for i in self.ratings.index:
+				r.append(pearsonr(self.ratings.loc[i,:], self.predicted_ratings.loc[i,:])[0])
+		elif self.is_mask:
+			if data is 'test':
+				for i in self.ratings.index:
+					r.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]])[0])
+			if data is 'train':
+				for i in self.ratings.index:
+					r.append(pearsonr(self.ratings.loc[i, self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,self.train_mask.loc[i,:]])[0])
 		else:
-			r = []
-			for i,sub in enumerate(self.ratings.index):
-				r.append(pearsonr(self.ratings.loc[sub,:], self.predicted_ratings.loc[sub,:])[0])
+			raise ValueError('Must run split_train_test() before using this option.')
 		return np.array(r)
 
-	def plot_predictions(self, mask=None):
+	def split_train_test(self, n_train_items=20):
+		''' Split ratings matrix into train and test items.  mask indicating training items
+
+		Args:
+			n_train_items: number of items for test dictionary or list of specific items
+
+		'''
+		
+		self.n_train_items = n_train_items
+		self.train_mask = self.ratings.copy()
+		self.train_mask.loc[:,:] = np.zeros(self. ratings.shape).astype(bool)
+
+		for sub in self.ratings.index:
+			sub_train_rating_item =  np.random.choice(self.ratings.columns,replace=False, size=n_train_items)
+			self.train_mask.loc[sub, sub_train_rating_item] = True
+		self.is_mask = True
+
+	def plot_predictions(self):
 
 		''' Create plot of actual and predicted ratings'''
 
@@ -99,38 +138,28 @@ class BaseCF(object):
 		if not self.is_predict:
 			raise ValueError('You must predict() model first before using this method.')
 		
-		f, ax = plt.subplots(nrows=1,ncols=3, figsize=(15,8))
+		if self.is_mask:
+			f, ax = plt.subplots(nrows=1,ncols=3, figsize=(15,8))
+		else:
+			f, ax = plt.subplots(nrows=1,ncols=2, figsize=(15,8))
+
 		sns.heatmap(self.ratings,vmax=100,vmin=0,ax=ax[0],square=False)
 		ax[0].set_title('Actual User/Item Ratings')
 		sns.heatmap(self.predicted_ratings,vmax=100,vmin=0,ax=ax[1],square=False)
 		ax[1].set_title('Predicted User/Item Ratings')
-		if isinstance(self.test,pd.DataFrame):
-			actual = self.test.values.flatten()
-		elif isinstance(self.test,np.ndarray):
-			actual = self.test.flatten()
-		else:
-			raise ValueError('Make sure self.test are pandas data frame or numpy array.')
-		if isinstance(self.predicted_ratings,pd.DataFrame):
+
+		if self.is_mask:
+			actual = self.ratings.values.flatten()
 			pred = self.predicted_ratings.values.flatten()
-		elif isinstance(self.predicted_ratings,np.ndarray):
-			pred = self.predicted_ratings.flatten()
-		else:
-			raise ValueError('Make sure predicted_ratings are pandas data frame or numpy array.')
-		if mask is not None:
-			if isinstance(mask,pd.DataFrame):
-				mask = mask.values.flatten()
-			elif isinstance(mask,np.ndarray):
-				mask = mask.flatten()
-			else:
-				raise ValueError('Make sure mask is a pandas data frame or numpy array.')
+			mask = self.train_mask.values.flatten()
 			pred = pred[~mask]
 			actual = actual[~mask]
-		ax[2].scatter(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
-		ax[2].set_xlabel('Actual Ratings')
-		ax[2].set_ylabel('Predicted Ratings')
-		ax[2].set_title('Predicted Ratings')
-		r = pearsonr(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
-		print('Correlation: %s' % r[0])
+			ax[2].scatter(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
+			ax[2].set_xlabel('Actual Ratings')
+			ax[2].set_ylabel('Predicted Ratings')
+			ax[2].set_title('Predicted Ratings')
+			r = pearsonr(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
+			print('Correlation: %s' % r[0])
 		return f, r
 		
 class Mean(BaseCF):
@@ -358,8 +387,8 @@ class NNMF_sgd(BaseCF):
 		if n_factors is  None:
 			n_factors = n_items
 
-		if self.mask is not None:
-			sample_row, sample_col = self.mask.nonzero()
+		if self.is_mask:
+			sample_row, sample_col = self.train_mask.values.nonzero()
 		else:
 			sample_row, sample_col = self.ratings.values.nonzero()
 		n_samples = len(sample_row)
@@ -376,8 +405,8 @@ class NNMF_sgd(BaseCF):
 		self.item_bias_reg = item_bias_reg
 		self.user_bias_reg = user_bias_reg
 
-		if self.mask is not None:
-			self.global_bias = np.mean(self.ratings[~mask])
+		if self.is_mask:
+			self.global_bias = self.ratings[self.train_mask].mean().mean()
 		else:
 			# self.global_bias = np.mean(self.ratings[np.where(self.ratings != 0)])
 			self.global_bias = self.ratings[~self.ratings.isnull()].mean().mean()

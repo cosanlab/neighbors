@@ -22,19 +22,54 @@ def simulate_data(data_type = 'data_long'):
 
 def basecf_method_tests(cf=None):
     assert cf.predicted_ratings.shape == (50,100)
-    mse = cf.get_mse()
-    r = cf.get_corr()
-    sub_r = cf.get_sub_corr()
-    assert isinstance(mse,float)
-    assert isinstance(r,float)
-    assert isinstance(sub_r,np.ndarray)
-    assert len(sub_r) == cf.ratings.shape[0]
-    assert mse > 0
-    assert r > 0
-    assert np.mean(sub_r) > 0
-    print(('mse: %s') % mse)
-    print(('r: %s') % r)
-    print(('mean sub r: %s') % np.mean(sub_r))
+    cf.split_train_test(n_train_items=20)
+    assert cf.train_mask.shape == (50,100)
+    for x in cf.train_mask.sum(axis=1):
+        assert cf.n_train_items == x 
+    mse_all = cf.get_mse(data='all')
+    r_all = cf.get_corr(data='all')
+    sub_r_all = cf.get_sub_corr(data='all')
+    assert isinstance(mse_all,float)
+    assert isinstance(r_all,float)
+    assert isinstance(sub_r_all,np.ndarray)
+    assert len(sub_r_all) == cf.ratings.shape[0]
+    assert mse_all > 0
+    assert r_all > 0
+    assert np.mean(sub_r_all) > 0
+    print('All')
+    print(('mse: %s') % mse_all)
+    print(('r: %s') % r_all)
+    print(('mean sub r: %s') % np.mean(sub_r_all))
+    
+    mse_tr = cf.get_mse(data='train')
+    r_tr = cf.get_corr(data='train')
+    sub_r_tr = cf.get_sub_corr(data='train')
+    assert isinstance(mse_tr,float)
+    assert isinstance(r_tr,float)
+    assert isinstance(sub_r_tr,np.ndarray)
+    assert len(sub_r_tr) == cf.ratings.shape[0]
+    assert mse_tr > 0
+    assert r_tr > 0
+    assert np.mean(sub_r_tr) > 0
+    print('Train')
+    print(('mse: %s') % mse_tr)
+    print(('r: %s') % r_tr)
+    print(('mean sub r: %s') % np.mean(sub_r_tr))
+    
+    mse_te = cf.get_mse(data='test')
+    r_te = cf.get_corr(data='test')
+    sub_r_te = cf.get_sub_corr(data='test')
+    assert isinstance(mse_te,float)
+    assert isinstance(r_te,float)
+    assert isinstance(sub_r_te,np.ndarray)
+    assert len(sub_r_te) == cf.ratings.shape[0]
+    assert mse_te > 0
+    assert r_te > 0
+    assert np.mean(sub_r_te) > 0
+    print('Test')
+    print(('mse: %s') % mse_te)
+    print(('r: %s') % r_te)
+    print(('mean sub r: %s') % np.mean(sub_r_te))
 
 def test_create_sub_by_item_matrix():
     rating = create_sub_by_item_matrix(simulate_data(data_type='data_long'))
@@ -77,4 +112,3 @@ def test_cf_nnmf_sgd():
            learning_rate=.001)
     cf.predict()
     basecf_method_tests(cf=cf)
-
