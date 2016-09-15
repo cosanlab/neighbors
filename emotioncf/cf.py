@@ -160,7 +160,9 @@ class BaseCF(object):
 			ax[2].set_title('Predicted Ratings')
 			r = pearsonr(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
 			print('Correlation: %s' % r[0])
-		return f, r
+			return f, r
+		else:
+			return f
 		
 class Mean(BaseCF):
 
@@ -289,10 +291,6 @@ class NNMF_multiplicative(BaseCF):
 			verbose (bool): verbose output during fitting procedure (default=True)
 		'''
 
-		mask = ~np.isnan(self.ratings.values)
-		# train[train.isnull()] = 0
-		# X = X.values
-
 		eps = 1e-5
 
 		n_samples, n_features = self.ratings.shape
@@ -303,7 +301,14 @@ class NNMF_multiplicative(BaseCF):
 		avg = np.sqrt(np.nanmean(self.ratings)/n_factors)
 		self.H = avg*np.random.rand(n_features, n_factors) # H = Y
 		self.W = avg*np.random.rand(n_samples, n_factors)	# W = A
-		masked_X = mask * self.ratings.values
+		
+		if self.is_mask:
+			masked_X = self.ratings.values * self.train_mask.values
+			mask = self.train_mask.values
+		else:
+			masked_X = self.ratings.values
+			mask = np.ones(self.ratings.shape)
+
 		X_est_prev = np.dot(self.W, self.H)
 
 		for i in range(1, max_iterations + 1):
