@@ -4,9 +4,14 @@ from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
 from emotioncf.data import create_sub_by_item_matrix
 
 def simulate_data(data_type = 'data_long'):
-    rat = np.random.rand(50,100)*50
-    for i in np.arange(0,rat.shape[1],5):
-        rat[:,i] = rat[:,i] + i
+    i = 100
+    s = 50
+    rat = np.random.rand(s,i)*50
+    for x in np.arange(0,rat.shape[1],5):
+        rat[0:s/2,x] = rat[0:s/2,x] + x
+    for x in np.arange(0,rat.shape[1],3):
+        rat[(s/2):s,x] = rat[(s/2):s,x] + x
+    rat[(s/2):s] = rat[(s/2):s,::-1]
     rat = pd.DataFrame(rat)
     if data_type is 'data_long':
         out = pd.DataFrame(columns=['Subject','Item','Rating'])
