@@ -142,10 +142,14 @@ class BaseCF(object):
 		else:
 			f, ax = plt.subplots(nrows=1,ncols=2, figsize=(15,8))
 
-		sns.heatmap(self.ratings,vmax=100,vmin=0,ax=ax[0],square=False)
+		sns.heatmap(self.ratings,vmax=100,vmin=0,ax=ax[0],square=False,xticklabels=False, yticklabels=False)
 		ax[0].set_title('Actual User/Item Ratings')
-		sns.heatmap(self.predicted_ratings,vmax=100,vmin=0,ax=ax[1],square=False)
+		ax[0].set_xlabel('Items')
+		ax[0].set_ylabel('Users')
+		sns.heatmap(self.predicted_ratings,vmax=100,vmin=0,ax=ax[1],square=False,xticklabels=False, yticklabels=False)
 		ax[1].set_title('Predicted User/Item Ratings')
+		ax[1].set_xlabel('Items')
+		ax[1].set_ylabel('Users')
 
 		if self.is_mask:
 			actual = self.ratings.values.flatten()
