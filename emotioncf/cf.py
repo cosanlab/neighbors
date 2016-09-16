@@ -452,7 +452,7 @@ class NNMF_sgd(BaseCF):
 		# self.predicted_ratings = np.zeros((self.user_vecs.shape[0], self.item_vecs.shape[0]))
 		for u in range(self.user_vecs.shape[0]):
 			for i in range(self.item_vecs.shape[0]):
-				self.predicted_ratings.loc[u, i] = self._predict_single(u, i)
+				self.predicted_ratings.iloc[u, i] = self._predict_single(u, i)
 		self.is_predict = True
 
 	def _predict_single(self, u, i):
