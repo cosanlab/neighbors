@@ -3,6 +3,8 @@ import pandas as pd
 from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
 from emotioncf.data import create_sub_by_item_matrix
 import matplotlib
+matplotlib.use('TkAgg')
+
 
 def simulate_data(data_type = 'data_long'):
     i = 100
