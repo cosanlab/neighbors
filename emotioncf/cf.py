@@ -426,7 +426,7 @@ class NNMF_sgd(BaseCF):
 				i = sample_col[idx]
 				prediction = self._predict_single(u,i)
 
-				e = (self.ratings.loc[u,i] - prediction) # error
+				e = (self.ratings.iloc[u,i] - prediction) # error
 				
 				# Update biases
 				self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
