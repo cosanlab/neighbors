@@ -55,6 +55,15 @@ Missing data from the matrix can then be filled in using the `predict()` method.
 cf.predict()
 ```
 
+### Evaluate Model Predictions
+There are several methods to aid in evaluating the performance of the model, including overall mean squared error `get_mse()`, overall correlation `get_corr()`, and correlation for each subject `get_sub_corr()`.  Each method can be run on all of the data using the default `'all'` flag.  If the data has been split into test and training, it is also possible to explicitly evaluate how well the model performs on the `'test'` and `'train'` data.
+
+```
+cf.get_mse('all')
+cf.get_corr('test')
+cf.get_sub_corr('train')
+```
+
 ### Mean
 An easy control model for collaborative filtering is to demonstrate how well the models perform over simply using the item means.  We initalize a class instance and then the model can be estimated and new ratings predicted.  We can get the overall mean squared error on the predicted ratings.
 
