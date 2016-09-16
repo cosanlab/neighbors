@@ -6,7 +6,6 @@ import numpy as np
 from scipy.stats import pearsonr
 from copy import deepcopy
 
-
 __all__ = ['Mean',
 			'KNN',
 			'NNMF_multiplicative',
@@ -158,8 +157,8 @@ class BaseCF(object):
 			ax[2].set_xlabel('Actual Ratings')
 			ax[2].set_ylabel('Predicted Ratings')
 			ax[2].set_title('Predicted Ratings')
-			r = pearsonr(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
-			print('Correlation: %s' % r[0])
+			r = pearsonr(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])[0]
+			print('Correlation: %s' % r)
 			return f, r
 		else:
 			return f
@@ -183,7 +182,7 @@ class Mean(BaseCF):
 		self.mean = self.ratings.mean(skipna=True, axis=0)
 		self.is_fit = True
 
-	def predict(self, **kwargs):
+	def predict(self):
 
 		''' Predict missing items using other subject's item means.
 
@@ -209,7 +208,7 @@ class KNN(BaseCF):
 		super(KNN, self).__init__(ratings)
 		self.subject_similarity = None
 
-	def fit(self, metric='correlation', **kwargs):
+	def fit(self, metric='correlation'):
 
 		''' Fit collaborative model to training data.  Calculate similarity between subjects across items
 
@@ -232,7 +231,7 @@ class KNN(BaseCF):
 		self.subject_similarity = sim
 		self.is_fit = True
 
-	def predict(self, k=None, **kwargs):
+	def predict(self, k=None):
 
 		''' Predict Subject's missing items using similarity based collaborative filtering.
 
@@ -273,13 +272,12 @@ class NNMF_multiplicative(BaseCF):
 		self.H = None
 		self.W = None
 	
-	def fit(self, 
-		n_factors=None, 
-		max_iterations=100,
-		error_limit=1e-6, 
-		fit_error_limit=1e-6, 
-		verbose=False,
-		**kwargs):
+	def fit(self,
+		n_factors = None, 
+		max_iterations = 100,
+		error_limit = 1e-6, 
+		fit_error_limit = 1e-6, 
+		verbose = False):
 
 		''' Fit NNMF collaborative filtering model to training data using multiplicative updating.
 
@@ -293,14 +291,14 @@ class NNMF_multiplicative(BaseCF):
 
 		eps = 1e-5
 
-		n_samples, n_features = self.ratings.shape
+		n_users, n_items = self.ratings.shape
 		if n_factors is None:
-			n_factors = n_features
+			n_factors = n_items
 
 		# Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_factors)
 		avg = np.sqrt(np.nanmean(self.ratings)/n_factors)
-		self.H = avg*np.random.rand(n_features, n_factors) # H = Y
-		self.W = avg*np.random.rand(n_samples, n_factors)	# W = A
+		self.H = avg*np.random.rand(n_items, n_factors) # H = Y
+		self.W = avg*np.random.rand(n_users, n_factors)	# W = A
 		
 		if self.is_mask:
 			masked_X = self.ratings.values * self.train_mask.values
@@ -311,31 +309,30 @@ class NNMF_multiplicative(BaseCF):
 
 		X_est_prev = np.dot(self.W, self.H)
 
-		for i in range(1, max_iterations + 1):
+		ctr = 1
+		while ctr <= max_iterations or curRes < error_limit or fit_residual < fit_error_limit:
 			# Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
-			self.W *= np.dot(masked_X, self.H.T) / np.dot(mask * np.dot(self.W,self.H), self.H.T)
+			self.W *= np.dot(masked_X, self.H.T) / np.dot(mask * np.dot(self.W, self.H), self.H.T)
 			self.W = np.maximum(self.W, eps)
 
 			# Update H: Matlab: Y=Y.*((A'*(W.*X))./(A'*(W.*(A*Y))));
-			self.H *= np.dot(self.W.T, masked_X) / np.dot(self.W.T, mask * np.dot(self.W,self.H))
+			self.H *= np.dot(self.W.T, masked_X) / np.dot(self.W.T, mask * np.dot(self.W, self.H))
 			self.H = np.maximum(self.H, eps)
 
 			# Evaluate
-			if i % 5 == 0 or i == 1 or i == max_iterations:
-				X_est = np.dot(self.W,self.H)
-				err = mask * (X_est_prev - X_est)
-				fit_residual = np.sqrt(np.sum(err ** 2))
-				X_est_prev = X_est
-				curRes = linalg.norm(mask * (self.ratings.values - X_est), ord='fro')
-				if verbose:
-					print('Iteration {}:'.format(i)),
-					print('fit residual', np.round(fit_residual, 4)),
-					print('total residual', np.round(curRes, 4))
-				if curRes < error_limit or fit_residual < fit_error_limit:
-					break
+			X_est = np.dot(self.W, self.H)
+			err = mask * (X_est_prev - X_est)
+			fit_residual = np.sqrt(np.sum(err ** 2))
+			X_est_prev = X_est
+			curRes = linalg.norm(mask * (self.ratings.values - X_est), ord='fro')
+			if ctr % 10 == 0 and verbose:
+				print('\tCurrent Iteration {}:'.format(ctr))
+				print('\tfit residual', np.round(fit_residual, 4))
+				print('\ttotal residual', np.round(curRes, 4))
+			ctr += 1
 		self.is_fit = True
 
-	def predict(self, **kwargs):
+	def predict(self):
 
 		''' Predict Subject's missing items using NNMF with multiplicative updating
 
@@ -368,16 +365,15 @@ class NNMF_sgd(BaseCF):
 
 	def fit(self, 
 		n_factors=None, 
-		mask=None,
 		item_fact_reg=0.0, 
 		user_fact_reg=0.0,
 		item_bias_reg=0.0,
 		user_bias_reg=0.0,
-		learning_rate=0.01,
+		learning_rate=0.001,
 		n_iterations=10,
 		verbose=False):
 
-		''' Fit NNMF collaborative filtering model to training data using multiplicative updating.
+		''' Fit NNMF collaborative filtering model to training data using stochastic gradient descent.
 
 		Args:
 			n_factors (int): Number of factors or components
@@ -396,11 +392,10 @@ class NNMF_sgd(BaseCF):
 			sample_row, sample_col = self.train_mask.values.nonzero()
 		else:
 			sample_row, sample_col = self.ratings.values.nonzero()
-		n_samples = len(sample_row)
 
 		# initialize latent vectors		
-		self.user_vecs = np.random.normal(scale=1./n_factors,size=(n_users, n_factors))
-		self.item_vecs = np.random.normal(scale=1./n_factors,size=(n_items, n_factors))
+		self.user_vecs = np.random.normal(scale=1./n_factors, size=(n_users, n_factors))
+		self.item_vecs = np.random.normal(scale=1./n_factors, size=(n_items, n_factors))
 
 		# Initialize biases
 		self.user_bias = np.zeros(n_users)
@@ -420,30 +415,30 @@ class NNMF_sgd(BaseCF):
 		ctr = 1
 		while ctr <= n_iterations:
 			if ctr % 10 == 0 and verbose:
-				print('\tcurrent iteration: {}'.format(ctr))
+				print('\tCurrent Iteration: {}'.format(ctr))
 
-			training_indices = np.arange(n_samples)
+			training_indices = np.arange(len(sample_row))
 			np.random.shuffle(training_indices)
 
 			# Check to make sure this is correct.  Seems weird that u and i are outside loop
 			for idx in training_indices:
 				u = sample_row[idx]
 				i = sample_col[idx]
-			prediction = self._predict_single(u,i)
+				prediction = self._predict_single(u,i)
 
-			e = (self.ratings.loc[u,i] - prediction) # error
-			
-			# Update biases
-			self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
-			self.item_bias[i] += (learning_rate * (e - self.item_bias_reg * self.item_bias[i]))
-			
-			# Update latent factors
-			self.user_vecs[u, :] += (learning_rate * (e * self.item_vecs[i, :] - self.user_fact_reg * self.user_vecs[u,:]))
-			self.item_vecs[i, :] += (learning_rate * (e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i,:]))
+				e = (self.ratings.loc[u,i] - prediction) # error
+				
+				# Update biases
+				self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
+				self.item_bias[i] += (learning_rate * (e - self.item_bias_reg * self.item_bias[i]))
+				
+				# Update latent factors
+				self.user_vecs[u, :] += (learning_rate * (e * self.item_vecs[i, :] - self.user_fact_reg * self.user_vecs[u,:]))
+				self.item_vecs[i, :] += (learning_rate * (e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i,:]))
 			ctr += 1
 		self.is_fit = True
 
-	def predict(self, **kwargs):
+	def predict(self):
 
 		''' Predict Subject's missing items using NNMF with stochastic gradient descent
 
