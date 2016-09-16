@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
 from emotioncf.data import create_sub_by_item_matrix
+import matplotlib
 
 def simulate_data(data_type = 'data_long'):
     i = 100
@@ -26,11 +27,16 @@ def simulate_data(data_type = 'data_long'):
         return rat
 
 def basecf_method_tests(cf=None):
+    # test predict
     assert cf.predicted_ratings.shape == (50,100)
+
+    # test cross validation
     cf.split_train_test(n_train_items=20)
     assert cf.train_mask.shape == (50,100)
     for x in cf.train_mask.sum(axis=1):
         assert cf.n_train_items == x 
+
+    # Test 'all'
     mse_all = cf.get_mse(data='all')
     r_all = cf.get_corr(data='all')
     sub_r_all = cf.get_sub_corr(data='all')
@@ -46,6 +52,7 @@ def basecf_method_tests(cf=None):
     print(('r: %s') % r_all)
     print(('mean sub r: %s') % np.mean(sub_r_all))
     
+    # Test 'train'
     mse_tr = cf.get_mse(data='train')
     r_tr = cf.get_corr(data='train')
     sub_r_tr = cf.get_sub_corr(data='train')
@@ -61,6 +68,7 @@ def basecf_method_tests(cf=None):
     print(('r: %s') % r_tr)
     print(('mean sub r: %s') % np.mean(sub_r_tr))
     
+    # Test 'test'
     mse_te = cf.get_mse(data='test')
     r_te = cf.get_corr(data='test')
     sub_r_te = cf.get_sub_corr(data='test')
@@ -76,15 +84,27 @@ def basecf_method_tests(cf=None):
     print(('r: %s') % r_te)
     print(('mean sub r: %s') % np.mean(sub_r_te))
 
+    # Test plot_prediction()
+    f, r = cf.plot_predictions()
+    assert isinstance(f,matplotlib.figure.Figure)
+
 def test_create_sub_by_item_matrix():
     rating = create_sub_by_item_matrix(simulate_data(data_type='data_long'))
     assert isinstance(rating,pd.DataFrame)
-    assert rating.shape == (50,100)
-    
+    assert rating.shape == (50, 100)
+
+def test_cf_base_init():
+    cf = Mean(simulate_data(data_type='data_wide'), n_train_items=50)
+    assert cf.is_mask
+    cf = Mean(simulate_data(data_type='data_wide'), mask=cf.train_mask)
+    assert cf.is_mask
+
 def test_cf_mean():
     cf = Mean(simulate_data(data_type='data_wide'))
     cf.fit()
     cf.predict()
+    f = cf.plot_predictions()
+    assert isinstance(f, matplotlib.figure.Figure)
     basecf_method_tests(cf=cf)
 
 def test_cf_knn():
@@ -106,10 +126,11 @@ def test_cf_nnmf_multiplicative():
     cf.fit()
     cf.predict()
     basecf_method_tests(cf=cf)
+    cf.fit(max_iterations=20, verbose=True)
     
 def test_cf_nnmf_sgd():
     cf = NNMF_sgd(simulate_data(data_type='data_wide'))
-    cf.fit(n_iterations = 100,
+    cf.fit(n_iterations = 50,
            user_fact_reg=1,
            item_fact_reg=.001,
            user_bias_reg=0,
@@ -117,3 +138,5 @@ def test_cf_nnmf_sgd():
            learning_rate=.001)
     cf.predict()
     basecf_method_tests(cf=cf)
+    cf.fit(n_iterations=20, verbose=True)
+

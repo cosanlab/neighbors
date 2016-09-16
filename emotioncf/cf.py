@@ -167,8 +167,8 @@ class Mean(BaseCF):
 
 	''' CF using Item Mean across subjects'''
 
-	def __init__(self, ratings):
-		super(Mean, self).__init__(ratings)
+	def __init__(self, ratings, mask=None, n_train_items=None):
+		super(Mean, self).__init__(ratings, mask, n_train_items)
 		self.mean = None
 
 	def fit(self, **kwargs):
@@ -204,8 +204,8 @@ class KNN(BaseCF):
 
 	''' K-Nearest Neighbors CF algorithm'''
 
-	def __init__(self, ratings):
-		super(KNN, self).__init__(ratings)
+	def __init__(self, ratings, mask=None, n_train_items=None):
+		super(KNN, self).__init__(ratings, mask, n_train_items)
 		self.subject_similarity = None
 
 	def fit(self, metric='correlation'):
@@ -267,8 +267,8 @@ class NNMF_multiplicative(BaseCF):
 	
 	'''
 	
-	def __init__(self, ratings):
-		super(NNMF_multiplicative, self).__init__(ratings)
+	def __init__(self, ratings, mask=None, n_train_items=None):
+		super(NNMF_multiplicative, self).__init__(ratings, mask, n_train_items)
 		self.H = None
 		self.W = None
 	
@@ -360,8 +360,8 @@ class NNMF_sgd(BaseCF):
 	
 	'''
 	
-	def __init__(self, ratings):
-		super(NNMF_sgd, self).__init__(ratings)
+	def __init__(self, ratings, mask=None, n_train_items=None):
+		super(NNMF_sgd, self).__init__(ratings, mask, n_train_items)
 
 	def fit(self, 
 		n_factors=None, 
