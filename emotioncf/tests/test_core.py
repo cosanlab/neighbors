@@ -142,3 +142,22 @@ def test_cf_nnmf_sgd():
     basecf_method_tests(cf=cf)
     cf.fit(n_iterations=20, verbose=True)
 
+def test_downsample():
+    cf = Mean(simulate_data(data_type = 'data_wide'))
+    cf.downsample(sampling_freq=10,target=2, target_type='samples')
+    assert cf.ratings.shape == (50,50)
+    cf = Mean(simulate_data(data_type = 'data_wide'))
+    cf.downsample(sampling_freq=10,target=5, target_type='hz')
+    assert cf.ratings.shape == (50,50)
+    cf = Mean(simulate_data(data_type = 'data_wide'))
+    cf.downsample(sampling_freq=10,target=2, target_type='seconds')
+    assert cf.ratings.shape == (50,5)
+    cf = Mean(simulate_data(data_type = 'data_wide'))
+    cf.split_train_test(n_train_items=20)
+    cf.fit()
+    cf.predict()
+    cf.downsample(sampling_freq=10,target=2, target_type='samples')
+    assert cf.ratings.shape == (50,50)
+    assert cf.train_mask.shape == (50,50)
+    assert cf.predicted_ratings.shape == (50,50)
+

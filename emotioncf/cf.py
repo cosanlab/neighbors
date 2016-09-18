@@ -166,7 +166,53 @@ class BaseCF(object):
 			return f, r
 		else:
 			return f
+
+	def downsample(self, sampling_freq=None, target=None, target_type='samples'):
+
+		''' Downsample rating matrix to a new target frequency or number of samples using averaging.
 		
+			Args:
+				sampling_freq:  Sampling frequency of data 
+				target: downsampling target
+				target_type: type of target can be [samples,seconds,hz]
+				
+		'''
+
+		if sampling_freq is None:
+			raise ValueError('Please specify the sampling frequency of the ratings data.')
+		if target is None:
+			raise ValueError('Please specify the downsampling target.')
+		if target_type is None:
+			raise ValueError('Please specify the type of target to downsample to [samples,seconds,hz].')
+
+
+		def ds(ratings, sampling_freq=sampling_freq, target=None, target_type='samples'):
+			if target_type is 'samples':
+				n_samples = target
+			elif target_type is 'seconds':
+				n_samples = target*sampling_freq
+			elif target_type is 'hz':
+				n_samples = sampling_freq/target
+			else:
+				raise ValueError('Make sure target_type is "samples", "seconds", or "hz".')
+
+			ratings = ratings.T
+			idx = np.sort(np.repeat(np.arange(0,ratings.shape[0]/n_samples,1),n_samples))
+			if ratings.shape[0] % n_samples:
+				idx = np.concatenate([idx, np.repeat(idx[-1],ratings.shape[0]-len(idx))])
+			return ratings.groupby(idx).mean().T
+
+		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
+			target_type=target_type)
+		
+		if self.is_mask:
+			self.train_mask = ds(self.train_mask, sampling_freq=sampling_freq, 
+				target=target, target_type=target_type)
+
+		if self.is_predict:
+			self.predicted_ratings = ds(self.predicted_ratings, 
+				sampling_freq=sampling_freq, target=target, target_type=target_type)
+
 class Mean(BaseCF):
 
 	''' CF using Item Mean across subjects'''
