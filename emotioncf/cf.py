@@ -34,7 +34,6 @@ class BaseCF(object):
 		if n_train_items is not None:
 			self.split_train_test(n_train_items=n_train_items)
 
-
 	def __repr__(self):
 		return '%s(rating=%s)' % (
 			self.__class__.__name__,
@@ -209,16 +208,60 @@ class BaseCF(object):
 			self.train_mask = ds(self.train_mask, sampling_freq=sampling_freq, 
 				target=target, target_type=target_type)
 			self.train_mask.loc[:,:] = self.train_mask>0
-			
+
 		if self.is_predict:
 			self.predicted_ratings = ds(self.predicted_ratings, 
 				sampling_freq=sampling_freq, target=target, target_type=target_type)
+
+	def _ts_conv_mean_overlap(sub_rating, n_samples=5):
+
+		'''Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
+		
+			Args:
+				sub_rating: vector of ratings for subject
+				n_samples:  number of samples to dilate each rating
+
+			Returns:
+				sub_rating_conv_mn: subject rating vector with each rating dilated n_samples (centered) with mean of overlapping
+
+		'''
+
+		if np.any(sub_rating.isnull()):
+			sub_rating.fillna(0, inplace=True)
+		bin_sub_rating = sub_rating>0
+		filt = np.ones(n_samples)
+		bin_sub_rating_conv = np.convolve(bin_sub_rating, filt, mode='same')
+		sub_rating_conv = np.convolve(sub_rating, filt, mode='same')
+		sub_rating_conv_mn = deepcopy(sub_rating_conv)
+		sub_rating_conv_mn[bin_sub_rating_conv>1] = sub_rating_conv_mn[bin_sub_rating_conv>1]/bin_sub_rating_conv[bin_sub_rating_conv>1]
+		return sub_rating_conv_mn
+
+	def _dilate_ts_rating_samples(self, n_samples=None):
+		
+		''' Helper function to dilate sparse time-series ratings by n_samples.  
+			Overlapping ratings will be averaged
+
+			Args:
+				n_samples:  Number of samples to dilate ratings
+
+			Returns:
+				masked_ratings: pandas ratings instance that has been dilated by n_samples
+		'''
+		
+		if n_samples is None:
+			raise ValueError('Please specify number of samples to dilate.')
+		
+		if not self.is_mask:
+			raise ValueError('Make sure cf instance has been masked.')
+
+		masked_ratings = self.ratings[self.train_mask]
+		return masked_ratings.apply(lambda x: _ts_conv_mean_overlap(x, n_samples=n_samples), axis=1)
 
 class Mean(BaseCF):
 
 	''' CF using Item Mean across subjects'''
 
-	def __init__(self, ratings, mask=None, n_train_items=None):
+	def __init__(self, ratings, mask=None, n_train_items=None, dilate_ts_n_samples=None):
 		super(Mean, self).__init__(ratings, mask, n_train_items)
 		self.mean = None
 
@@ -230,7 +273,14 @@ class Mean(BaseCF):
 			metric: type of similarity {"correlation","cosine"}
 		'''
 
-		self.mean = self.ratings.mean(skipna=True, axis=0)
+		if self.is_mask:			
+			if dilate_ts_n_samples is None:
+				ratings = self.ratings[self.train_mask].mean(skipna=True, axis=0)
+			else:
+				ratings = _dilate_ts_rating_samples(self, n_samples=dilate_ts_n_samples)
+		else:
+			ratings = deepcopy(self.ratings)
+		self.mean = ratings.mean(skipna=True, axis=0)
 		self.is_fit = True
 
 	def predict(self):
@@ -267,16 +317,21 @@ class KNN(BaseCF):
 			metric: type of similarity {"correlation","cosine"}
 
 		'''
-	
+
+		if dilate_ts_n_samples is None:
+			ratings = deepcopy(self.ratings)
+		else:
+			ratings = _dilate_ts_rating_samples(self, n_samples=dilate_ts_n_samples)
+
 		if metric is 'correlation':
-			sim = pd.DataFrame(np.zeros((self.ratings.shape[0],self.ratings.shape[0])))
-			sim.columns=self.ratings.index
-			sim.index=self.ratings.index
-			for x in self.ratings.iterrows():
-				for y in self.ratings.iterrows():
+			sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
+			sim.columns=ratings.index
+			sim.index=ratings.index
+			for x in ratings.iterrows():
+				for y in ratings.iterrows():
 					sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
 		elif metric is 'cosine':
-			sim = self.ratings.dot(self.ratings.T)
+			sim = ratings.dot(ratings.T)
 			norms = np.array([np.sqrt(np.diagonal(sim.values))])
 			sim.loc[:,:] = (sim.values / norms / norms.T)
 		self.subject_similarity = sim
