@@ -204,11 +204,12 @@ class BaseCF(object):
 
 		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
 			target_type=target_type)
-		
+
 		if self.is_mask:
 			self.train_mask = ds(self.train_mask, sampling_freq=sampling_freq, 
 				target=target, target_type=target_type)
-
+			self.train_mask.loc[:,:] = self.train_mask>0
+			
 		if self.is_predict:
 			self.predicted_ratings = ds(self.predicted_ratings, 
 				sampling_freq=sampling_freq, target=target, target_type=target_type)
