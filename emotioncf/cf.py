@@ -437,7 +437,8 @@ class NNMF_multiplicative(BaseCF):
 		X_est_prev = np.dot(self.W, self.H)
 
 		ctr = 1
-		while ctr <= max_iterations or curRes < error_limit or fit_residual < fit_error_limit:
+		while ctr <= max_iterations or fit_residual < fit_error_limit:
+		# while ctr <= max_iterations or curRes < error_limit or fit_residual < fit_error_limit:
 			# Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
 			self.W *= np.dot(masked_X, self.H.T) / np.dot(mask * np.dot(self.W, self.H), self.H.T)
 			self.W = np.maximum(self.W, eps)
@@ -451,11 +452,11 @@ class NNMF_multiplicative(BaseCF):
 			err = mask * (X_est_prev - X_est)
 			fit_residual = np.sqrt(np.sum(err ** 2))
 			X_est_prev = X_est
-			curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')
+			# curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')
 			if ctr % 10 == 0 and verbose:
 				print('\tCurrent Iteration {}:'.format(ctr))
 				print('\tfit residual', np.round(fit_residual, 4))
-				print('\ttotal residual', np.round(curRes, 4))
+				# print('\ttotal residual', np.round(curRes, 4))
 			ctr += 1
 		self.is_fit = True
 
