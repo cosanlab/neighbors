@@ -44,6 +44,16 @@ def basecf_method_test(cf=None, data=None):
     print(('r: %s') % r)
     print(('mean sub r: %s') % np.mean(sub_r))
     
+    df = cf.to_long_df()
+    assert isinstance(df,pd.DataFrame)
+    if cf.is_predict:
+        assert 'Condition' in df.columns
+        assert 'Observed' in df['Condition'].unique()
+        assert 'Predicted' in df['Condition'].unique()
+        assert df.shape[0] == cf.ratings.shape[0]*cf.ratings.shape[1]*2
+    if cf.is_mask:
+        assert 'Mask' in df.columns
+    
 def basecf_method_all_tests(cf=None):
     cf.plot_predictions()
     basecf_method_test(cf=cf, data='all')

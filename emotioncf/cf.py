@@ -213,6 +213,35 @@ class BaseCF(object):
 			self.predicted_ratings = ds(self.predicted_ratings, 
 				sampling_freq=sampling_freq, target=target, target_type=target_type)
 
+	def to_long_df(self):
+	
+		''' Create a long format pandas dataframe with observed, predicted, and mask.'''
+
+		observed = pd.DataFrame(columns=['Subject','Item','Rating','Condition'])
+		for row in self.ratings.iterrows():
+			tmp = pd.DataFrame(columns=observed.columns)
+			tmp['Rating'] = row[1]
+			tmp['Item'] = self.ratings.columns
+			tmp['Subject'] = row[0]
+			tmp['Condition'] = 'Observed'
+			if self.is_mask:
+				tmp['Mask'] = self.train_mask.loc[row[0]]
+			observed = observed.append(tmp)
+
+		if self.is_predict:
+			predicted = pd.DataFrame(columns=['Subject','Item','Rating','Condition'])
+			for row in self.predicted_ratings.iterrows():
+				tmp = pd.DataFrame(columns=predicted.columns)
+				tmp['Rating'] = row[1]
+				tmp['Item'] = self.predicted_ratings.columns
+				tmp['Subject'] = row[0]
+				tmp['Condition'] = 'Predicted'
+				if self.is_mask:
+					tmp['Mask'] = self.train_mask.loc[row[0]]
+				predicted = predicted.append(tmp)
+			observed = observed.append(predicted)
+		return observed
+
 	def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
 
 		'''Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.

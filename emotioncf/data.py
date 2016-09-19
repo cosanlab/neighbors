@@ -10,12 +10,14 @@ __license__ = "MIT"
 
 
 def create_sub_by_item_matrix(df):
+
     ''' Convert a pandas long data frame of a single rating into a subject by item matrix
     
         Args:
             df: pandas dataframe instance.  Must have column names ['Subject','Item','Rating]
             
     '''
+
     if not isinstance(df,pd.DataFrame):
         raise ValueError('df must be pandas instance')
     if np.any([not x in df.columns for x in ['Subject','Item','Rating']]):
