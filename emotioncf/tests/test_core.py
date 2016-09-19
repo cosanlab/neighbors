@@ -4,8 +4,6 @@ from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
 from emotioncf.data import create_sub_by_item_matrix
 import matplotlib
 matplotlib.use('TkAgg')
-
-
 def simulate_data(data_type = 'data_long'):
     i = 100
     s = 50
@@ -28,120 +26,135 @@ def simulate_data(data_type = 'data_long'):
     elif data_type is 'data_wide':
         return rat
 
-def basecf_method_tests(cf=None):
-    # test predict
-    assert cf.predicted_ratings.shape == (50,100)
-
-    # test cross validation
-    cf.split_train_test(n_train_items=20)
+def basecf_method_test(cf=None, data=None):
     assert cf.train_mask.shape == (50,100)
-    for x in cf.train_mask.sum(axis=1):
-        assert cf.n_train_items == x 
-
-    # Test 'all'
-    mse_all = cf.get_mse(data='all')
-    r_all = cf.get_corr(data='all')
-    sub_r_all = cf.get_sub_corr(data='all')
-    assert isinstance(mse_all,float)
-    assert isinstance(r_all,float)
-    assert isinstance(sub_r_all,np.ndarray)
-    assert len(sub_r_all) == cf.ratings.shape[0]
-    assert mse_all > 0
-    assert r_all > 0
-    assert np.mean(sub_r_all) > 0
-    print('All')
-    print(('mse: %s') % mse_all)
-    print(('r: %s') % r_all)
-    print(('mean sub r: %s') % np.mean(sub_r_all))
+    assert cf.predicted_ratings.shape == (50,100)
+    mse = cf.get_mse(data=data)
+    r = cf.get_corr(data=data)
+    sub_r = cf.get_sub_corr(data=data)
+    assert isinstance(mse,float)
+    assert isinstance(r,float)
+    assert isinstance(sub_r,np.ndarray)
+    assert len(sub_r) == cf.ratings.shape[0]
+    assert mse > 0
+    assert r > 0
+    assert np.mean(sub_r) > 0
+    print(data)
+    print(('mse: %s') % mse)
+    print(('r: %s') % r)
+    print(('mean sub r: %s') % np.mean(sub_r))
     
-    # Test 'train'
-    mse_tr = cf.get_mse(data='train')
-    r_tr = cf.get_corr(data='train')
-    sub_r_tr = cf.get_sub_corr(data='train')
-    assert isinstance(mse_tr,float)
-    assert isinstance(r_tr,float)
-    assert isinstance(sub_r_tr,np.ndarray)
-    assert len(sub_r_tr) == cf.ratings.shape[0]
-    assert mse_tr > 0
-    assert r_tr > 0
-    assert np.mean(sub_r_tr) > 0
-    print('Train')
-    print(('mse: %s') % mse_tr)
-    print(('r: %s') % r_tr)
-    print(('mean sub r: %s') % np.mean(sub_r_tr))
+def basecf_method_all_tests(cf=None):
+    cf.plot_predictions()
+    basecf_method_test(cf=cf, data='all')
+    basecf_method_test(cf=cf, data='train')
+    basecf_method_test(cf=cf, data='test')
     
-    # Test 'test'
-    mse_te = cf.get_mse(data='test')
-    r_te = cf.get_corr(data='test')
-    sub_r_te = cf.get_sub_corr(data='test')
-    assert isinstance(mse_te,float)
-    assert isinstance(r_te,float)
-    assert isinstance(sub_r_te,np.ndarray)
-    assert len(sub_r_te) == cf.ratings.shape[0]
-    assert mse_te > 0
-    assert r_te > 0
-    assert np.mean(sub_r_te) > 0
-    print('Test')
-    print(('mse: %s') % mse_te)
-    print(('r: %s') % r_te)
-    print(('mean sub r: %s') % np.mean(sub_r_te))
-
-    # Test plot_prediction()
-    f, r = cf.plot_predictions()
-    assert isinstance(f,matplotlib.figure.Figure)
-
 def test_create_sub_by_item_matrix():
     rating = create_sub_by_item_matrix(simulate_data(data_type='data_long'))
     assert isinstance(rating,pd.DataFrame)
-    assert rating.shape == (50, 100)
-
-def test_cf_base_init():
-    cf = Mean(simulate_data(data_type='data_wide'), n_train_items=50)
-    assert cf.is_mask
-    cf = Mean(simulate_data(data_type='data_wide'), mask=cf.train_mask)
-    assert cf.is_mask
-
+    assert rating.shape == (50,100)
+    
 def test_cf_mean():
     cf = Mean(simulate_data(data_type='data_wide'))
     cf.fit()
     cf.predict()
-    f = cf.plot_predictions()
-    assert isinstance(f, matplotlib.figure.Figure)
-    basecf_method_tests(cf=cf)
-
-def test_cf_knn():
-    cf = KNN(simulate_data(data_type='data_wide'))
+    cf = Mean(simulate_data(data_type='data_wide'))
+    cf.split_train_test(n_train_items=20)
     cf.fit()
     cf.predict()
-    basecf_method_tests(cf=cf)
-
+    basecf_method_all_tests(cf=cf)
+    cf.fit(dilate_ts_n_samples=2)
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+    
+    
+def test_cf_knn():
+    cf = KNN(simulate_data(data_type='data_wide'))
+    cf.fit(metric='correlation')
+    cf.predict()
+    
+    cf.split_train_test(n_train_items=50)
+    cf.fit()
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+    
     cf.fit(metric='correlation')
     cf.predict(k=10)
-    basecf_method_tests(cf=cf)
+    basecf_method_test(cf=cf, data='all')
+    
+    cf.fit()
+    cf.predict(k=10)
+    basecf_method_all_tests(cf=cf)
 
+    cf.fit(dilate_ts_n_samples=2,metric='correlation')
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+    
     cf.fit(metric='cosine')
     cf.predict(k=10)
-    basecf_method_tests(cf=cf)
+    basecf_method_test(cf=cf, data='all')
+    
+    cf.fit()
+    cf.predict(k=10)
+    basecf_method_all_tests(cf=cf)
 
+    cf.fit(dilate_ts_n_samples=2,metric='cosine')
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+    
+def test_cf_knn_dil():
+    cf = KNN(simulate_data(data_type='data_wide'))
+    cf.split_train_test(n_train_items=20)
+    cf.fit(dilate_ts_n_samples=2,metric='correlation')
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+
+    cf.fit(dilate_ts_n_samples=2,metric='cosine')
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+    
 def test_cf_nnmf_multiplicative():
     cf = NNMF_multiplicative(simulate_data(data_type='data_wide'))
     cf.fit()
     cf.predict()
-    basecf_method_tests(cf=cf)
-    cf.fit(max_iterations=20, verbose=True)
+    cf.split_train_test(n_train_items=50)
+    cf.fit()
+    basecf_method_all_tests(cf=cf)
     
+    cf.fit(dilate_ts_n_samples=2)
+    cf.predict()
+    basecf_method_all_tests(cf=cf)  
+
 def test_cf_nnmf_sgd():
     cf = NNMF_sgd(simulate_data(data_type='data_wide'))
-    cf.fit(n_iterations = 50,
-           user_fact_reg=1,
-           item_fact_reg=.001,
+    cf.fit(n_iterations = 20,
+           user_fact_reg=0,
+           item_fact_reg=0,
            user_bias_reg=0,
            item_bias_reg=0,
            learning_rate=.001)
     cf.predict()
-    basecf_method_tests(cf=cf)
-    cf.fit(n_iterations=20, verbose=True)
-
+    
+    cf.split_train_test(n_train_items=50)
+    cf.fit(n_iterations = 20,
+           user_fact_reg=0,
+           item_fact_reg=0,
+           user_bias_reg=0,
+           item_bias_reg=0,
+           learning_rate=.001)
+    basecf_method_all_tests(cf=cf)
+    
+    cf.fit(n_iterations = 20,
+           user_fact_reg=0,
+           item_fact_reg=0,
+           user_bias_reg=0,
+           item_bias_reg=0,
+           learning_rate=.001,
+           dilate_ts_n_samples=2)
+    cf.predict()
+    basecf_method_all_tests(cf=cf)  
+    
 def test_downsample():
     cf = Mean(simulate_data(data_type = 'data_wide'))
     cf.downsample(sampling_freq=10,target=2, target_type='samples')
@@ -159,5 +172,5 @@ def test_downsample():
     cf.downsample(sampling_freq=10,target=2, target_type='samples')
     assert cf.ratings.shape == (50,50)
     assert cf.train_mask.shape == (50,50)
-    assert cf.predicted_ratings.shape == (50,50)
+    assert cf.predicted_ratings.shape == (50,50) 
 

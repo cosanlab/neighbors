@@ -213,7 +213,7 @@ class BaseCF(object):
 			self.predicted_ratings = ds(self.predicted_ratings, 
 				sampling_freq=sampling_freq, target=target, target_type=target_type)
 
-	def _ts_conv_mean_overlap(sub_rating, n_samples=5):
+	def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
 
 		'''Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
 		
@@ -226,6 +226,7 @@ class BaseCF(object):
 
 		'''
 
+		# Notes:  Could add custom filter input
 		if np.any(sub_rating.isnull()):
 			sub_rating.fillna(0, inplace=True)
 		bin_sub_rating = sub_rating>0
@@ -233,11 +234,12 @@ class BaseCF(object):
 		bin_sub_rating_conv = np.convolve(bin_sub_rating, filt, mode='same')
 		sub_rating_conv = np.convolve(sub_rating, filt, mode='same')
 		sub_rating_conv_mn = deepcopy(sub_rating_conv)
-		sub_rating_conv_mn[bin_sub_rating_conv>1] = sub_rating_conv_mn[bin_sub_rating_conv>1]/bin_sub_rating_conv[bin_sub_rating_conv>1]
+		sub_rating_conv_mn[bin_sub_rating_conv>1] = (sub_rating_conv_mn[bin_sub_rating_conv>1]/
+			bin_sub_rating_conv[bin_sub_rating_conv>1])
 		return sub_rating_conv_mn
 
 	def _dilate_ts_rating_samples(self, n_samples=None):
-		
+
 		''' Helper function to dilate sparse time-series ratings by n_samples.  
 			Overlapping ratings will be averaged
 
@@ -255,32 +257,34 @@ class BaseCF(object):
 			raise ValueError('Make sure cf instance has been masked.')
 
 		masked_ratings = self.ratings[self.train_mask]
-		return masked_ratings.apply(lambda x: _ts_conv_mean_overlap(x, n_samples=n_samples), axis=1)
+		return masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x, n_samples=n_samples), axis=1)
 
 class Mean(BaseCF):
 
 	''' CF using Item Mean across subjects'''
 
-	def __init__(self, ratings, mask=None, n_train_items=None, dilate_ts_n_samples=None):
+	def __init__(self, ratings, mask=None, n_train_items=None):
 		super(Mean, self).__init__(ratings, mask, n_train_items)
 		self.mean = None
 
-	def fit(self, **kwargs):
+	def fit(self, dilate_ts_n_samples=None):
 
 		''' Fit collaborative model to training data.  Calculate similarity between subjects across items
 
 		Args:
 			metric: type of similarity {"correlation","cosine"}
+			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation 
+								in estimating time-series ratings
+
 		'''
 
 		if self.is_mask:			
 			if dilate_ts_n_samples is None:
-				ratings = self.ratings[self.train_mask].mean(skipna=True, axis=0)
+				self.mean = self.ratings[self.train_mask].mean(skipna=True, axis=0)
 			else:
-				ratings = _dilate_ts_rating_samples(self, n_samples=dilate_ts_n_samples)
+				self.mean = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples).mean(skipna=True, axis=0)
 		else:
-			ratings = deepcopy(self.ratings)
-		self.mean = ratings.mean(skipna=True, axis=0)
+			self.mean = self.ratings.mean(skipna=True, axis=0)
 		self.is_fit = True
 
 	def predict(self):
@@ -289,8 +293,10 @@ class Mean(BaseCF):
 
 			Args:
 				k: number of closest neighbors to use
+
 			Returns:
 				predicted_rating: (pd.DataFrame instance) adds field to object instance
+
 		'''
 
 		if not self.is_fit:
@@ -309,31 +315,37 @@ class KNN(BaseCF):
 		super(KNN, self).__init__(ratings, mask, n_train_items)
 		self.subject_similarity = None
 
-	def fit(self, metric='correlation'):
+	def fit(self, metric='correlation', dilate_ts_n_samples=None):
 
 		''' Fit collaborative model to training data.  Calculate similarity between subjects across items
 
 		Args:
 			metric: type of similarity {"correlation","cosine"}
+			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation 
+								in estimating time-series ratings
 
 		'''
 
-		if dilate_ts_n_samples is None:
-			ratings = deepcopy(self.ratings)
+		if self.is_mask:			
+			if dilate_ts_n_samples is None:
+				ratings = self.ratings[self.train_mask]
+			else:
+				ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
 		else:
-			ratings = _dilate_ts_rating_samples(self, n_samples=dilate_ts_n_samples)
+			ratings = deepcopy(self.ratings)
 
-		if metric is 'correlation':
-			sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
-			sim.columns=ratings.index
-			sim.index=ratings.index
-			for x in ratings.iterrows():
-				for y in ratings.iterrows():
+		def cosine_similarity(x,y):
+			return np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))
+
+		sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
+		sim.columns=ratings.index
+		sim.index=ratings.index
+		for x in ratings.iterrows():
+			for y in ratings.iterrows():
+				if metric is 'correlation':
 					sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
-		elif metric is 'cosine':
-			sim = ratings.dot(ratings.T)
-			norms = np.array([np.sqrt(np.diagonal(sim.values))])
-			sim.loc[:,:] = (sim.values / norms / norms.T)
+				elif metric is 'cosine':
+					sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())]) 
 		self.subject_similarity = sim
 		self.is_fit = True
 
@@ -383,7 +395,8 @@ class NNMF_multiplicative(BaseCF):
 		max_iterations = 100,
 		error_limit = 1e-6, 
 		fit_error_limit = 1e-6, 
-		verbose = False):
+		verbose = False,
+		dilate_ts_n_samples = None):
 
 		''' Fit NNMF collaborative filtering model to training data using multiplicative updating.
 
@@ -393,6 +406,9 @@ class NNMF_multiplicative(BaseCF):
 			error_limit (float): error tolerance (default=1e-6)
 			fit_error_limit (float): fit error tolerance (default=1e-6)
 			verbose (bool): verbose output during fitting procedure (default=True)
+			dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation 
+										in estimating time-series ratings
+
 		'''
 
 		eps = 1e-5
@@ -407,11 +423,16 @@ class NNMF_multiplicative(BaseCF):
 		self.W = avg*np.random.rand(n_users, n_factors)	# W = A
 		
 		if self.is_mask:
-			masked_X = self.ratings.values * self.train_mask.values
-			mask = self.train_mask.values
+			if dilate_ts_n_samples is None:
+				masked_X = self.ratings.values * self.train_mask.values
+				mask = self.train_mask.values
+			else:
+				masked_X = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples).values
+				mask = masked_X>0
 		else:
 			masked_X = self.ratings.values
 			mask = np.ones(self.ratings.shape)
+
 
 		X_est_prev = np.dot(self.W, self.H)
 
@@ -430,7 +451,7 @@ class NNMF_multiplicative(BaseCF):
 			err = mask * (X_est_prev - X_est)
 			fit_residual = np.sqrt(np.sum(err ** 2))
 			X_est_prev = X_est
-			curRes = linalg.norm(mask * (self.ratings.values - X_est), ord='fro')
+			curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')
 			if ctr % 10 == 0 and verbose:
 				print('\tCurrent Iteration {}:'.format(ctr))
 				print('\tfit residual', np.round(fit_residual, 4))
@@ -477,7 +498,8 @@ class NNMF_sgd(BaseCF):
 		user_bias_reg=0.0,
 		learning_rate=0.001,
 		n_iterations=10,
-		verbose=False):
+		verbose=False,
+		dilate_ts_n_samples=None):
 
 		''' Fit NNMF collaborative filtering model to training data using stochastic gradient descent.
 
@@ -487,6 +509,9 @@ class NNMF_sgd(BaseCF):
 			error_limit (float): error tolerance (default=1e-6)
 			fit_error_limit (float): fit error tolerance (default=1e-6)
 			verbose (bool): verbose output during fitting procedure (default=True)
+			dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation 
+										in estimating time-series ratings
+
 		'''
 
 		# initialize variables
@@ -495,9 +520,19 @@ class NNMF_sgd(BaseCF):
 			n_factors = n_items
 
 		if self.is_mask:
-			sample_row, sample_col = self.train_mask.values.nonzero()
+			if dilate_ts_n_samples is None:
+				sample_row, sample_col = self.train_mask.values.nonzero()
+				self.global_bias = self.ratings[self.train_mask].mean().mean()
+				ratings = self.ratings[self.train_mask]
+			else:
+				ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+				sample_row, sample_col = ratings.values.nonzero()
+				mask = ratings>0
+				self.global_bias = ratings[mask].mean().mean()
 		else:
-			sample_row, sample_col = self.ratings.values.nonzero()
+			ratings = self.ratings
+			sample_row, sample_col = ratings.values.nonzero()
+			self.global_bias = self.ratings[~self.ratings.isnull()].mean().mean()
 
 		# initialize latent vectors		
 		self.user_vecs = np.random.normal(scale=1./n_factors, size=(n_users, n_factors))
@@ -511,12 +546,6 @@ class NNMF_sgd(BaseCF):
 		self.item_bias_reg = item_bias_reg
 		self.user_bias_reg = user_bias_reg
 
-		if self.is_mask:
-			self.global_bias = self.ratings[self.train_mask].mean().mean()
-		else:
-			# self.global_bias = np.mean(self.ratings[np.where(self.ratings != 0)])
-			self.global_bias = self.ratings[~self.ratings.isnull()].mean().mean()
-
 		# train weights
 		ctr = 1
 		while ctr <= n_iterations:
@@ -526,13 +555,12 @@ class NNMF_sgd(BaseCF):
 			training_indices = np.arange(len(sample_row))
 			np.random.shuffle(training_indices)
 
-			# Check to make sure this is correct.  Seems weird that u and i are outside loop
 			for idx in training_indices:
 				u = sample_row[idx]
 				i = sample_col[idx]
 				prediction = self._predict_single(u,i)
 
-				e = (self.ratings.iloc[u,i] - prediction) # error
+				e = (ratings.iloc[u,i] - prediction) # error
 				
 				# Update biases
 				self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
