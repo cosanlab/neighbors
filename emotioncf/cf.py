@@ -182,7 +182,7 @@ class BaseCF(object):
 		ax[1].set_xlabel('Items')
 		ax[1].set_ylabel('Users')
 
-		f.tightlayout()
+		f.tight_layout()
 
 		if self.is_mask:
 			actual = self.ratings.values.flatten()
