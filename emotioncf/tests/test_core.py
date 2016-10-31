@@ -32,10 +32,13 @@ def basecf_method_test(cf=None, data=None):
     mse = cf.get_mse(data=data)
     r = cf.get_corr(data=data)
     sub_r = cf.get_sub_corr(data=data)
+    sub_mse = cf.get_sub_mse(data=data)
     assert isinstance(mse,float)
     assert isinstance(r,float)
     assert isinstance(sub_r,np.ndarray)
     assert len(sub_r) == cf.ratings.shape[0]
+    assert isinstance(sub_mse,np.ndarray)
+    assert len(sub_mse) == cf.ratings.shape[0]
     assert mse > 0
     assert r > 0
     assert np.mean(sub_r) > 0

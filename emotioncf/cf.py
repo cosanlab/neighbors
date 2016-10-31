@@ -129,8 +129,6 @@ class BaseCF(object):
 					actual = self.ratings.loc[i,~self.train_mask.loc[i,:]]
 					pred = self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]]
 					mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
-
-					mse.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]])[0])
 			if data is 'train':
 				for i in self.ratings.index:
 					actual = self.ratings.loc[i,self.train_mask.loc[i,:]]
