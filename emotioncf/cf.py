@@ -97,33 +97,6 @@ class BaseCF(object):
 		if data is 'all':
 			for i in self.ratings.index:
 				r.append(pearsonr(self.ratings.loc[i,:], self.predicted_ratings.loc[i,:])[0])
-		elif data is 'mask':
-			if self.is_mask:
-				if data is 'test':
-					for i in self.ratings.index:
-						r.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]])[0])
-				if data is 'train':
-					for i in self.ratings.index:
-						r.append(pearsonr(self.ratings.loc[i, self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,self.train_mask.loc[i,:]])[0])
-			else:
-				raise ValueError('Must run split_train_test() before using this option.')
-		else:
-			raise ValueError('Must specify data=["all","mask"].')
-		return np.array(r)
-
-	def get_sub_mse(self, data='all'):
-
-		'''Calculate observed/predicted MSE for each subject in matrix'''
-
-		if not self.is_fit:
-			raise ValueError('You must fit() model first before using this method.')
-		if not self.is_predict:
-			raise ValueError('You must predict() model first before using this method.')
-
-		mse = []
-		if data is 'all':
-			for i in self.ratings.index:
-				r.append(pearsonr(self.ratings.loc[i,:], self.predicted_ratings.loc[i,:])[0])
 		elif self.is_mask:
 			if data is 'test':
 				for i in self.ratings.index:
@@ -134,6 +107,38 @@ class BaseCF(object):
 		else:
 			raise ValueError('Must run split_train_test() before using this option.')
 		return np.array(r)
+
+	def get_sub_mse(self, data='all'):
+
+		'''Calculate observed/predicted mse for each subject in matrix'''
+
+		if not self.is_fit:
+			raise ValueError('You must fit() model first before using this method.')
+		if not self.is_predict:
+			raise ValueError('You must predict() model first before using this method.')
+
+		mse = []
+		if data is 'all':
+			for i in self.ratings.index:
+				actual = self.ratings.loc[i,:]
+				pred = self.predicted_ratings.loc[i,:]
+				mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
+		if self.is_mask:
+			if data is 'test':
+				for i in self.ratings.index:
+					actual = self.ratings.loc[i,~self.train_mask.loc[i,:]]
+					pred = self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]]
+					mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
+
+					mse.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]])[0])
+			if data is 'train':
+				for i in self.ratings.index:
+					actual = self.ratings.loc[i,self.train_mask.loc[i,:]]
+					pred = self.predicted_ratings.loc[i,self.train_mask.loc[i,:]]
+					mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
+		else:
+			raise ValueError('Must run split_train_test() before using this option.')
+		return np.array(mse)
 
 	def split_train_test(self, n_train_items=20):
 		''' Split ratings matrix into train and test items.  mask indicating training items
@@ -176,6 +181,8 @@ class BaseCF(object):
 		ax[1].set_title('Predicted User/Item Ratings')
 		ax[1].set_xlabel('Items')
 		ax[1].set_ylabel('Users')
+
+		f.tightlayout()
 
 		if self.is_mask:
 			actual = self.ratings.values.flatten()
