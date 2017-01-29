@@ -30,8 +30,8 @@ class BaseCF(object):
 			self.train_mask = mask
 			self.is_mask = True
 		elif self.ratings.isnull().any().any():
-    		self.train_mask = ratings.isnull()
-    		self.is_mask = True
+			self.train_mask = self.ratings.isnull()
+			self.is_mask = True
 		else:
 			self.is_mask = False
 
@@ -232,10 +232,10 @@ class BaseCF(object):
 				raise ValueError('Make sure target_type is "samples", "seconds", or "hz".')
 
 			ratings = ratings.T
-		    idx = np.sort(np.repeat(np.arange(1,data.shape[0]/n_samples,1),n_samples))
-		    if ratings.shape[0] > len(idx):
-		        idx = np.concatenate([idx, np.repeat(idx[-1]+1,data.shape[0]-len(idx))])
-		    return ratings.groupby(idx).mean().T
+			idx = np.sort(np.repeat(np.arange(1,data.shape[0]/n_samples,1),n_samples))
+			if ratings.shape[0] > len(idx):
+				idx = np.concatenate([idx, np.repeat(idx[-1]+1,data.shape[0]-len(idx))])
+			return ratings.groupby(idx).mean().T
 
 		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
 			target_type=target_type)
