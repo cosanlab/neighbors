@@ -29,8 +29,12 @@ class BaseCF(object):
 		if mask is not None:
 			self.train_mask = mask
 			self.is_mask = True
+		elif self.ratings.isnull().any().any():
+    		self.train_mask = ratings.isnull()
+    		self.is_mask = True
 		else:
 			self.is_mask = False
+
 		if n_train_items is not None:
 			self.split_train_test(n_train_items=n_train_items)
 
@@ -142,11 +146,11 @@ class BaseCF(object):
 		''' Split ratings matrix into train and test items.  mask indicating training items
 
 		Args:
-			n_train_items: number of items for test dictionary or list of specific items
+			n_train_items: (int) number of items for test dictionary or list of specific items
 
 		'''
 		
-		self.n_train_items = n_train_items
+		self.n_train_items = int(n_train_items)
 		self.train_mask = self.ratings.copy()
 		self.train_mask.loc[:,:] = np.zeros(self. ratings.shape).astype(bool)
 
@@ -228,10 +232,10 @@ class BaseCF(object):
 				raise ValueError('Make sure target_type is "samples", "seconds", or "hz".')
 
 			ratings = ratings.T
-			idx = np.sort(np.repeat(np.arange(0,ratings.shape[0]/n_samples,1),n_samples))
-			if ratings.shape[0] % n_samples:
-				idx = np.concatenate([idx, np.repeat(idx[-1],ratings.shape[0]-len(idx))])
-			return ratings.groupby(idx).mean().T
+		    idx = np.sort(np.repeat(np.arange(1,data.shape[0]/n_samples,1),n_samples))
+		    if ratings.shape[0] > len(idx):
+		        idx = np.concatenate([idx, np.repeat(idx[-1]+1,data.shape[0]-len(idx))])
+		    return ratings.groupby(idx).mean().T
 
 		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
 			target_type=target_type)
