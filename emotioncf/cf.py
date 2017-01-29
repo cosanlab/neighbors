@@ -30,7 +30,7 @@ class BaseCF(object):
 			self.train_mask = mask
 			self.is_mask = True
 		elif self.ratings.isnull().any().any():
-			self.train_mask = self.ratings.isnull()
+			self.train_mask = ~self.ratings.isnull()
 			self.is_mask = True
 		else:
 			self.is_mask = False
