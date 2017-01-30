@@ -232,9 +232,9 @@ class BaseCF(object):
 				raise ValueError('Make sure target_type is "samples", "seconds", or "hz".')
 
 			ratings = ratings.T
-			idx = np.sort(np.repeat(np.arange(1,data.shape[0]/n_samples,1),n_samples))
+			idx = np.sort(np.repeat(np.arange(1,ratings.shape[0]/n_samples,1),n_samples))
 			if ratings.shape[0] > len(idx):
-				idx = np.concatenate([idx, np.repeat(idx[-1]+1,data.shape[0]-len(idx))])
+				idx = np.concatenate([idx, np.repeat(idx[-1]+1,ratings.shape[0]-len(idx))])
 			return ratings.groupby(idx).mean().T
 
 		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
