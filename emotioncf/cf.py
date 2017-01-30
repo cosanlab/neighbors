@@ -495,15 +495,15 @@ class NNMF_multiplicative(BaseCF):
 		
 		if self.is_mask:
 			if dilate_ts_n_samples is None:
-				masked_X = self.ratings.values * self.train_mask.values
 				mask = self.train_mask.values
+				masked_X = self.ratings.values * mask
+				masked_X[np.isnan(masked_X)]=0
 			else:
 				masked_X = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples).values
 				mask = masked_X>0
 		else:
 			masked_X = self.ratings.values
 			mask = np.ones(self.ratings.shape)
-
 
 		X_est_prev = np.dot(self.W, self.H)
 
