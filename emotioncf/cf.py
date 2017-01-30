@@ -29,8 +29,12 @@ class BaseCF(object):
 		if mask is not None:
 			self.train_mask = mask
 			self.is_mask = True
+		elif self.ratings.isnull().any().any():
+			self.train_mask = ~self.ratings.isnull()
+			self.is_mask = True
 		else:
 			self.is_mask = False
+
 		if n_train_items is not None:
 			self.split_train_test(n_train_items=n_train_items)
 
@@ -142,11 +146,11 @@ class BaseCF(object):
 		''' Split ratings matrix into train and test items.  mask indicating training items
 
 		Args:
-			n_train_items: number of items for test dictionary or list of specific items
+			n_train_items: (int) number of items for test dictionary or list of specific items
 
 		'''
 		
-		self.n_train_items = n_train_items
+		self.n_train_items = int(n_train_items)
 		self.train_mask = self.ratings.copy()
 		self.train_mask.loc[:,:] = np.zeros(self. ratings.shape).astype(bool)
 
@@ -228,9 +232,9 @@ class BaseCF(object):
 				raise ValueError('Make sure target_type is "samples", "seconds", or "hz".')
 
 			ratings = ratings.T
-			idx = np.sort(np.repeat(np.arange(0,ratings.shape[0]/n_samples,1),n_samples))
-			if ratings.shape[0] % n_samples:
-				idx = np.concatenate([idx, np.repeat(idx[-1],ratings.shape[0]-len(idx))])
+			idx = np.sort(np.repeat(np.arange(1,ratings.shape[0]/n_samples,1),n_samples))
+			if ratings.shape[0] > len(idx):
+				idx = np.concatenate([idx, np.repeat(idx[-1]+1,ratings.shape[0]-len(idx))])
 			return ratings.groupby(idx).mean().T
 
 		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
@@ -376,12 +380,12 @@ class KNN(BaseCF):
 		super(KNN, self).__init__(ratings, mask, n_train_items)
 		self.subject_similarity = None
 
-	def fit(self, metric='correlation', dilate_ts_n_samples=None):
+	def fit(self, metric='pearson', dilate_ts_n_samples=None):
 
 		''' Fit collaborative model to training data.  Calculate similarity between subjects across items
 
 		Args:
-			metric: type of similarity {"correlation","cosine"}
+			metric: type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
 			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation 
 								in estimating time-series ratings
 
@@ -398,15 +402,20 @@ class KNN(BaseCF):
 		def cosine_similarity(x,y):
 			return np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))
 
-		sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
-		sim.columns=ratings.index
-		sim.index=ratings.index
-		for x in ratings.iterrows():
-			for y in ratings.iterrows():
-				if metric is 'correlation':
-					sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
-				elif metric is 'cosine':
-					sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())]) 
+		if metric in ['pearson','kendall','spearman']:
+			sim = self.ratings.T.corr(method=metric)
+		elif metric in ['correlation','cosine']:
+			sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
+			sim.columns=ratings.index
+			sim.index=ratings.index
+			for x in ratings.iterrows():
+				for y in ratings.iterrows():
+					if metric is 'correlation':
+						sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
+					elif metric is 'cosine':
+						sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())]) 
+		else:
+			raise NotImplementedError("%s is not implemented yet. Try ['pearson','spearman','correlation','cosine']" % metric )
 		self.subject_similarity = sim
 		self.is_fit = True
 
@@ -432,6 +441,7 @@ class KNN(BaseCF):
 				top_subjects = self.subject_similarity.loc[row[0]].drop(row[0]).sort_values(ascending=False)[0:k]
 			else:
 				top_subjects = self.subject_similarity.loc[row[0]].drop(row[0]).sort_values(ascending=False)
+			top_subjects = top_subjects[~top_subjects.isnull()] # remove nan subjects
 			for col in self.ratings.iteritems():
 				pred.loc[row[0],col[0]] = np.dot(top_subjects,self.ratings.loc[top_subjects.index,col[0]].T)/len(top_subjects)
 		self.predicted_ratings = pred
@@ -485,15 +495,15 @@ class NNMF_multiplicative(BaseCF):
 		
 		if self.is_mask:
 			if dilate_ts_n_samples is None:
-				masked_X = self.ratings.values * self.train_mask.values
 				mask = self.train_mask.values
+				masked_X = self.ratings.values * mask
+				masked_X[np.isnan(masked_X)]=0
 			else:
 				masked_X = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples).values
 				mask = masked_X>0
 		else:
 			masked_X = self.ratings.values
 			mask = np.ones(self.ratings.shape)
-
 
 		X_est_prev = np.dot(self.W, self.H)
 
