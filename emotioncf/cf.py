@@ -380,12 +380,12 @@ class KNN(BaseCF):
 		super(KNN, self).__init__(ratings, mask, n_train_items)
 		self.subject_similarity = None
 
-	def fit(self, metric='correlation', dilate_ts_n_samples=None):
+	def fit(self, metric='pearson', dilate_ts_n_samples=None):
 
 		''' Fit collaborative model to training data.  Calculate similarity between subjects across items
 
 		Args:
-			metric: type of similarity {"correlation","cosine"}
+			metric: type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
 			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation 
 								in estimating time-series ratings
 
@@ -402,15 +402,20 @@ class KNN(BaseCF):
 		def cosine_similarity(x,y):
 			return np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))
 
-		sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
-		sim.columns=ratings.index
-		sim.index=ratings.index
-		for x in ratings.iterrows():
-			for y in ratings.iterrows():
-				if metric is 'correlation':
-					sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
-				elif metric is 'cosine':
-					sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())]) 
+		if metric in ['pearson','kendall','spearman']:
+			sim = self.ratings.T.corr(method=metric)
+		elif metric in ['correlation','cosine']:
+			sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
+			sim.columns=ratings.index
+			sim.index=ratings.index
+			for x in ratings.iterrows():
+				for y in ratings.iterrows():
+					if metric is 'correlation':
+						sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
+					elif metric is 'cosine':
+						sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())]) 
+		else:
+			raise NotImplementedError("%s is not implemented yet. Try ['pearson','spearman','correlation','cosine']" % metric )
 		self.subject_similarity = sim
 		self.is_fit = True
 
@@ -436,6 +441,7 @@ class KNN(BaseCF):
 				top_subjects = self.subject_similarity.loc[row[0]].drop(row[0]).sort_values(ascending=False)[0:k]
 			else:
 				top_subjects = self.subject_similarity.loc[row[0]].drop(row[0]).sort_values(ascending=False)
+			top_subjects = top_subjects[~top_subjects.isnull()] # remove nan subjects
 			for col in self.ratings.iteritems():
 				pred.loc[row[0],col[0]] = np.dot(top_subjects,self.ratings.loc[top_subjects.index,col[0]].T)/len(top_subjects)
 		self.predicted_ratings = pred
