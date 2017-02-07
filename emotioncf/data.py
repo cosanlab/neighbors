@@ -23,9 +23,7 @@ def create_sub_by_item_matrix(df):
     if np.any([not x in df.columns for x in ['Subject','Item','Rating']]):
         raise ValueError("df must contain ['Subject','Item','Rating] as column names")
 
-    columnNames = sorted(df.Item.unique())
-    ratings = pd.DataFrame(columns=columnNames,index=df['Subject'].unique())
-    for row in df.iterrows():
-        ratings.loc[row[1]['Subject'], row[1]['Item']] = float(row[1]['Rating'])
+
+    ratings = df.pivot(index='Subject', columns='Item', values='Rating').reset_index(drop=True)
     return ratings.astype(float)
 
