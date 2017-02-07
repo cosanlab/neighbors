@@ -77,14 +77,14 @@ cf.get_mse('all')
 ```
 
 ### K-Nearest Neighbors
-EmotionCF uses a standard API to estimate and predict data.  Though the KNN approach is not technically a model, we still use the fit method to estimate data.  This calculates a similarity matrix between subjects using ['correlation','cosine'] methods.  We can then predict the left out ratings using the top `k` nearest neighbors.  We can evaluate how well the model works for all data points using `get_corr()` and `get_mse()` methods.  We can also get the correlation for each subject's indivdiual data using `get_sub_corr()` method.
+EmotionCF uses a standard API to estimate and predict data.  Though the KNN approach is not technically a model, we still use the fit method to estimate data.  This calculates a similarity matrix between subjects using ['correlation','cosine'] methods.  We can then predict the left out ratings using the top `k` nearest neighbors.  We can evaluate how well the model works for all data points using `get_corr()` and `get_mse()` methods.  We can also get the correlation for each subject's indivdiual data using `get_sub_corr()` method.  So far we have found that this method does not perform well when there aren't many overlapping samples across items and users.
 
 ```python
 from emotioncf.cf import KNN
 
 cf = KNN(ratings)
 cf.split_train_test(n_train_items=20)
-cf.fit(metric='cosine')
+cf.fit(metric='pearson')
 cf.predict(k=10)
 cf.get_mse('test')
 cf.get_corr('test')
@@ -93,7 +93,7 @@ cf.get_sub_corr('test')
 
 ### Non-negative matrix factorization using stochastic gradient descent
 
-Here we initialize a new class instance and split the data into 20 training and 80 test items per subject.  We fit the model using 100 iterations.  Can pass in optional regularization parameters and a learning rate for the update function.  The model is then used to predict the left out ratings.  We can get the overall model MSE and correlation value on the test ratings.  We can also make a quick plot of the results.
+Here we initialize a new class instance and split the data into 20 training and 80 test items per subject.  We fit the model using 100 iterations.  Can pass in optional regularization parameters and a learning rate for the update function.  The model is then used to predict the left out ratings.  We can get the overall model MSE and correlation value on the test ratings.  We can also make a quick plot of the results. As indicated by the name, this method does not work with data that includes negative numbers.
 
 ```python
 from emotioncf.cf import NNMF_sgd
