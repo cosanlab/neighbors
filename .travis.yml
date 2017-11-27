@@ -17,6 +17,7 @@ install:
    - conda info -a
    - conda config --add channels conda-forge
    - conda create -q -n testenv python=$TRAVIS_PYTHON_VERSION pip pytest numpy pandas scipy matplotlib seaborn
+   - source activate testenv
    - pip install -r requirements.txt
    - pip install python-coveralls
 
