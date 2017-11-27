@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/ljchang/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/ljchang/emotionCF?branch=master)
 
 # emotionCF
-A python package to perform collaborative filtering on emotion datasets.
+A python package to perform collaborative filtering on emotion datasets.  Compatible with Python 3.6 and Python 2.7
 
 ## Installation
 
