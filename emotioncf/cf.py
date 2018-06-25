@@ -21,7 +21,7 @@ class BaseCF(object):
 
 	def __init__(self, ratings, mask=None, n_train_items=None):
 		if not isinstance(ratings, pd.DataFrame):
-			raise ValueError('ratings must be a pandas dataframe instance')			
+			raise ValueError('ratings must be a pandas dataframe instance')
 		self.ratings = ratings
 		self.predicted_ratings = None
 		self.is_fit = False
@@ -47,7 +47,7 @@ class BaseCF(object):
 	def get_mse(self, data='all'):
 
 		''' Get overall mean squared error for predicted compared to actual for all items and subjects. '''
-		
+
 		if not self.is_fit:
 			raise ValueError('You must fit() model first before using this method.')
 		if not self.is_predict:
@@ -149,7 +149,7 @@ class BaseCF(object):
 			n_train_items: (int) number of items for test dictionary or list of specific items
 
 		'''
-		
+
 		self.n_train_items = int(n_train_items)
 		self.train_mask = self.ratings.copy()
 		self.train_mask.loc[:,:] = np.zeros(self. ratings.shape).astype(bool)
@@ -164,12 +164,12 @@ class BaseCF(object):
 		''' Create plot of actual and predicted ratings'''
 
 		import matplotlib.pyplot as plt
-		import seaborn as sns		
+		import seaborn as sns
 		if not self.is_fit:
 			raise ValueError('You must fit() model first before using this method.')
 		if not self.is_predict:
 			raise ValueError('You must predict() model first before using this method.')
-		
+
 		if self.is_mask:
 			f, ax = plt.subplots(nrows=1,ncols=3, figsize=(15,8))
 		else:
@@ -205,12 +205,12 @@ class BaseCF(object):
 	def downsample(self, sampling_freq=None, target=None, target_type='samples'):
 
 		''' Downsample rating matrix to a new target frequency or number of samples using averaging.
-		
+
 			Args:
-				sampling_freq:  Sampling frequency of data 
+				sampling_freq:  Sampling frequency of data
 				target: downsampling target
 				target_type: type of target can be [samples,seconds,hz]
-				
+
 		'''
 
 		if sampling_freq is None:
@@ -237,20 +237,20 @@ class BaseCF(object):
 				idx = np.concatenate([idx, np.repeat(idx[-1]+1,ratings.shape[0]-len(idx))])
 			return ratings.groupby(idx).mean().T
 
-		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target, 
+		self.ratings = ds(self.ratings, sampling_freq=sampling_freq, target=target,
 			target_type=target_type)
 
 		if self.is_mask:
-			self.train_mask = ds(self.train_mask, sampling_freq=sampling_freq, 
+			self.train_mask = ds(self.train_mask, sampling_freq=sampling_freq,
 				target=target, target_type=target_type)
 			self.train_mask.loc[:,:] = self.train_mask>0
 
 		if self.is_predict:
-			self.predicted_ratings = ds(self.predicted_ratings, 
+			self.predicted_ratings = ds(self.predicted_ratings,
 				sampling_freq=sampling_freq, target=target, target_type=target_type)
 
 	def to_long_df(self):
-	
+
 		''' Create a long format pandas dataframe with observed, predicted, and mask.'''
 
 		observed = pd.DataFrame(columns=['Subject','Item','Rating','Condition'])
@@ -281,7 +281,7 @@ class BaseCF(object):
 	def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
 
 		'''Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
-		
+
 			Args:
 				sub_rating: vector of ratings for subject
 				n_samples:  number of samples to dilate each rating
@@ -305,7 +305,7 @@ class BaseCF(object):
 
 	def _dilate_ts_rating_samples(self, n_samples=None):
 
-		''' Helper function to dilate sparse time-series ratings by n_samples.  
+		''' Helper function to dilate sparse time-series ratings by n_samples.
 			Overlapping ratings will be averaged
 
 			Args:
@@ -314,15 +314,18 @@ class BaseCF(object):
 			Returns:
 				masked_ratings: pandas ratings instance that has been dilated by n_samples
 		'''
-		
+
 		if n_samples is None:
 			raise ValueError('Please specify number of samples to dilate.')
-		
+
 		if not self.is_mask:
 			raise ValueError('Make sure cf instance has been masked.')
 
 		masked_ratings = self.ratings[self.train_mask]
-		return masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x, n_samples=n_samples), axis=1)
+		return masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x,
+									n_samples=n_samples),
+									axis=1,
+									result_type='broadcast')
 
 class Mean(BaseCF):
 
@@ -338,12 +341,12 @@ class Mean(BaseCF):
 
 		Args:
 			metric: type of similarity {"correlation","cosine"}
-			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation 
+			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation
 								in estimating time-series ratings
 
 		'''
 
-		if self.is_mask:			
+		if self.is_mask:
 			if dilate_ts_n_samples is None:
 				self.mean = self.ratings[self.train_mask].mean(skipna=True, axis=0)
 			else:
@@ -386,12 +389,12 @@ class KNN(BaseCF):
 
 		Args:
 			metric: type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
-			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation 
+			dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation
 								in estimating time-series ratings
 
 		'''
 
-		if self.is_mask:			
+		if self.is_mask:
 			if dilate_ts_n_samples is None:
 				ratings = self.ratings[self.train_mask]
 			else:
@@ -411,9 +414,9 @@ class KNN(BaseCF):
 			for x in ratings.iterrows():
 				for y in ratings.iterrows():
 					if metric is 'correlation':
-						sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0] 
+						sim.loc[x[0],y[0]] = pearsonr(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])[0]
 					elif metric is 'cosine':
-						sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())]) 
+						sim.loc[x[0],y[0]] = cosine_similarity(x[1][(~x[1].isnull()) & (~y[1].isnull())],y[1][(~x[1].isnull()) & (~y[1].isnull())])
 		else:
 			raise NotImplementedError("%s is not implemented yet. Try ['pearson','spearman','correlation','cosine']" % metric )
 		self.subject_similarity = sim
@@ -448,24 +451,24 @@ class KNN(BaseCF):
 		self.is_predict = True
 
 class NNMF_multiplicative(BaseCF):
-	''' Train non negative matrix factorization model using multiplicative updates.  
+	''' Train non negative matrix factorization model using multiplicative updates.
 		Allows masking to only learn the training weights.
 
 		Based on http://stackoverflow.com/questions/22767695/
 		python-non-negative-matrix-factorization-that-handles-both-zeros-and-missing-dat
-	
+
 	'''
-	
+
 	def __init__(self, ratings, mask=None, n_train_items=None):
 		super(NNMF_multiplicative, self).__init__(ratings, mask, n_train_items)
 		self.H = None
 		self.W = None
-	
+
 	def fit(self,
-		n_factors = None, 
+		n_factors = None,
 		max_iterations = 100,
-		error_limit = 1e-6, 
-		fit_error_limit = 1e-6, 
+		error_limit = 1e-6,
+		fit_error_limit = 1e-6,
 		verbose = False,
 		dilate_ts_n_samples = None):
 
@@ -477,7 +480,7 @@ class NNMF_multiplicative(BaseCF):
 			error_limit (float): error tolerance (default=1e-6)
 			fit_error_limit (float): fit error tolerance (default=1e-6)
 			verbose (bool): verbose output during fitting procedure (default=True)
-			dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation 
+			dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation
 										in estimating time-series ratings
 
 		'''
@@ -492,7 +495,7 @@ class NNMF_multiplicative(BaseCF):
 		avg = np.sqrt(np.nanmean(self.ratings)/n_factors)
 		self.H = avg*np.random.rand(n_items, n_factors) # H = Y
 		self.W = avg*np.random.rand(n_users, n_factors)	# W = A
-		
+
 		if self.is_mask:
 			if dilate_ts_n_samples is None:
 				mask = self.train_mask.values
@@ -550,21 +553,21 @@ class NNMF_multiplicative(BaseCF):
 		self.is_predict = True
 
 class NNMF_sgd(BaseCF):
-	''' Train non negative matrix factorization model using stochastic gradient descent.  
+	''' Train non negative matrix factorization model using stochastic gradient descent.
 		Allows masking to only learn the training weights.
 
-		This code is based off of Ethan Rosenthal's excellent tutorial 
+		This code is based off of Ethan Rosenthal's excellent tutorial
 		on collaborative filtering https://blog.insightdatascience.com/
 		explicit-matrix-factorization-als-sgd-and-all-that-jazz-b00e4d9b21ea#.kkr7mzvr2
-	
+
 	'''
-	
+
 	def __init__(self, ratings, mask=None, n_train_items=None):
 		super(NNMF_sgd, self).__init__(ratings, mask, n_train_items)
 
-	def fit(self, 
-		n_factors=None, 
-		item_fact_reg=0.0, 
+	def fit(self,
+		n_factors=None,
+		item_fact_reg=0.0,
 		user_fact_reg=0.0,
 		item_bias_reg=0.0,
 		user_bias_reg=0.0,
@@ -581,7 +584,7 @@ class NNMF_sgd(BaseCF):
 			error_limit (float): error tolerance (default=1e-6)
 			fit_error_limit (float): fit error tolerance (default=1e-6)
 			verbose (bool): verbose output during fitting procedure (default=True)
-			dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation 
+			dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation
 										in estimating time-series ratings
 
 		'''
@@ -606,7 +609,7 @@ class NNMF_sgd(BaseCF):
 			sample_row, sample_col = ratings.values.nonzero()
 			self.global_bias = self.ratings[~self.ratings.isnull()].mean().mean()
 
-		# initialize latent vectors		
+		# initialize latent vectors
 		self.user_vecs = np.random.normal(scale=1./n_factors, size=(n_users, n_factors))
 		self.item_vecs = np.random.normal(scale=1./n_factors, size=(n_items, n_factors))
 
@@ -633,11 +636,11 @@ class NNMF_sgd(BaseCF):
 				prediction = self._predict_single(u,i)
 
 				e = (ratings.iloc[u,i] - prediction) # error
-				
+
 				# Update biases
 				self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
 				self.item_bias[i] += (learning_rate * (e - self.item_bias_reg * self.item_bias[i]))
-				
+
 				# Update latent factors
 				self.user_vecs[u, :] += (learning_rate * (e * self.item_vecs[i, :] - self.user_fact_reg * self.user_vecs[u,:]))
 				self.item_vecs[i, :] += (learning_rate * (e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i,:]))
@@ -666,5 +669,3 @@ class NNMF_sgd(BaseCF):
 			prediction = self.global_bias + self.user_bias[u] + self.item_bias[i]
 			prediction += self.user_vecs[u, :].dot(self.item_vecs[i, :].T)
 			return prediction
-
-

@@ -1,0 +1,4 @@
+{
+  "emotioncf/tests/test_core.py::test_cf_mean": true,
+  "emotioncf/tests/test_core.py::test_cf_nnmf_multiplicative": true
+}
