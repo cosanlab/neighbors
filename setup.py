@@ -14,8 +14,7 @@ extra_setuptools_args = dict(
 setup(
     name="emotioncf",
     version=__version__,
-    description='A Python package for performing Collaborative Filtering on ',
-                'sparse emotion ratings",
+    description='A Python package for performing Collaborative Filtering on sparse emotion ratings',
     maintainer='Luke Chang',
     maintainer_email='luke.j.chang@dartmouth.edu',
     url='http://github.com/ljchang/emotionCF',
