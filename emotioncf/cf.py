@@ -100,7 +100,8 @@ class BaseCF(object):
 		r = []
 		if data is 'all':
 			for i in self.ratings.index:
-				r.append(pearsonr(self.ratings.loc[i,:], self.predicted_ratings.loc[i,:])[0])
+				noNanMask = (~np.isnan(self.ratings.loc[i,:])) & (~np.isnan(self.predicted_ratings.loc[i,:]))
+				r.append(pearsonr(self.ratings.loc[i,:][noNanMask], self.predicted_ratings.loc[i,:][noNanMask])[0])
 		elif self.is_mask:
 			if data is 'test':
 				for i in self.ratings.index:
