@@ -174,12 +174,15 @@ class BaseCF(object):
 			f, ax = plt.subplots(nrows=1,ncols=3, figsize=(15,8))
 		else:
 			f, ax = plt.subplots(nrows=1,ncols=2, figsize=(15,8))
-
-		sns.heatmap(self.ratings,vmax=100,vmin=0,ax=ax[0],square=False,xticklabels=False, yticklabels=False)
+		
+		vmax = self.ratings.max().max() if self.ratings.max().max() > self.predicted_ratings.max().max() else self.predicted_ratings.max().max()
+		vmin = self.ratings.min().min() if self.ratings.min().min() < self.predicted_ratings.min().min() else self.predicted_ratings.min().min()
+		
+		sns.heatmap(self.ratings,vmax=vmax,vmin=vmin,ax=ax[0],square=False,xticklabels=False, yticklabels=False)
 		ax[0].set_title('Actual User/Item Ratings')
 		ax[0].set_xlabel('Items')
 		ax[0].set_ylabel('Users')
-		sns.heatmap(self.predicted_ratings,vmax=100,vmin=0,ax=ax[1],square=False,xticklabels=False, yticklabels=False)
+		sns.heatmap(self.predicted_ratings,vmax=vmax,vmin=vmin,ax=ax[1],square=False,xticklabels=False, yticklabels=False)
 		ax[1].set_title('Predicted User/Item Ratings')
 		ax[1].set_xlabel('Items')
 		ax[1].set_ylabel('Users')
