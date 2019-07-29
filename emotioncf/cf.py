@@ -98,16 +98,21 @@ class BaseCF(object):
 			raise ValueError('You must predict() model first before using this method.')
 
 		r = []
+		# Note: the following mask prevents NaN values from being passed to `pearsonr()`.
+		# However, it does not guaratee that no correlation values will be NaN, e.g. if only one
+		# rating for a given subject is non-null in both test and train groups for a given
+		# dataset, or variance is otherwise zero.
+		noNanMask = (~np.isnan(self.ratings)) & (~np.isnan(self.predicted_ratings))
 		if data is 'all':
 			for i in self.ratings.index:
-				r.append(pearsonr(self.ratings.loc[i,:], self.predicted_ratings.loc[i,:])[0])
+				r.append(pearsonr(self.ratings.loc[i,:][noNanMask.loc[i, :]], self.predicted_ratings.loc[i,:][noNanMask.loc[i, :]])[0])
 		elif self.is_mask:
 			if data is 'test':
 				for i in self.ratings.index:
-					r.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]])[0])
+					r.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i,:]][noNanMask.loc[i, :]], self.predicted_ratings.loc[i,~self.train_mask.loc[i,:]][noNanMask.loc[i, :]])[0])
 			if data is 'train':
 				for i in self.ratings.index:
-					r.append(pearsonr(self.ratings.loc[i, self.train_mask.loc[i,:]], self.predicted_ratings.loc[i,self.train_mask.loc[i,:]])[0])
+					r.append(pearsonr(self.ratings.loc[i, self.train_mask.loc[i,:]][noNanMask.loc[i, :]], self.predicted_ratings.loc[i,self.train_mask.loc[i,:]][noNanMask.loc[i, :]])[0])
 		else:
 			raise ValueError('Must run split_train_test() before using this option.')
 		return np.array(r)
