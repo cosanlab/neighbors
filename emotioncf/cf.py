@@ -179,7 +179,7 @@ class BaseCF(object):
 			f, ax = plt.subplots(nrows=1,ncols=3, figsize=(15,8))
 		else:
 			f, ax = plt.subplots(nrows=1,ncols=2, figsize=(15,8))
-		
+
 		heatmapkwargs.setdefault("square", False)
 		heatmapkwargs.setdefault("xticklabels", False)
 		heatmapkwargs.setdefault("yticklabels", False)
@@ -314,12 +314,14 @@ class BaseCF(object):
 		sub_rating_conv_mn = deepcopy(sub_rating_conv)
 		sub_rating_conv_mn[bin_sub_rating_conv>1] = (sub_rating_conv_mn[bin_sub_rating_conv>1]/
 			bin_sub_rating_conv[bin_sub_rating_conv>1])
+		new_mask = bin_sub_rating_conv==0
+		sub_rating_conv_mn[new_mask] = np.nan
 		return sub_rating_conv_mn
 
 	def _dilate_ts_rating_samples(self, n_samples=None):
 
 		''' Helper function to dilate sparse time-series ratings by n_samples.
-			Overlapping ratings will be averaged
+			Overlapping ratings will be averaged. Will update mask with new values.
 
 			Args:
 				n_samples:  Number of samples to dilate ratings
@@ -335,10 +337,12 @@ class BaseCF(object):
 			raise ValueError('Make sure cf instance has been masked.')
 
 		masked_ratings = self.ratings[self.train_mask]
-		return masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x,
+		dilated_ratings = masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x,
 									n_samples=n_samples),
 									axis=1,
 									result_type='broadcast')
+		self.train_mask = ~dilated_ratings.isnull()
+		return dilated_ratings
 
 class Mean(BaseCF):
 
