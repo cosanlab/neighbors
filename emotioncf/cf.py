@@ -78,7 +78,7 @@ class BaseCF(object):
 			raise ValueError('Must run split_train_test() before using this option.')
 
 	def get_corr(self, data='all'):
-		''' Get overall correlation for predicted compared to actual for all items and subjects. 
+		'''Get overall correlation for predicted compared to actual for all items and subjects. 
 			
 			Args:
 				data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
@@ -95,7 +95,7 @@ class BaseCF(object):
 		if data is 'all':
 			actual = self.ratings.values.flatten()
 			pred = self.predicted_ratings.values.flatten()
-			return pearsonr(pred[(~np.isnan(actual)) & (~np.isnan(pred))], actual[(~np.isnan(actual)) & (~np.isnan(pred))])[0]
+			return pearsonr(pred[(~np.isnan(actual)) & (~np.isnan(pred))],actual[(~np.isnan(actual)) & (~np.isnan(pred))])[0]
 		elif self.is_mask:
 			if data is 'train':
 				if self.is_mask_dilated:
@@ -136,7 +136,8 @@ class BaseCF(object):
 			if data is 'train':
 				if self.is_mask_dilated:
 					for i in self.ratings.index:
-						r.append(pearsonr(self.ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]], self.predicted_ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
+						r.append(pearsonr(self.ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]], 
+						self.predicted_ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
 				else:
 					for i in self.ratings.index:
 						r.append(pearsonr(self.ratings.loc[i, self.train_mask.loc[i, :]][noNanMask.loc[i, :]], self.predicted_ratings.loc[i, self.train_mask.loc[i, :]][noNanMask.loc[i, :]])[0])

@@ -41,8 +41,8 @@ def basecf_method_test(cf=None, data=None):
     assert isinstance(sub_mse, np.ndarray)
     assert len(sub_mse) == cf.ratings.shape[0]
     assert mse > 0
-    assert r > -0.1
-    assert np.mean(sub_r) > -0.1
+    assert r > (-0.1)
+    assert np.mean(sub_r) > (-0.1)
     print(data)
     print(('mse: %s') % mse)
     print(('r: %s') % r)
@@ -58,7 +58,7 @@ def basecf_method_test(cf=None, data=None):
     if cf.is_mask:
         assert 'Mask' in df.columns
     cf.plot_predictions(data=data)
-    
+
 def basecf_method_all_tests(cf=None):
     basecf_method_test(cf=cf, data='all')
     basecf_method_test(cf=cf, data='train')
