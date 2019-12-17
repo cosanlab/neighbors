@@ -188,23 +188,20 @@ class BaseCF(object):
 		heatmapkwargs.setdefault("vmax", vmax)
 		heatmapkwargs.setdefault("vmin", vmin)
 
-		sns.heatmap(self.ratings,ax=ax[0],**heatmapkwargs)
+		sns.heatmap(self.ratings, ax=ax[0], **heatmapkwargs)
 		ax[0].set_title('Actual User/Item Ratings')
-		ax[0].set_xlabel('Items')
-		ax[0].set_ylabel('Users')
-		sns.heatmap(self.predicted_ratings,ax=ax[1],**heatmapkwargs)
+		ax[0].set_xlabel('Items', fontsize=18)
+		ax[0].set_ylabel('Users', fontsize=18)
+		sns.heatmap(self.predicted_ratings, ax=ax[1], **heatmapkwargs)
 		ax[1].set_title('Predicted User/Item Ratings')
-		ax[1].set_xlabel('Items')
-		ax[1].set_ylabel('Users')
+		ax[1].set_xlabel('Items', fontsize=18)
+		ax[1].set_ylabel('Users', fontsize=18)
 
 		f.tight_layout()
 
 		if self.is_mask:
-			actual = self.ratings.values.flatten()
-			pred = self.predicted_ratings.values.flatten()
-			mask = self.train_mask.values.flatten()
-			pred = pred[~mask]
-			actual = actual[~mask]
+			actual = self.ratings.values[self.train_mask]
+			pred = self.predicted_ratings.values[self.train_mask]
 			ax[2].scatter(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
 			ax[2].set_xlabel('Actual Ratings')
 			ax[2].set_ylabel('Predicted Ratings')
@@ -618,13 +615,14 @@ class NNMF_sgd(BaseCF):
 				ratings = self.ratings[self.train_mask]
 			else:
 				ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-				sample_row, sample_col = ratings.values.nonzero()
-				mask = ratings>0
-				self.global_bias = ratings[mask].mean().mean()
+				sample_row, sample_col = zip(*np.argwhere(~np.isnan(ratings.values)))
+				self.global_bias = ratings.values[self.train_mask].mean()
 		else:
 			ratings = self.ratings
-			sample_row, sample_col = ratings.values.nonzero()
-			self.global_bias = self.ratings[~self.ratings.isnull()].mean().mean()
+			ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+			# sample_row, sample_col = ratings.values.nonzero()
+			sample_row, sample_col = zip(*np.argwhere(~np.isnan(ratings.values)))
+			self.global_bias = ratings.values[~np.isnan(ratings.values)].mean()
 
 		# initialize latent vectors
 		self.user_vecs = np.random.normal(scale=1./n_factors, size=(n_users, n_factors))
