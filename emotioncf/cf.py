@@ -170,6 +170,7 @@ class BaseCF(object):
 
 		import matplotlib.pyplot as plt
 		import seaborn as sns
+
 		if not self.is_fit:
 			raise ValueError('You must fit() model first before using this method.')
 		if not self.is_predict:
@@ -524,7 +525,7 @@ class NNMF_multiplicative(BaseCF):
 
 		X_est_prev = np.dot(self.W, self.H)
 
-		ctr = 1
+		ctr = 1; fit_residual = 10;
 		while ctr <= max_iterations or fit_residual < fit_error_limit:
 		# while ctr <= max_iterations or curRes < error_limit or fit_residual < fit_error_limit:
 			# Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
@@ -580,15 +581,15 @@ class NNMF_sgd(BaseCF):
 		super(NNMF_sgd, self).__init__(ratings, mask, n_train_items)
 
 	def fit(self,
-		n_factors=None,
-		item_fact_reg=0.0,
-		user_fact_reg=0.0,
-		item_bias_reg=0.0,
-		user_bias_reg=0.0,
-		learning_rate=0.001,
-		n_iterations=10,
-		verbose=False,
-		dilate_ts_n_samples=None):
+			n_factors=None,
+			item_fact_reg=0.0,
+			user_fact_reg=0.0,
+			item_bias_reg=0.0,
+			user_bias_reg=0.0,
+			learning_rate=0.001,
+			n_iterations=10,
+			verbose=False,
+			dilate_ts_n_samples=None):
 
 		''' Fit NNMF collaborative filtering model to training data using stochastic gradient descent.
 
@@ -610,13 +611,11 @@ class NNMF_sgd(BaseCF):
 			
 		if dilate_ts_n_samples is not None:
 			self.ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-			sample_row, sample_col = self.train_mask.values.nonzero()
-			self.global_bias = self.ratings.values[self.train_mask].mean()
 
 		if self.is_mask:
+			self.ratings = self.ratings[self.train_mask]
 			sample_row, sample_col = self.train_mask.values.nonzero()
 			self.global_bias = self.ratings[self.train_mask].mean().mean()
-			ratings = self.ratings[self.train_mask]
 		else:
 			sample_row, sample_col = zip(*np.argwhere(~np.isnan(self.ratings.values)))
 			self.global_bias = self.ratings.values[~np.isnan(self.ratings.values)].mean()
@@ -645,9 +644,9 @@ class NNMF_sgd(BaseCF):
 			for idx in training_indices:
 				u = sample_row[idx]
 				i = sample_col[idx]
-				prediction = self._predict_single(u,i)
+				prediction = self._predict_single(u, i)
 
-				e = (ratings.iloc[u,i] - prediction) # error
+				e = (self.ratings.iloc[u, i] - prediction) # error
 
 				# Update biases
 				self.user_bias[u] += (learning_rate * (e - self.user_bias_reg * self.user_bias[u]))
@@ -670,7 +669,6 @@ class NNMF_sgd(BaseCF):
 				predicted_rating: (pd.DataFrame instance) adds field to object instance
 		'''
 		self.predicted_ratings = self.ratings.copy()
-		# self.predicted_ratings = np.zeros((self.user_vecs.shape[0], self.item_vecs.shape[0]))
 		for u in range(self.user_vecs.shape[0]):
 			for i in range(self.item_vecs.shape[0]):
 				self.predicted_ratings.iloc[u, i] = self._predict_single(u, i)
