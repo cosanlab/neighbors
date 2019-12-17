@@ -26,7 +26,7 @@ def simulate_data(data_type = 'data_long'):
         return out
     elif data_type is 'data_wide':
         return rat
-
+        
 def basecf_method_test(cf=None, data=None):
     assert cf.train_mask.shape == (50, 100)
     assert cf.predicted_ratings.shape == (50, 100)
@@ -57,9 +57,9 @@ def basecf_method_test(cf=None, data=None):
         assert df.shape[0] == cf.ratings.shape[0]*cf.ratings.shape[1]*2
     if cf.is_mask:
         assert 'Mask' in df.columns
-
-def basecf_method_all_tests(cf=None):
     cf.plot_predictions()
+    
+def basecf_method_all_tests(cf=None):
     basecf_method_test(cf=cf, data='all')
     basecf_method_test(cf=cf, data='train')
     basecf_method_test(cf=cf, data='test')
@@ -143,31 +143,32 @@ def test_cf_nnmf_multiplicative():
 def test_cf_nnmf_sgd():
     cf = NNMF_sgd(simulate_data(data_type='data_wide'))
     cf.fit(n_iterations = 20,
-           user_fact_reg=0,
-           item_fact_reg=0,
-           user_bias_reg=0,
-           item_bias_reg=0,
-           learning_rate=.001)
+            user_fact_reg=0,
+            item_fact_reg=0,
+            user_bias_reg=0,
+            item_bias_reg=0,
+            learning_rate=.001)
     cf.predict()
 
     cf.split_train_test(n_train_items=50)
     cf.fit(n_iterations = 20,
-           user_fact_reg=0,
-           item_fact_reg=0,
-           user_bias_reg=0,
-           item_bias_reg=0,
-           learning_rate=.001)
+            user_fact_reg=0,
+            item_fact_reg=0,
+            user_bias_reg=0,
+            item_bias_reg=0,
+            learning_rate=.001)
     basecf_method_all_tests(cf=cf)
 
     cf.fit(n_iterations = 20,
-           user_fact_reg=0,
-           item_fact_reg=0,
-           user_bias_reg=0,
-           item_bias_reg=0,
-           learning_rate=.001,
-           dilate_ts_n_samples=2)
+            user_fact_reg=0,
+            item_fact_reg=0,
+            user_bias_reg=0,
+            item_bias_reg=0,
+            learning_rate=.001,
+            dilate_ts_n_samples=2)
     cf.predict()
-    basecf_method_all_tests(cf=cf)
+    basecf_method_test(cf=cf, data='all')
+    basecf_method_test(cf=cf, data='train')
 
 def test_downsample():
     cf = Mean(simulate_data(data_type = 'data_wide'))
