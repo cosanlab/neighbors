@@ -607,22 +607,19 @@ class NNMF_sgd(BaseCF):
 		n_users, n_items = self.ratings.shape
 		if n_factors is  None:
 			n_factors = n_items
+			
+		if dilate_ts_n_samples is not None:
+			self.ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+			sample_row, sample_col = self.train_mask.values.nonzero()
+			self.global_bias = self.ratings.values[self.train_mask].mean()
 
 		if self.is_mask:
-			if dilate_ts_n_samples is None:
-				sample_row, sample_col = self.train_mask.values.nonzero()
-				self.global_bias = self.ratings[self.train_mask].mean().mean()
-				ratings = self.ratings[self.train_mask]
-			else:
-				ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-				sample_row, sample_col = zip(*np.argwhere(~np.isnan(ratings.values)))
-				self.global_bias = ratings.values[self.train_mask].mean()
+			sample_row, sample_col = self.train_mask.values.nonzero()
+			self.global_bias = self.ratings[self.train_mask].mean().mean()
+			ratings = self.ratings[self.train_mask]
 		else:
-			ratings = self.ratings
-			ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-			# sample_row, sample_col = ratings.values.nonzero()
-			sample_row, sample_col = zip(*np.argwhere(~np.isnan(ratings.values)))
-			self.global_bias = ratings.values[~np.isnan(ratings.values)].mean()
+			sample_row, sample_col = zip(*np.argwhere(~np.isnan(self.ratings.values)))
+			self.global_bias = self.ratings.values[~np.isnan(self.ratings.values)].mean()
 
 		# initialize latent vectors
 		self.user_vecs = np.random.normal(scale=1./n_factors, size=(n_users, n_factors))
