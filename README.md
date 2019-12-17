@@ -139,8 +139,11 @@ cf.downsample(sampling_freq=10,target=5, target_type='hz')
 
 It is also possible to leverage presumed autocorrelation when training models by using the `dilate_ts_n_samples=n_samples` keyword.  This flag will convolve a boxcar regressor with each subject's sample from `cf.train_mask` `n_samples`.  The dilation will be centered on each sample.  The intuition here is that if a subject rates an item at a given time point, say '50', they likely will have rated time points immediately preceding and following similarly (e.g., [50,50,50]).  This is due to autocorrelation in the data.  More presumed autocorrelation will likely benefit from a higher number of samples being selected.  This will allow time series that are sparsely sampled to be estimated more accurately.
 
+*NOTE: If you dilate the mask, it will be stored as `cf.dilated_mask`
+
 ```python
 cf = NNMF_sgd(ratings)
+mask = cf.train_mask
 cf.split_train_test(n_train_items=20)
 cf.fit(n_iterations = 100,
      user_fact_reg=1.0,
