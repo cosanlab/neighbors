@@ -30,9 +30,11 @@ class BaseCF(object):
 		self.dilated_mask = None
 		if mask is not None:
 			self.train_mask = mask
+			self.masked_ratings = self.ratings[self.train_mask]
 			self.is_mask = True
 		elif self.ratings.isnull().any().any():
 			self.train_mask = ~self.ratings.isnull()
+			self.masked_ratings = self.ratings[self.train_mask]
 			self.is_mask = True
 		else:
 			self.is_mask = False
@@ -62,20 +64,9 @@ class BaseCF(object):
 		if not self.is_predict:
 			raise ValueError('You must predict() model first before using this method.')
 
-		if data is 'all':
-			actual = self.ratings.values.flatten()
-			pred = self.predicted_ratings.values.flatten()
-			return np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2)
-		elif self.is_mask:
-			if data is 'train':
-				if self.is_mask_dilated:
-					return np.mean((self.predicted_ratings.values[self.dilated_mask.values]-self.ratings.values[self.dilated_mask.values])**2)
-				else:
-					return np.mean((self.predicted_ratings.values[self.train_mask.values]-self.ratings.values[self.train_mask.values])**2)
-			else:
-				return np.mean((self.predicted_ratings.values[~self.train_mask.values]-self.ratings.values[~self.train_mask.values])**2)
-		else:
-			raise ValueError('Must run split_train_test() before using this option.')
+		actual, pred = self._retrieve_predictions(data)
+
+		return np.mean((pred-actual)**2)
 
 	def get_corr(self, data='all'):
 		'''Get overall correlation for predicted compared to actual for all items and subjects. 
@@ -89,23 +80,13 @@ class BaseCF(object):
 
 		if not self.is_fit:
 			raise ValueError('You must fit() model first before using this method.')
+
 		if not self.is_predict:
 			raise ValueError('You must predict() model first before using this method.')
 
-		if data is 'all':
-			actual = self.ratings.values.flatten()
-			pred = self.predicted_ratings.values.flatten()
-			return pearsonr(pred[(~np.isnan(actual)) & (~np.isnan(pred))],actual[(~np.isnan(actual)) & (~np.isnan(pred))])[0]
-		elif self.is_mask:
-			if data is 'train':
-				if self.is_mask_dilated:
-					return pearsonr(self.predicted_ratings.values[self.dilated_mask.values], self.ratings.values[self.dilated_mask.values])[0]
-				else:
-					return pearsonr(self.predicted_ratings.values[self.train_mask.values], self.ratings.values[self.train_mask.values])[0]		
-			else:
-				return pearsonr(self.predicted_ratings.values[~self.train_mask.values], self.ratings.values[~self.train_mask.values])[0]
-		else:
-			raise ValueError('Must run split_train_test() before using this option.')
+		actual, pred = self._retrieve_predictions(data)
+
+		return pearsonr(actual, pred)[0]
 
 	def get_sub_corr(self, data='all'):
 		'''Calculate observed/predicted correlation for each subject in matrix
@@ -128,22 +109,26 @@ class BaseCF(object):
 		# However, it does not guaratee that no correlation values will be NaN, e.g. if only one
 		# rating for a given subject is non-null in both test and train groups for a given
 		# dataset, or variance is otherwise zero.
-		noNanMask = (~np.isnan(self.ratings)) & (~np.isnan(self.predicted_ratings))
 		if data is 'all':
+			noNanMask = (~np.isnan(self.ratings)) & (~np.isnan(self.predicted_ratings))
 			for i in self.ratings.index:
 				r.append(pearsonr(self.ratings.loc[i,:][noNanMask.loc[i, :]], self.predicted_ratings.loc[i,:][noNanMask.loc[i, :]])[0])
 		elif self.is_mask:
-			if data is 'train':
+			if data is 'training':
+				noNanMask = (~np.isnan(self.masked_ratings)) & (~np.isnan(self.predicted_ratings))
 				if self.is_mask_dilated:
-					for i in self.ratings.index:
-						r.append(pearsonr(self.ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]], 
+					for i in self.masked_ratings.index:
+						r.append(pearsonr(self.masked_ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]], 
 						self.predicted_ratings.loc[i, self.dilated_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
 				else:
-					for i in self.ratings.index:
-						r.append(pearsonr(self.ratings.loc[i, self.train_mask.loc[i, :]][noNanMask.loc[i, :]], self.predicted_ratings.loc[i, self.train_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
-			else:
-				for i in self.ratings.index:
-					r.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i, :]][noNanMask.loc[i, :]], self.predicted_ratings.loc[i, ~self.train_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
+					for i in self.masked_ratings.index:
+						r.append(pearsonr(self.masked_ratings.loc[i, self.train_mask.loc[i, :]][noNanMask.loc[i, :]], 
+						self.predicted_ratings.loc[i, self.train_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
+			else: #test
+				noNanMask = (~np.isnan(self.ratings)) & (~np.isnan(self.predicted_ratings))
+				for i in self.masked_ratings.index:
+					r.append(pearsonr(self.ratings.loc[i, ~self.train_mask.loc[i, :]][noNanMask.loc[i, :]], 
+					self.predicted_ratings.loc[i, ~self.train_mask.loc[i, :]][noNanMask.loc[i, :]])[0])
 		else:
 			raise ValueError('Must run split_train_test() before using this option.')
 		return np.array(r)
@@ -171,15 +156,15 @@ class BaseCF(object):
 				pred = self.predicted_ratings.loc[i,:]
 				mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
 		elif self.is_mask:
-			if data is 'train':
+			if data is 'training':
 				if self.is_mask_dilated:
-					for i in self.ratings.index:
-						actual = self.ratings.loc[i, self.dilated_mask.loc[i, :]]
+					for i in self.masked_ratings.index:
+						actual = self.masked_ratings.loc[i, self.dilated_mask.loc[i, :]]
 						pred = self.predicted_ratings.loc[i, self.dilated_mask.loc[i, :]]
 						mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
 				else:
 					for i in self.ratings.index:
-						actual = self.ratings.loc[i, self.train_mask.loc[i, :]]
+						actual = self.masked_ratings.loc[i, self.train_mask.loc[i, :]]
 						pred = self.predicted_ratings.loc[i, self.train_mask.loc[i, :]]
 						mse.append(np.mean((pred[(~np.isnan(actual)) & (~np.isnan(pred))] - actual[(~np.isnan(actual)) & (~np.isnan(pred))])**2))
 			else:
@@ -206,6 +191,8 @@ class BaseCF(object):
 		for sub in self.ratings.index:
 			sub_train_rating_item =  np.random.choice(self.ratings.columns,replace=False, size=n_train_items)
 			self.train_mask.loc[sub, sub_train_rating_item] = True
+
+		self.masked_ratings = self.ratings[self.train_mask]
 		self.is_mask = True
 
 	def plot_predictions(self, data='training', heatmapkwargs = {}):
@@ -228,16 +215,22 @@ class BaseCF(object):
 		if not self.is_predict:
 			raise ValueError('You must predict() model first before using this method.')
 
+		if self.is_mask:
+			ratings = self.masked_ratings.copy()
+		else:
+			ratings = self.ratings.copy()
+
 		heatmapkwargs.setdefault("square", False)
 		heatmapkwargs.setdefault("xticklabels", False)
 		heatmapkwargs.setdefault("yticklabels", False)
-		vmax = self.ratings.max().max() if self.ratings.max().max() > self.predicted_ratings.max().max() else self.predicted_ratings.max().max()
-		vmin = self.ratings.min().min() if self.ratings.min().min() < self.predicted_ratings.min().min() else self.predicted_ratings.min().min()
+		vmax = ratings.max().max() if ratings.max().max() > self.predicted_ratings.max().max() else self.predicted_ratings.max().max()
+		vmin = ratings.min().min() if ratings.min().min() < self.predicted_ratings.min().min() else self.predicted_ratings.min().min()
+
 		heatmapkwargs.setdefault("vmax", vmax)
 		heatmapkwargs.setdefault("vmin", vmin)
 
 		f, ax = plt.subplots(nrows=1,ncols=3, figsize=(15, 8))
-		sns.heatmap(self.ratings, ax=ax[0], **heatmapkwargs)
+		sns.heatmap(ratings, ax=ax[0], **heatmapkwargs)
 		ax[0].set_title('Actual User/Item Ratings')
 		ax[0].set_xlabel('Items', fontsize=18)
 		ax[0].set_ylabel('Users', fontsize=18)
@@ -247,26 +240,16 @@ class BaseCF(object):
 		ax[1].set_ylabel('Users', fontsize=18)
 		f.tight_layout()
 
-		if data is 'all':
-			actual = self.ratings.values.flatten()
-			pred = self.predicted_ratings.values.flatten()
-		elif data is 'train':
-			if self.is_mask_dilated:
-				actual = self.ratings.values[self.dilated_mask]
-				pred = self.predicted_ratings.values[self.dilated_mask]
-			else:
-				actual = self.ratings.values[self.train_mask]
-				pred = self.predicted_ratings.values[self.train_mask]
-		else:
-			actual = self.ratings.values[~self.train_mask]
-			pred = self.predicted_ratings.values[~self.train_mask]
+		actual, pred = self._retrieve_predictions(data)
 		
 		ax[2].scatter(actual[(~np.isnan(actual)) & (~np.isnan(pred))],pred[(~np.isnan(actual)) & (~np.isnan(pred))])
 		ax[2].set_xlabel('Actual Ratings')
 		ax[2].set_ylabel('Predicted Ratings')
 		ax[2].set_title('Predicted Ratings')
+		
 		r = self.get_corr(data=data)
 		print('Correlation: %s' % r)
+
 		return f, r
 
 	def downsample(self, sampling_freq=None, target=None, target_type='samples'):
@@ -311,11 +294,12 @@ class BaseCF(object):
 			self.train_mask = ds(self.train_mask, sampling_freq=sampling_freq,
 				target=target, target_type=target_type)
 			self.train_mask.loc[:,:] = self.train_mask>0
-
-		if self.is_mask_dilated:
-			self.dilated_mask = ds(self.dilated_mask, sampling_freq=sampling_freq,
+			self.masked_ratings = ds(self.masked_ratings, sampling_freq=sampling_freq,
 				target=target, target_type=target_type)
-			self.dilated_mask.loc[:,:] = self.dilated_mask>0
+			if self.is_mask_dilated:
+				self.dilated_mask = ds(self.dilated_mask, sampling_freq=sampling_freq,
+					target=target, target_type=target_type)
+				self.dilated_mask.loc[:,:] = self.dilated_mask>0
 
 		if self.is_predict:
 			self.predicted_ratings = ds(self.predicted_ratings,
@@ -333,7 +317,10 @@ class BaseCF(object):
 			tmp['Subject'] = row[0]
 			tmp['Condition'] = 'Observed'
 			if self.is_mask:
-				tmp['Mask'] = self.train_mask.loc[row[0]]
+				if self.is_mask_dilated:
+					tmp['Mask'] = self.dilated_mask.loc[row[0]]
+				else:
+					tmp['Mask'] = self.train_mask.loc[row[0]]
 			observed = observed.append(tmp)
 
 		if self.is_predict:
@@ -350,6 +337,45 @@ class BaseCF(object):
 			observed = observed.append(predicted)
 		return observed
 
+	def _retrieve_predictions(self, data):
+		'''Helper function to extract predicted values
+		
+			Args:
+				data: (str) can be ['all', 'training', 'test']
+			
+			Returns:
+				actual: (np.array) true values
+				predicted:	(np.array) predicted values
+		'''
+		
+		if data not in ['all', 'training', 'test']:
+			raise ValueError("data must be ['all','training','test']")
+
+		if data is 'all':
+			if self.is_mask:
+				if self.is_mask_dilated:
+					actual = self.masked_ratings.values[self.dilated_mask]
+					predicted = self.predicted_ratings.values[self.dilated_mask]
+				else:
+					actual = self.masked_ratings.values[self.train_mask]
+					predicted = self.predicted_ratings.values[self.train_mask]
+			else:
+				actual = self.ratings.values.flatten()
+				predicted = self.predicted_ratings.values.flatten()
+		elif self.is_mask:
+			if data is 'training':
+				actual = self.masked_ratings.values[self.train_mask]
+				predicted = self.predicted_ratings.values[self.train_mask]
+			else: # test
+				actual = self.ratings.values[~self.train_mask]
+				predicted = self.predicted_ratings.values[~self.train_mask]
+				if np.all(np.isnan(actual)):
+					raise ValueError("No test data available. Use data='all' or 'training'")
+		else:
+			raise ValueError('Must run split_train_test() before using this option.')
+
+		return actual, predicted
+
 	def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
 
 		'''Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
@@ -364,15 +390,15 @@ class BaseCF(object):
 		'''
 
 		# Notes:  Could add custom filter input
+		bin_sub_rating = ~sub_rating.isnull()
 		if np.any(sub_rating.isnull()):
 			sub_rating.fillna(0, inplace=True)
-		bin_sub_rating = sub_rating>0
 		filt = np.ones(n_samples)
 		bin_sub_rating_conv = np.convolve(bin_sub_rating, filt, mode='same')
 		sub_rating_conv = np.convolve(sub_rating, filt, mode='same')
 		sub_rating_conv_mn = deepcopy(sub_rating_conv)
-		sub_rating_conv_mn[bin_sub_rating_conv>1] = (sub_rating_conv_mn[bin_sub_rating_conv>1]/
-			bin_sub_rating_conv[bin_sub_rating_conv>1])
+		sub_rating_conv_mn[bin_sub_rating_conv>=1] = (sub_rating_conv_mn[bin_sub_rating_conv>=1]/
+			bin_sub_rating_conv[bin_sub_rating_conv>=1])
 		new_mask = bin_sub_rating_conv==0
 		sub_rating_conv_mn[new_mask] = np.nan
 		return sub_rating_conv_mn
@@ -395,14 +421,14 @@ class BaseCF(object):
 		if not self.is_mask:
 			raise ValueError('Make sure cf instance has been masked.')
 
-		masked_ratings = self.ratings[self.train_mask]
-		dilated_ratings = masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x,
+		self.masked_ratings = self.ratings[self.train_mask]
+		self.masked_ratings = self.masked_ratings.apply(lambda x: self._conv_ts_mean_overlap(x,
 									n_samples=n_samples),
 									axis=1,
 									result_type='broadcast')
-		self.dilated_mask = ~dilated_ratings.isnull()
+		self.dilated_mask = ~self.masked_ratings.isnull()
 		self.is_mask_dilated = True
-		return dilated_ratings
+		return self.masked_ratings
 
 class Mean(BaseCF):
 
@@ -424,10 +450,11 @@ class Mean(BaseCF):
 		'''
 
 		if self.is_mask:
-			if dilate_ts_n_samples is None:
-				self.mean = self.ratings[self.train_mask].mean(skipna=True, axis=0)
+			if dilate_ts_n_samples is not None:
+				_ = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+				self.mean = self.masked_ratings[self.dilated_mask].mean(skipna=True, axis=0)
 			else:
-				self.mean = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples).mean(skipna=True, axis=0)
+				self.mean = self.masked_ratings[self.train_mask].mean(skipna=True, axis=0)
 		else:
 			self.mean = self.ratings.mean(skipna=True, axis=0)
 		self.is_fit = True
@@ -471,23 +498,25 @@ class KNN(BaseCF):
 
 		'''
 
+
 		if self.is_mask:
-			if dilate_ts_n_samples is None:
-				ratings = self.ratings[self.train_mask]
-			else:
-				ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+			ratings = self.ratings[self.train_mask]
 		else:
-			ratings = deepcopy(self.ratings)
+			ratings = self.ratings.copy()
+		
+		if dilate_ts_n_samples is not None:
+			ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+			ratings = ratings[self.dilated_mask]
 
 		def cosine_similarity(x,y):
 			return np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y))
 
 		if metric in ['pearson','kendall','spearman']:
-			sim = self.ratings.T.corr(method=metric)
+			sim = ratings.T.corr(method=metric)
 		elif metric in ['correlation','cosine']:
-			sim = pd.DataFrame(np.zeros((ratings.shape[0],ratings.shape[0])))
-			sim.columns=ratings.index
-			sim.index=ratings.index
+			sim = pd.DataFrame(np.zeros((ratings.shape[0], ratings.shape[0])))
+			sim.columns = ratings.index
+			sim.index = ratings.index
 			for x in ratings.iterrows():
 				for y in ratings.iterrows():
 					if metric is 'correlation':
@@ -500,30 +529,36 @@ class KNN(BaseCF):
 		self.is_fit = True
 
 	def predict(self, k=None):
-
 		''' Predict Subject's missing items using similarity based collaborative filtering.
 
 			Args:
 				ratings: pandas dataframe instance of ratings
 				k: number of closest neighbors to use
+
 			Returns:
 				predicted_rating: (pd.DataFrame instance) adds field to object instance
+
 		'''
 
 		if not self.is_fit:
 			raise ValueError('You must fit() model first before using this method.')
 
-		pred = pd.DataFrame(np.zeros(self.ratings.shape))
-		pred.columns = self.ratings.columns
-		pred.index = self.ratings.index
-		for row in self.ratings.iterrows():
+		if self.is_mask:
+			ratings = self.masked_ratings.copy()
+		else:
+			ratings = self.ratings.copy()
+
+		pred = pd.DataFrame(np.zeros(ratings.shape))
+		pred.columns = ratings.columns
+		pred.index = ratings.index
+		for row in ratings.iterrows():
 			if k is not None:
 				top_subjects = self.subject_similarity.loc[row[0]].drop(row[0]).sort_values(ascending=False)[0:k]
 			else:
 				top_subjects = self.subject_similarity.loc[row[0]].drop(row[0]).sort_values(ascending=False)
 			top_subjects = top_subjects[~top_subjects.isnull()] # remove nan subjects
-			for col in self.ratings.iteritems():
-				pred.loc[row[0],col[0]] = np.dot(top_subjects,self.ratings.loc[top_subjects.index,col[0]].T)/len(top_subjects)
+			for col in ratings.iteritems():
+				pred.loc[row[0],col[0]] = np.dot(top_subjects, self.ratings.loc[top_subjects.index,col[0]].T)/len(top_subjects)
 		self.predicted_ratings = pred
 		self.is_predict = True
 
@@ -578,7 +613,6 @@ class NNMF_multiplicative(BaseCF):
 			if dilate_ts_n_samples is not None:
 				masked_X = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples).values
 				mask = self.dilated_mask.values
-
 			else:
 				mask = self.train_mask.values
 				masked_X = self.ratings.values * mask
@@ -674,21 +708,21 @@ class NNMF_sgd(BaseCF):
 			n_factors = n_items
 			
 		if dilate_ts_n_samples is not None:
-			ratings = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
+			self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
 
 		if self.is_mask:
 			if self.is_mask_dilated:
-				ratings = self.ratings[self.dilated_mask]
+				ratings = self.masked_ratings[self.dilated_mask]
 				sample_row, sample_col = self.dilated_mask.values.nonzero()
-				self.global_bias = self.ratings[self.dilated_mask].mean().mean()
+				self.global_bias = ratings[self.dilated_mask].mean().mean()
 			else:
-				ratings = self.ratings[self.train_mask]
+				ratings = self.masked_ratings[self.train_mask]
 				sample_row, sample_col = self.train_mask.values.nonzero()
-				self.global_bias = self.ratings[self.train_mask].mean().mean()
+				self.global_bias = ratings[self.train_mask].mean().mean()
 		else:
 			ratings = self.ratings.copy()
-			sample_row, sample_col = zip(*np.argwhere(~np.isnan(self.ratings.values)))
-			self.global_bias = self.ratings.values[~np.isnan(self.ratings.values)].mean()
+			sample_row, sample_col = zip(*np.argwhere(~np.isnan(ratings.values)))
+			self.global_bias = ratings.values[~np.isnan(ratings.values)].mean()
 
 		# initialize latent vectors
 		self.user_vecs = np.random.normal(scale=1./n_factors, size=(n_users, n_factors))

@@ -3,6 +3,7 @@ import pandas as pd
 from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
 from emotioncf.data import create_sub_by_item_matrix
 import matplotlib
+import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
 
 def simulate_data(data_type = 'data_long'):
@@ -41,8 +42,8 @@ def basecf_method_test(cf=None, data=None):
     assert isinstance(sub_mse, np.ndarray)
     assert len(sub_mse) == cf.ratings.shape[0]
     assert mse > 0
-    assert r > (-0.1)
-    assert np.mean(sub_r) > (-0.1)
+    assert r > 0
+    assert np.mean(sub_r) > 0
     print(data)
     print(('mse: %s') % mse)
     print(('r: %s') % r)
@@ -58,10 +59,11 @@ def basecf_method_test(cf=None, data=None):
     if cf.is_mask:
         assert 'Mask' in df.columns
     cf.plot_predictions(data=data)
+    plt.close()
 
 def basecf_method_all_tests(cf=None):
     basecf_method_test(cf=cf, data='all')
-    basecf_method_test(cf=cf, data='train')
+    basecf_method_test(cf=cf, data='training')
     basecf_method_test(cf=cf, data='test')
 
 def test_create_sub_by_item_matrix():
@@ -85,9 +87,8 @@ def test_cf_mean():
 
 def test_cf_knn():
     cf = KNN(simulate_data(data_type='data_wide'))
-    cf.fit(metric='correlation')
+    cf.fit(metric='pearson')
     cf.predict()
-
     cf.split_train_test(n_train_items=50)
     cf.fit()
     cf.predict()
@@ -95,39 +96,23 @@ def test_cf_knn():
 
     cf.fit(metric='correlation')
     cf.predict(k=10)
-    basecf_method_test(cf=cf, data='all')
-
-    cf.fit()
-    cf.predict(k=10)
-    basecf_method_all_tests(cf=cf)
-
-    cf.fit(dilate_ts_n_samples=2, metric='correlation')
-    cf.predict()
     basecf_method_all_tests(cf=cf)
 
     cf.fit(metric='cosine')
     cf.predict(k=10)
-    basecf_method_test(cf=cf, data='all')
-
-    cf.fit()
-    cf.predict(k=10)
-    basecf_method_all_tests(cf=cf)
-
-    cf.fit(dilate_ts_n_samples=2, metric='cosine')
-    cf.predict()
     basecf_method_all_tests(cf=cf)
 
 def test_cf_knn_dil():
     cf = KNN(simulate_data(data_type='data_wide'))
     cf.split_train_test(n_train_items=20)
+    cf.fit(dilate_ts_n_samples=2, metric='pearson')
+    cf.predict()
+    basecf_method_all_tests(cf=cf)
+
     cf.fit(dilate_ts_n_samples=2, metric='correlation')
     cf.predict()
     basecf_method_all_tests(cf=cf)
-
-    cf.fit(dilate_ts_n_samples=2, metric='cosine')
-    cf.predict()
-    basecf_method_all_tests(cf=cf)
-
+    
 def test_cf_nnmf_multiplicative():
     cf = NNMF_multiplicative(simulate_data(data_type='data_wide'))
     cf.fit()
