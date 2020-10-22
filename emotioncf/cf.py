@@ -40,13 +40,13 @@ class BaseCF(object):
         return "%s(rating=%s)" % (self.__class__.__name__, self.ratings.shape)
 
     def get_mse(self, data="all"):
-        """ Get overall mean squared error for predicted compared to actual for all items and subjects.
-            
-            Args:
-                data: (str) Get mse on 'all' data, the 'training' data, or the 'test' data
+        """Get overall mean squared error for predicted compared to actual for all items and subjects.
 
-            Returns:
-                mse: (float) mean squared error
+        Args:
+            data: (str) Get mse on 'all' data, the 'training' data, or the 'test' data
+
+        Returns:
+            mse: (float) mean squared error
 
         """
 
@@ -61,12 +61,12 @@ class BaseCF(object):
 
     def get_corr(self, data="all"):
         """Get overall correlation for predicted compared to actual for all items and subjects.
-            
-            Args:
-                data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
 
-            Returns:
-                r: (float) Correlation
+        Args:
+            data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
+
+        Returns:
+            r: (float) Correlation
         """
 
         if not self.is_fit:
@@ -82,11 +82,11 @@ class BaseCF(object):
     def get_sub_corr(self, data="all"):
         """Calculate observed/predicted correlation for each subject in matrix
 
-            Args:
-                data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
+        Args:
+            data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
 
-            Returns:
-                r: (float) Correlation
+        Returns:
+            r: (float) Correlation
 
         """
 
@@ -160,11 +160,11 @@ class BaseCF(object):
     def get_sub_mse(self, data="all"):
         """Calculate observed/predicted mse for each subject in matrix
 
-            Args:
-                data: (str) Get mse on 'all' data, the 'training' data, or the 'test' data
+        Args:
+            data: (str) Get mse on 'all' data, the 'training' data, or the 'test' data
 
-            Returns:
-                mse: (float) mean squared error
+        Returns:
+            mse: (float) mean squared error
 
         """
 
@@ -235,7 +235,7 @@ class BaseCF(object):
         return np.array(mse)
 
     def split_train_test(self, n_train_items=20):
-        """ Split ratings matrix into train and test items.  mask indicating training items
+        """Split ratings matrix into train and test items.  mask indicating training items
 
         Args:
             n_train_items: (int) number of items for test dictionary or list of specific items
@@ -256,13 +256,13 @@ class BaseCF(object):
         self.is_mask = True
 
     def plot_predictions(self, data="training", heatmapkwargs={}):
-        """ Create plot of actual and predicted ratings
+        """Create plot of actual and predicted ratings
 
-            Args:
-                data: (str) plot 'all' data, the 'training' data, or the 'test' data
+        Args:
+            data: (str) plot 'all' data, the 'training' data, or the 'test' data
 
-            Returns:
-                r: (float) Correlation
+        Returns:
+            r: (float) Correlation
 
         """
 
@@ -325,12 +325,12 @@ class BaseCF(object):
 
     def downsample(self, sampling_freq=None, target=None, target_type="samples"):
 
-        """ Downsample rating matrix to a new target frequency or number of samples using averaging.
+        """Downsample rating matrix to a new target frequency or number of samples using averaging.
 
-            Args:
-                sampling_freq:  Sampling frequency of data
-                target: downsampling target
-                target_type: type of target can be [samples,seconds,hz]
+        Args:
+            sampling_freq:  Sampling frequency of data
+            target: downsampling target
+            target_type: type of target can be [samples,seconds,hz]
 
         """
 
@@ -441,13 +441,13 @@ class BaseCF(object):
 
     def _retrieve_predictions(self, data):
         """Helper function to extract predicted values
-        
-            Args:
-                data: (str) can be ['all', 'training', 'test']
-            
-            Returns:
-                actual: (np.array) true values
-                predicted:	(np.array) predicted values
+
+        Args:
+            data: (str) can be ['all', 'training', 'test']
+
+        Returns:
+            actual: (np.array) true values
+            predicted: (np.array) predicted values
         """
 
         if data not in ["all", "training", "test"]:
@@ -484,12 +484,12 @@ class BaseCF(object):
 
         """Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
 
-            Args:
-                sub_rating: vector of ratings for subject
-                n_samples:  number of samples to dilate each rating
+        Args:
+            sub_rating: vector of ratings for subject
+            n_samples:  number of samples to dilate each rating
 
-            Returns:
-                sub_rating_conv_mn: subject rating vector with each rating dilated n_samples (centered) with mean of overlapping
+        Returns:
+            sub_rating_conv_mn: subject rating vector with each rating dilated n_samples (centered) with mean of overlapping
 
         """
 
@@ -511,14 +511,14 @@ class BaseCF(object):
 
     def _dilate_ts_rating_samples(self, n_samples=None):
 
-        """ Helper function to dilate sparse time-series ratings by n_samples.
-            Overlapping ratings will be averaged. Will update mask with new values.
+        """Helper function to dilate sparse time-series ratings by n_samples.
+        Overlapping ratings will be averaged. Will update mask with new values.
 
-            Args:
-                n_samples:  Number of samples to dilate ratings
+        Args:
+            n_samples:  Number of samples to dilate ratings
 
-            Returns:
-                masked_ratings: pandas ratings instance that has been dilated by n_samples
+        Returns:
+            masked_ratings: pandas ratings instance that has been dilated by n_samples
         """
 
         if n_samples is None:
@@ -548,7 +548,7 @@ class Mean(BaseCF):
 
     def fit(self, dilate_ts_n_samples=None):
 
-        """ Fit collaborative model to training data.  Calculate similarity between subjects across items
+        """Fit collaborative model to training data.  Calculate similarity between subjects across items
 
         Args:
             metric: type of similarity {"correlation","cosine"}
@@ -573,13 +573,13 @@ class Mean(BaseCF):
 
     def predict(self):
 
-        """ Predict missing items using other subject's item means.
+        """Predict missing items using other subject's item means.
 
-            Args:
-                k: number of closest neighbors to use
+        Args:
+            k: number of closest neighbors to use
 
-            Returns:
-                predicted_rating: (pd.DataFrame instance) adds field to object instance
+        Returns:
+            predicted_rating: (pd.DataFrame instance) adds field to object instance
 
         """
 
@@ -602,7 +602,7 @@ class KNN(BaseCF):
 
     def fit(self, metric="pearson", dilate_ts_n_samples=None):
 
-        """ Fit collaborative model to training data.  Calculate similarity between subjects across items
+        """Fit collaborative model to training data.  Calculate similarity between subjects across items
 
         Args:
             metric: type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
@@ -650,14 +650,14 @@ class KNN(BaseCF):
         self.is_fit = True
 
     def predict(self, k=None):
-        """ Predict Subject's missing items using similarity based collaborative filtering.
+        """Predict Subject's missing items using similarity based collaborative filtering.
 
-            Args:
-                ratings: pandas dataframe instance of ratings
-                k: number of closest neighbors to use
+        Args:
+            ratings: pandas dataframe instance of ratings
+            k: number of closest neighbors to use
 
-            Returns:
-                predicted_rating: (pd.DataFrame instance) adds field to object instance
+        Returns:
+            predicted_rating: (pd.DataFrame instance) adds field to object instance
 
         """
 
@@ -695,11 +695,11 @@ class KNN(BaseCF):
 
 
 class NNMF_multiplicative(BaseCF):
-    """ Train non negative matrix factorization model using multiplicative updates.
-        Allows masking to only learn the training weights.
+    """Train non negative matrix factorization model using multiplicative updates.
+    Allows masking to only learn the training weights.
 
-        Based on http://stackoverflow.com/questions/22767695/
-        python-non-negative-matrix-factorization-that-handles-both-zeros-and-missing-dat
+    Based on http://stackoverflow.com/questions/22767695/
+    python-non-negative-matrix-factorization-that-handles-both-zeros-and-missing-dat
 
     """
 
@@ -718,7 +718,7 @@ class NNMF_multiplicative(BaseCF):
         dilate_ts_n_samples=None,
     ):
 
-        """ Fit NNMF collaborative filtering model to training data using multiplicative updating.
+        """Fit NNMF collaborative filtering model to training data using multiplicative updating.
 
         Args:
             n_factors (int): Number of factors or components
@@ -790,13 +790,13 @@ class NNMF_multiplicative(BaseCF):
 
     def predict(self):
 
-        """ Predict Subject's missing items using NNMF with multiplicative updating
+        """Predict Subject's missing items using NNMF with multiplicative updating
 
-            Args:
-                ratings: pandas dataframe instance of ratings
-                k: number of closest neighbors to use
-            Returns:
-                predicted_rating: (pd.DataFrame instance) adds field to object instance
+        Args:
+            ratings: pandas dataframe instance of ratings
+            k: number of closest neighbors to use
+        Returns:
+            predicted_rating: (pd.DataFrame instance) adds field to object instance
         """
 
         if not self.is_fit:
@@ -808,12 +808,12 @@ class NNMF_multiplicative(BaseCF):
 
 
 class NNMF_sgd(BaseCF):
-    """ Train non negative matrix factorization model using stochastic gradient descent.
-        Allows masking to only learn the training weights.
+    """Train non negative matrix factorization model using stochastic gradient descent.
+    Allows masking to only learn the training weights.
 
-        This code is based off of Ethan Rosenthal's excellent tutorial
-        on collaborative filtering https://blog.insightdatascience.com/
-        explicit-matrix-factorization-als-sgd-and-all-that-jazz-b00e4d9b21ea#.kkr7mzvr2
+    This code is based off of Ethan Rosenthal's excellent tutorial
+    on collaborative filtering https://blog.insightdatascience.com/
+    explicit-matrix-factorization-als-sgd-and-all-that-jazz-b00e4d9b21ea#.kkr7mzvr2
 
     """
 
@@ -833,7 +833,7 @@ class NNMF_sgd(BaseCF):
         dilate_ts_n_samples=None,
     ):
 
-        """ Fit NNMF collaborative filtering model to training data using stochastic gradient descent.
+        """Fit NNMF collaborative filtering model to training data using stochastic gradient descent.
 
         Args:
             n_factors (int): Number of factors or components
@@ -920,13 +920,13 @@ class NNMF_sgd(BaseCF):
 
     def predict(self):
 
-        """ Predict Subject's missing items using NNMF with stochastic gradient descent
+        """Predict Subject's missing items using NNMF with stochastic gradient descent
 
-            Args:
-                ratings: pandas dataframe instance of ratings
-                k: number of closest neighbors to use
-            Returns:
-                predicted_rating: (pd.DataFrame instance) adds field to object instance
+        Args:
+            ratings: pandas dataframe instance of ratings
+            k: number of closest neighbors to use
+        Returns:
+            predicted_rating: (pd.DataFrame instance) adds field to object instance
         """
         self.predicted_ratings = self.ratings.copy()
         for u in range(self.user_vecs.shape[0]):
