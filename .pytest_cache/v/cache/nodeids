@@ -1,9 +1,0 @@
-[
-  "emotioncf/tests/test_core.py::test_create_sub_by_item_matrix",
-  "emotioncf/tests/test_core.py::test_cf_mean",
-  "emotioncf/tests/test_core.py::test_cf_knn",
-  "emotioncf/tests/test_core.py::test_cf_knn_dil",
-  "emotioncf/tests/test_core.py::test_cf_nnmf_multiplicative",
-  "emotioncf/tests/test_core.py::test_cf_nnmf_sgd",
-  "emotioncf/tests/test_core.py::test_downsample"
-]
