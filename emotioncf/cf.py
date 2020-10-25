@@ -1,3 +1,8 @@
+"""
+Classes that perform various types of collaborative filtering
+
+"""
+
 from __future__ import division
 import pandas as pd
 import numpy as np
@@ -43,10 +48,10 @@ class BaseCF(object):
         """Get overall mean squared error for predicted compared to actual for all items and subjects.
 
         Args:
-            data: (str) Get mse on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get mse on 'all' data, the 'training' data, or the 'test' data
 
         Returns:
-            mse: (float) mean squared error
+            mse (float): mean squared error
 
         """
 
@@ -63,10 +68,10 @@ class BaseCF(object):
         """Get overall correlation for predicted compared to actual for all items and subjects.
 
         Args:
-            data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get correlation on 'all' data, the 'training' data, or the 'test' data
 
         Returns:
-            r: (float) Correlation
+            r (float): Correlation
         """
 
         if not self.is_fit:
@@ -83,10 +88,10 @@ class BaseCF(object):
         """Calculate observed/predicted correlation for each subject in matrix
 
         Args:
-            data: (str) Get correlation on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get correlation on 'all' data, the 'training' data, or the 'test' data
 
         Returns:
-            r: (float) Correlation
+            r (float): Correlation
 
         """
 
@@ -161,10 +166,10 @@ class BaseCF(object):
         """Calculate observed/predicted mse for each subject in matrix
 
         Args:
-            data: (str) Get mse on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get mse on 'all' data, the 'training' data, or the 'test' data
 
         Returns:
-            mse: (float) mean squared error
+            mse (float): mean squared error
 
         """
 
@@ -238,7 +243,7 @@ class BaseCF(object):
         """Split ratings matrix into train and test items.  mask indicating training items
 
         Args:
-            n_train_items: (int) number of items for test dictionary or list of specific items
+            n_train_items (int): number of items for test dictionary or list of specific items
 
         """
 
@@ -259,10 +264,10 @@ class BaseCF(object):
         """Create plot of actual and predicted ratings
 
         Args:
-            data: (str) plot 'all' data, the 'training' data, or the 'test' data
+            data (str): plot 'all' data, the 'training' data, or the 'test' data
 
         Returns:
-            r: (float) Correlation
+            r (float): Correlation
 
         """
 
@@ -328,9 +333,9 @@ class BaseCF(object):
         """Downsample rating matrix to a new target frequency or number of samples using averaging.
 
         Args:
-            sampling_freq:  Sampling frequency of data
-            target: downsampling target
-            target_type: type of target can be [samples,seconds,hz]
+            sampling_freq (int/float):  Sampling frequency of data
+            target (int/float): downsampling target
+            target_type (str): type of target can be [samples,seconds,hz]
 
         """
 
@@ -443,11 +448,11 @@ class BaseCF(object):
         """Helper function to extract predicted values
 
         Args:
-            data: (str) can be ['all', 'training', 'test']
+            data (str): can be ['all', 'training', 'test']
 
         Returns:
-            actual: (np.array) true values
-            predicted: (np.array) predicted values
+            actual (array): true values
+            predicted (array): predicted values
         """
 
         if data not in ["all", "training", "test"]:
@@ -485,11 +490,11 @@ class BaseCF(object):
         """Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
 
         Args:
-            sub_rating: vector of ratings for subject
-            n_samples:  number of samples to dilate each rating
+            sub_rating (array): vector of ratings for subject
+            n_samples (int):  number of samples to dilate each rating
 
         Returns:
-            sub_rating_conv_mn: subject rating vector with each rating dilated n_samples (centered) with mean of overlapping
+            sub_rating_conv_mn (array): subject rating vector with each rating dilated n_samples (centered) with mean of overlapping
 
         """
 
@@ -515,10 +520,10 @@ class BaseCF(object):
         Overlapping ratings will be averaged. Will update mask with new values.
 
         Args:
-            n_samples:  Number of samples to dilate ratings
+            n_samples (int):  Number of samples to dilate ratings
 
         Returns:
-            masked_ratings: pandas ratings instance that has been dilated by n_samples
+            masked_ratings (Dataframe): pandas ratings instance that has been dilated by n_samples
         """
 
         if n_samples is None:
@@ -551,9 +556,8 @@ class Mean(BaseCF):
         """Fit collaborative model to training data.  Calculate similarity between subjects across items
 
         Args:
-            metric: type of similarity {"correlation","cosine"}
-            dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation
-                                in estimating time-series ratings
+            metric (str): type of similarity {"correlation","cosine"}
+            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series ratings
 
         """
 
@@ -576,10 +580,10 @@ class Mean(BaseCF):
         """Predict missing items using other subject's item means.
 
         Args:
-            k: number of closest neighbors to use
+            k (int): number of closest neighbors to use
 
         Returns:
-            predicted_rating: (pd.DataFrame instance) adds field to object instance
+            predicted_rating (Dataframe): adds field to object instance
 
         """
 
@@ -605,10 +609,7 @@ class KNN(BaseCF):
         """Fit collaborative model to training data.  Calculate similarity between subjects across items
 
         Args:
-            metric: type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
-            dilate_ts_n_samples: will dilate masked samples by n_samples to leverage auto-correlation
-                                in estimating time-series ratings
-
+            metric (str): type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
         """
 
         if self.is_mask:
@@ -653,11 +654,10 @@ class KNN(BaseCF):
         """Predict Subject's missing items using similarity based collaborative filtering.
 
         Args:
-            ratings: pandas dataframe instance of ratings
-            k: number of closest neighbors to use
+            k (int): number of closest neighbors to use
 
         Returns:
-            predicted_rating: (pd.DataFrame instance) adds field to object instance
+            predicted_rating (Dataframe): adds field to object instance
 
         """
 
@@ -726,8 +726,7 @@ class NNMF_multiplicative(BaseCF):
             error_limit (float): error tolerance (default=1e-6)
             fit_error_limit (float): fit error tolerance (default=1e-6)
             verbose (bool): verbose output during fitting procedure (default=True)
-            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation
-                                        in estimating time-series ratings
+            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series ratings
 
         """
 
@@ -793,10 +792,10 @@ class NNMF_multiplicative(BaseCF):
         """Predict Subject's missing items using NNMF with multiplicative updating
 
         Args:
-            ratings: pandas dataframe instance of ratings
-            k: number of closest neighbors to use
+            ratings (Dataframe): pandas dataframe instance of ratings
+            k (int): number of closest neighbors to use
         Returns:
-            predicted_rating: (pd.DataFrame instance) adds field to object instance
+            predicted_rating (Dataframe): adds field to object instance
         """
 
         if not self.is_fit:
@@ -841,8 +840,7 @@ class NNMF_sgd(BaseCF):
             error_limit (float): error tolerance (default=1e-6)
             fit_error_limit (float): fit error tolerance (default=1e-6)
             verbose (bool): verbose output during fitting procedure (default=True)
-            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation
-                                        in estimating time-series ratings
+            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series ratings
 
         """
 
@@ -923,11 +921,12 @@ class NNMF_sgd(BaseCF):
         """Predict Subject's missing items using NNMF with stochastic gradient descent
 
         Args:
-            ratings: pandas dataframe instance of ratings
-            k: number of closest neighbors to use
+            ratings (Dataframe): pandas dataframe instance of ratings
+            k (int): number of closest neighbors to use
         Returns:
-            predicted_rating: (pd.DataFrame instance) adds field to object instance
+            predicted_rating (Dataframe): adds field to object instance
         """
+
         self.predicted_ratings = self.ratings.copy()
         for u in range(self.user_vecs.shape[0]):
             for i in range(self.item_vecs.shape[0]):

@@ -1,3 +1,7 @@
+"""
+Functions that perform various data transformations
+
+"""
 import pandas as pd
 
 __all__ = ["create_sub_by_item_matrix"]
@@ -11,7 +15,7 @@ def create_sub_by_item_matrix(df):
     """Convert a pandas long data frame of a single rating into a subject by item matrix
 
     Args:
-        df: pandas dataframe instance.  Must have column names ['Subject','Item','Rating]
+        df (Dataframe): input dataframe. Must have columns ["Subject", "Item", "Rating"]
 
     """
 
