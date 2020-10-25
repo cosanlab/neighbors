@@ -243,6 +243,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#formatting" class="md-nav__link">
+    Formatting
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation" class="md-nav__link">
     Documentation
   </a>
@@ -364,6 +371,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#formatting" class="md-nav__link">
+    Formatting
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation" class="md-nav__link">
     Documentation
   </a>
@@ -413,6 +427,19 @@
 <p><code>pip install -r requirements-dev.txt</code></p>
 <h2 id="testing">Testing</h2>
 <p>To run tests just call <code>pytest</code> from the root of this repository. New tests can be added in <code>emotioncf/tests/</code>.</p>
+<h2 id="formatting">Formatting</h2>
+<p>Please format your code using black. If you've installed the development dependencies, then you can configure <code>git</code> to tell if you any new changes are not formatted by setting up a <strong>pre-commit hook:</strong>  </p>
+<ul>
+<li><code>cd .git/hooks</code></li>
+<li>
+<p>Create a new file called <code>pre-commit</code> with the following contents:</p>
+<p><div class="highlight"><pre><span></span><code>#!/bin/sh
+black --check .
+</code></pre></div>
+- Make sure the file is executable <code>chmod 775 pre-commit</code></p>
+</li>
+</ul>
+<p>Now anytime you try to commit new changes, git will automatically run black before the commit and warn you if certain files need to be formatted.</p>
 <h2 id="documentation">Documentation</h2>
 <p>Documentation is built with <a href="https://www.mkdocs.org/">mkdocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs material theme</a> and <a href="https://pawamoy.github.io/mkdocstrings/">mkdocstrings</a> extension. </p>
 <h3 id="live-server">Live server</h3>
