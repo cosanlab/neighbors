@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 matplotlib.use("TkAgg")
 
-
+# TODO: Look into cleaning tests and using pytest fixtures
 def simulate_data(data_type="data_long"):
     i = 100
     s = 50
@@ -67,7 +67,7 @@ def basecf_method_test(cf=None, data=None):
 
 def basecf_method_all_tests(cf=None):
     basecf_method_test(cf=cf, data="all")
-    basecf_method_test(cf=cf, data="training")
+    basecf_method_test(cf=cf, data="train")
     basecf_method_test(cf=cf, data="test")
 
 

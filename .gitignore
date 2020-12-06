@@ -92,3 +92,7 @@ ENV/
 
 # Locally build mkdocs site
 site/
+
+# Conda environment
+environment.yml
+environment-lock.yml

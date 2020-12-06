@@ -19,6 +19,17 @@ class BaseCF(object):
     """ Base Collaborative Filtering Class """
 
     def __init__(self, ratings, mask=None, n_train_items=None):
+        """
+        Initialize a base collaborative filtering model
+
+        Args:
+            ratings (pd.DataFrame): users x items dataframe
+            mask ([type], optional): [description]. Defaults to None.
+            n_train_items ([type], optional): [description]. Defaults to None.
+
+        Raises:
+            ValueError: [description]
+        """
         if not isinstance(ratings, pd.DataFrame):
             raise ValueError("ratings must be a pandas dataframe instance")
         self.ratings = ratings
@@ -48,7 +59,7 @@ class BaseCF(object):
         """Get overall mean squared error for predicted compared to actual for all items and subjects.
 
         Args:
-            data (str): Get mse on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get mse on 'all' data, the 'train' data, or the 'test' data
 
         Returns:
             mse (float): mean squared error
@@ -68,7 +79,7 @@ class BaseCF(object):
         """Get overall correlation for predicted compared to actual for all items and subjects.
 
         Args:
-            data (str): Get correlation on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get correlation on 'all' data, the 'train' data, or the 'test' data
 
         Returns:
             r (float): Correlation
@@ -88,7 +99,7 @@ class BaseCF(object):
         """Calculate observed/predicted correlation for each subject in matrix
 
         Args:
-            data (str): Get correlation on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get correlation on 'all' data, the 'train' data, or the 'test' data
 
         Returns:
             r (float): Correlation
@@ -115,7 +126,7 @@ class BaseCF(object):
                     )[0]
                 )
         elif self.is_mask:
-            if data == "training":
+            if data == "train":
                 noNanMask = (~np.isnan(self.masked_ratings)) & (
                     ~np.isnan(self.predicted_ratings)
                 )
@@ -166,7 +177,7 @@ class BaseCF(object):
         """Calculate observed/predicted mse for each subject in matrix
 
         Args:
-            data (str): Get mse on 'all' data, the 'training' data, or the 'test' data
+            data (str): Get mse on 'all' data, the 'train' data, or the 'test' data
 
         Returns:
             mse (float): mean squared error
@@ -193,7 +204,7 @@ class BaseCF(object):
                     )
                 )
         elif self.is_mask:
-            if data == "training":
+            if data == "train":
                 if self.is_mask_dilated:
                     for i in self.masked_ratings.index:
                         actual = self.masked_ratings.loc[i, self.dilated_mask.loc[i, :]]
@@ -239,32 +250,37 @@ class BaseCF(object):
             raise ValueError("Must run split_train_test() before using this option.")
         return np.array(mse)
 
-    def split_train_test(self, n_train_items=20):
-        """Split ratings matrix into train and test items.  mask indicating training items
+    def split_train_test(self, n_train_items=0.1):
+        """
+        Split data into training and testing sets
 
         Args:
-            n_train_items (int): number of items for test dictionary or list of specific items
-
+            n_train_items (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default .1 (10% of the data)
         """
 
-        self.n_train_items = int(n_train_items)
+        if isinstance(n_train_items, float) and 1 >= n_train_items > 0:
+            self.n_train_items = int(np.round(self.ratings.shape[1] * n_train_items))
+
+        elif isinstance(n_train_items, int):
+            self.n_train_items = n_train_items
+
         self.train_mask = self.ratings.copy()
         self.train_mask.loc[:, :] = np.zeros(self.ratings.shape).astype(bool)
 
         for sub in self.ratings.index:
             sub_train_rating_item = np.random.choice(
-                self.ratings.columns, replace=False, size=n_train_items
+                self.ratings.columns, replace=False, size=self.n_train_items
             )
             self.train_mask.loc[sub, sub_train_rating_item] = True
 
         self.masked_ratings = self.ratings[self.train_mask]
         self.is_mask = True
 
-    def plot_predictions(self, data="training", heatmapkwargs={}):
+    def plot_predictions(self, data="train", heatmapkwargs={}):
         """Create plot of actual and predicted ratings
 
         Args:
-            data (str): plot 'all' data, the 'training' data, or the 'test' data
+            data (str): plot 'all' data, the 'train' data, or the 'test' data
 
         Returns:
             r (float): Correlation
@@ -448,15 +464,15 @@ class BaseCF(object):
         """Helper function to extract predicted values
 
         Args:
-            data (str): can be ['all', 'training', 'test']
+            data (str): can be ['all', 'train', 'test']
 
         Returns:
             actual (array): true values
             predicted (array): predicted values
         """
 
-        if data not in ["all", "training", "test"]:
-            raise ValueError("data must be ['all','training','test']")
+        if data not in ["all", "train", "test"]:
+            raise ValueError("data must be ['all','train','test']")
 
         if data == "all":
             if self.is_mask:
@@ -470,7 +486,7 @@ class BaseCF(object):
                 actual = self.ratings.values.flatten()
                 predicted = self.predicted_ratings.values.flatten()
         elif self.is_mask:
-            if data == "training":
+            if data == "train":
                 actual = self.masked_ratings.values[self.train_mask]
                 predicted = self.predicted_ratings.values[self.train_mask]
             else:  # test
@@ -478,7 +494,7 @@ class BaseCF(object):
                 predicted = self.predicted_ratings.values[~self.train_mask]
                 if np.all(np.isnan(actual)):
                     raise ValueError(
-                        "No test data available. Use data='all' or 'training'"
+                        "No test data available. Use data='all' or 'train'"
                     )
         else:
             raise ValueError("Must run split_train_test() before using this option.")
@@ -551,9 +567,9 @@ class Mean(BaseCF):
         super(Mean, self).__init__(ratings, mask, n_train_items)
         self.mean = None
 
-    def fit(self, dilate_ts_n_samples=None):
+    def fit(self, dilate_ts_n_samples=None, **kwargs):
 
-        """Fit collaborative model to training data.  Calculate similarity between subjects across items
+        """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
         Args:
             metric (str): type of similarity {"correlation","cosine"}
@@ -575,7 +591,7 @@ class Mean(BaseCF):
             self.mean = self.ratings.mean(skipna=True, axis=0)
         self.is_fit = True
 
-    def predict(self):
+    def predict(self, **kwargs):
 
         """Predict missing items using other subject's item means.
 
@@ -601,12 +617,12 @@ class KNN(BaseCF):
     """ K-Nearest Neighbors CF algorithm"""
 
     def __init__(self, ratings, mask=None, n_train_items=None):
-        super(KNN, self).__init__(ratings, mask, n_train_items)
+        super().__init__(ratings, mask, n_train_items)
         self.subject_similarity = None
 
-    def fit(self, metric="pearson", dilate_ts_n_samples=None):
+    def fit(self, metric="pearson", dilate_ts_n_samples=None, **kwargs):
 
-        """Fit collaborative model to training data.  Calculate similarity between subjects across items
+        """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
         Args:
             metric (str): type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
@@ -650,7 +666,7 @@ class KNN(BaseCF):
         self.subject_similarity = sim
         self.is_fit = True
 
-    def predict(self, k=None):
+    def predict(self, k=None, **kwargs):
         """Predict Subject's missing items using similarity based collaborative filtering.
 
         Args:
@@ -696,7 +712,7 @@ class KNN(BaseCF):
 
 class NNMF_multiplicative(BaseCF):
     """Train non negative matrix factorization model using multiplicative updates.
-    Allows masking to only learn the training weights.
+    Allows masking to only learn the train weights.
 
     Based on http://stackoverflow.com/questions/22767695/
     python-non-negative-matrix-factorization-that-handles-both-zeros-and-missing-dat
@@ -716,9 +732,10 @@ class NNMF_multiplicative(BaseCF):
         fit_error_limit=1e-6,
         verbose=False,
         dilate_ts_n_samples=None,
+        **kwargs,
     ):
 
-        """Fit NNMF collaborative filtering model to training data using multiplicative updating.
+        """Fit NNMF collaborative filtering model to train data using multiplicative updating.
 
         Args:
             n_factors (int): Number of factors or components
@@ -787,7 +804,7 @@ class NNMF_multiplicative(BaseCF):
             ctr += 1
         self.is_fit = True
 
-    def predict(self):
+    def predict(self, **kwargs):
 
         """Predict Subject's missing items using NNMF with multiplicative updating
 
@@ -806,9 +823,14 @@ class NNMF_multiplicative(BaseCF):
         self.is_predict = True
 
 
+# TODO: add stopping criteria as argument
+# TODO: see if we can easily pass hyperparams skleanr grid-search
+# TODO: see if we can manage sparse arrays and swap out pandas for numpy
+# TODO: see if we can use a real sgd optimizer
+# TODO: fix but when training size is really small, probably related to no variance in correlating predictions with actual
 class NNMF_sgd(BaseCF):
     """Train non negative matrix factorization model using stochastic gradient descent.
-    Allows masking to only learn the training weights.
+    Allows masking to only learn the train weights.
 
     This code is based off of Ethan Rosenthal's excellent tutorial
     on collaborative filtering https://blog.insightdatascience.com/
@@ -830,9 +852,10 @@ class NNMF_sgd(BaseCF):
         n_iterations=10,
         verbose=False,
         dilate_ts_n_samples=None,
+        **kwargs,
     ):
 
-        """Fit NNMF collaborative filtering model to training data using stochastic gradient descent.
+        """Fit NNMF collaborative filtering model to train data using stochastic gradient descent.
 
         Args:
             n_factors (int): Number of factors or components
@@ -896,6 +919,7 @@ class NNMF_sgd(BaseCF):
                 i = sample_col[idx]
                 prediction = self._predict_single(u, i)
 
+                # Use changes in e to determine tolerance
                 e = ratings.iloc[u, i] - prediction  # error
 
                 # Update biases
@@ -916,7 +940,7 @@ class NNMF_sgd(BaseCF):
             ctr += 1
         self.is_fit = True
 
-    def predict(self):
+    def predict(self, **kwargs):
 
         """Predict Subject's missing items using NNMF with stochastic gradient descent
 
