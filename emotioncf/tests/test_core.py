@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from emotioncf.cf import Mean, KNN, NNMF_multiplicative, NNMF_sgd
+from emotioncf.cf import Mean, KNN, NNMF_mult, NNMF_sgd
 from emotioncf.data import create_sub_by_item_matrix
 import matplotlib
 import matplotlib.pyplot as plt
@@ -9,6 +9,7 @@ matplotlib.use("TkAgg")
 
 # TODO: Look into cleaning tests and using pytest fixtures
 def simulate_data(data_type="data_long"):
+    np.random.seed(0)
     i = 100
     s = 50
     rat = np.random.rand(s, i) * 50
@@ -31,23 +32,23 @@ def simulate_data(data_type="data_long"):
         return rat
 
 
-def basecf_method_test(cf=None, data=None):
+def basecf_method_test(cf=None, dataset=None):
     assert cf.train_mask.shape == (50, 100)
-    assert cf.predicted_ratings.shape == (50, 100)
-    mse = cf.get_mse(data=data)
-    r = cf.get_corr(data=data)
-    sub_r = cf.get_sub_corr(data=data)
-    sub_mse = cf.get_sub_mse(data=data)
+    assert cf.predictions.shape == (50, 100)
+    mse = cf.get_mse(dataset=dataset)
+    r = cf.get_corr(dataset=dataset)
+    sub_r = cf.get_sub_corr(dataset=dataset)
+    sub_mse = cf.get_sub_mse(dataset=dataset)
     assert isinstance(mse, float)
     assert isinstance(r, float)
     assert isinstance(sub_r, np.ndarray)
-    assert len(sub_r) == cf.ratings.shape[0]
+    assert len(sub_r) == cf.data.shape[0]
     assert isinstance(sub_mse, np.ndarray)
-    assert len(sub_mse) == cf.ratings.shape[0]
+    assert len(sub_mse) == cf.data.shape[0]
     assert mse > 0
     assert r > 0
     assert np.mean(sub_r) > 0
-    print(data)
+    print(dataset)
     print(("mse: %s") % mse)
     print(("r: %s") % r)
     print(("mean sub r: %s") % np.mean(sub_r))
@@ -58,17 +59,17 @@ def basecf_method_test(cf=None, data=None):
         assert "Condition" in df.columns
         assert "Observed" in df["Condition"].unique()
         assert "Predicted" in df["Condition"].unique()
-        assert df.shape[0] == cf.ratings.shape[0] * cf.ratings.shape[1] * 2
+        assert df.shape[0] == cf.data.shape[0] * cf.data.shape[1] * 2
     if cf.is_mask:
         assert "Mask" in df.columns
-    cf.plot_predictions(data=data)
+    cf.plot_predictions(dataset=dataset)
     plt.close()
 
 
 def basecf_method_all_tests(cf=None):
-    basecf_method_test(cf=cf, data="all")
-    basecf_method_test(cf=cf, data="train")
-    basecf_method_test(cf=cf, data="test")
+    basecf_method_test(cf=cf, dataset="all")
+    basecf_method_test(cf=cf, dataset="train")
+    basecf_method_test(cf=cf, dataset="test")
 
 
 def test_create_sub_by_item_matrix():
@@ -121,8 +122,8 @@ def test_cf_knn_dil():
     basecf_method_all_tests(cf=cf)
 
 
-def test_cf_nnmf_multiplicative():
-    cf = NNMF_multiplicative(simulate_data(data_type="data_wide"))
+def test_cf_nnmf_mult():
+    cf = NNMF_mult(simulate_data(data_type="data_wide"))
     cf.fit()
     cf.predict()
     cf.split_train_test(n_train_items=50)
@@ -173,21 +174,21 @@ def test_cf_nnmf_sgd():
 def test_downsample():
     cf = Mean(simulate_data(data_type="data_wide"))
     cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    assert cf.ratings.shape == (50, 50)
+    assert cf.data.shape == (50, 50)
     cf = Mean(simulate_data(data_type="data_wide"))
     cf.downsample(sampling_freq=10, target=5, target_type="hz")
-    assert cf.ratings.shape == (50, 50)
+    assert cf.data.shape == (50, 50)
     cf = Mean(simulate_data(data_type="data_wide"))
     cf.downsample(sampling_freq=10, target=2, target_type="seconds")
-    assert cf.ratings.shape == (50, 5)
+    assert cf.data.shape == (50, 5)
     cf = Mean(simulate_data(data_type="data_wide"))
     cf.split_train_test(n_train_items=20)
     cf.fit()
     cf.predict()
     cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    assert cf.ratings.shape == (50, 50)
+    assert cf.data.shape == (50, 50)
     assert cf.train_mask.shape == (50, 50)
-    assert cf.predicted_ratings.shape == (50, 50)
+    assert cf.predictions.shape == (50, 50)
 
     cf = Mean(simulate_data(data_type="data_wide"))
     cf.split_train_test(n_train_items=20)
@@ -196,4 +197,4 @@ def test_downsample():
     cf.downsample(sampling_freq=10, target=2, target_type="samples")
     assert cf.dilated_mask.shape == (50, 50)
     assert cf.train_mask.shape == (50, 50)
-    assert cf.predicted_ratings.shape == (50, 50)
+    assert cf.predictions.shape == (50, 50)
