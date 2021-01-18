@@ -40,10 +40,6 @@ class BaseCF(object):
             self.train_mask = mask
             self.masked_data = self.data[self.train_mask]
             self.is_mask = True
-        elif self.data.isnull().any().any():
-            self.train_mask = ~self.data.isnull()
-            self.masked_data = self.data[self.train_mask]
-            self.is_mask = True
         else:
             self.is_mask = False
 
@@ -51,7 +47,8 @@ class BaseCF(object):
             self.split_train_test(n_train_items=n_train_items)
 
     def __repr__(self):
-        return "%s(rating=%s)" % (self.__class__.__name__, self.data.shape)
+        out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, mask={self.is_mask}, is_mask_dilated={self.is_mask_dilated})"
+        return out
 
     def get_mse(self, dataset="all"):
         """Get overall mean squared error for predicted compared to actual for all items and subjects.
