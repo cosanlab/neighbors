@@ -6,9 +6,6 @@ import pandas as pd
 
 __all__ = ["create_sub_by_item_matrix"]
 
-# class Ratings(object):
-#    def __init__():
-
 
 def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"):
 
@@ -34,7 +31,8 @@ def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"
             f"df is missing some or all of the following columns: {columns}"
         )
 
-    ratings = df.pivot(
+    ratings = df[columns]
+    ratings = ratings.pivot(
         index=columns[0], columns=columns[1], values=columns[2]
     ).reset_index(drop=True)
     try:

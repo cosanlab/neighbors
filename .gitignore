@@ -96,3 +96,6 @@ site/
 # Conda environment
 environment.yml
 environment-lock.yml
+
+# Development notebookd
+dev

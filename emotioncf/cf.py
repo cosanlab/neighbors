@@ -258,11 +258,16 @@ class BaseCF(object):
             n_train_items (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default .1 (10% of the data)
         """
 
-        if isinstance(n_train_items, float) and 1 >= n_train_items > 0:
+        if isinstance(n_train_items, (float, np.floating)) and 1 >= n_train_items > 0:
             self.n_train_items = int(np.round(self.ratings.shape[1] * n_train_items))
 
-        elif isinstance(n_train_items, int):
+        elif isinstance(n_train_items, (int, np.integer)):
             self.n_train_items = n_train_items
+
+        else:
+            raise TypeError(
+                f"n_train_items must be an integer or a float between 0-1, not {type(n_train_items)} with value {n_train_items}"
+            )
 
         self.train_mask = self.ratings.copy()
         self.train_mask.loc[:, :] = np.zeros(self.ratings.shape).astype(bool)
@@ -519,8 +524,8 @@ class BaseCF(object):
         if np.any(sub_rating.isnull()):
             sub_rating.fillna(0, inplace=True)
         filt = np.ones(n_samples)
-        bin_sub_rating_conv = np.convolve(bin_sub_rating, filt, mode="same")
-        sub_rating_conv = np.convolve(sub_rating, filt, mode="same")
+        bin_sub_rating_conv = np.convolve(bin_sub_rating, filt)[: len(bin_sub_rating)]
+        sub_rating_conv = np.convolve(sub_rating, filt)[: len(sub_rating)]
         sub_rating_conv_mn = deepcopy(sub_rating_conv)
         sub_rating_conv_mn[bin_sub_rating_conv >= 1] = (
             sub_rating_conv_mn[bin_sub_rating_conv >= 1]
@@ -564,7 +569,7 @@ class Mean(BaseCF):
     """ CF using Item Mean across subjects"""
 
     def __init__(self, ratings, mask=None, n_train_items=None):
-        super(Mean, self).__init__(ratings, mask, n_train_items)
+        super().__init__(ratings, mask, n_train_items)
         self.mean = None
 
     def fit(self, dilate_ts_n_samples=None, **kwargs):
@@ -720,7 +725,7 @@ class NNMF_multiplicative(BaseCF):
     """
 
     def __init__(self, ratings, mask=None, n_train_items=None):
-        super(NNMF_multiplicative, self).__init__(ratings, mask, n_train_items)
+        super().__init__(ratings, mask, n_train_items)
         self.H = None
         self.W = None
 
@@ -839,7 +844,7 @@ class NNMF_sgd(BaseCF):
     """
 
     def __init__(self, ratings, mask=None, n_train_items=None):
-        super(NNMF_sgd, self).__init__(ratings, mask, n_train_items)
+        super().__init__(ratings, mask, n_train_items)
 
     def fit(
         self,
@@ -849,7 +854,7 @@ class NNMF_sgd(BaseCF):
         item_bias_reg=0.0,
         user_bias_reg=0.0,
         learning_rate=0.001,
-        n_iterations=10,
+        n_iterations=100,
         verbose=False,
         dilate_ts_n_samples=None,
         **kwargs,
