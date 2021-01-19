@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from scipy.stats import pearsonr
 from copy import deepcopy
+from sklearn.model_selection import train_test_split
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -68,7 +69,7 @@ class BaseCF(object):
 
         actual, pred = self._retrieve_predictions(dataset)
 
-        return np.mean((pred - actual) ** 2)
+        return np.nanmean((pred - actual) ** 2)
 
     def get_corr(self, dataset="all"):
         """Get overall correlation for predicted compared to actual for all items and subjects.
@@ -88,7 +89,9 @@ class BaseCF(object):
 
         actual, pred = self._retrieve_predictions(dataset)
 
-        return pearsonr(actual, pred)[0]
+        # Handle nans when computing correlation
+        nans = np.logical_or(np.isnan(actual), np.isnan(pred))
+        return pearsonr(actual[~nans], pred[~nans])[0]
 
     def get_sub_corr(self, dataset="all"):
         """Calculate observed/predicted correlation for each subject in matrix
@@ -188,7 +191,7 @@ class BaseCF(object):
                 actual = self.data.loc[i, :]
                 pred = self.predictions.loc[i, :]
                 mse.append(
-                    np.mean(
+                    np.nanmean(
                         (
                             pred[(~np.isnan(actual)) & (~np.isnan(pred))]
                             - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
@@ -203,7 +206,7 @@ class BaseCF(object):
                         actual = self.masked_data.loc[i, self.dilated_mask.loc[i, :]]
                         pred = self.predictions.loc[i, self.dilated_mask.loc[i, :]]
                         mse.append(
-                            np.mean(
+                            np.nanmean(
                                 (
                                     pred[(~np.isnan(actual)) & (~np.isnan(pred))]
                                     - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
@@ -216,7 +219,7 @@ class BaseCF(object):
                         actual = self.masked_data.loc[i, self.train_mask.loc[i, :]]
                         pred = self.predictions.loc[i, self.train_mask.loc[i, :]]
                         mse.append(
-                            np.mean(
+                            np.nanmean(
                                 (
                                     pred[(~np.isnan(actual)) & (~np.isnan(pred))]
                                     - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
@@ -229,7 +232,7 @@ class BaseCF(object):
                     actual = self.data.loc[i, ~self.train_mask.loc[i, :]]
                     pred = self.predictions.loc[i, ~self.train_mask.loc[i, :]]
                     mse.append(
-                        np.mean(
+                        np.nanmean(
                             (
                                 pred[(~np.isnan(actual)) & (~np.isnan(pred))]
                                 - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
@@ -240,6 +243,28 @@ class BaseCF(object):
         else:
             raise ValueError("Must run split_train_test() before using this option.")
         return np.array(mse)
+
+    # IN PROGRESS
+    def _split(self, n_train_items=0.1, shared_split=False):
+        """
+        Split data into training and testing sets. Returns indices rather than a boolean array the same shape as self.data
+
+        Args:
+            n_train_items (float, optional): proportion of dataset to include for training. Defaults to 0.1.
+            axis (int, optional): which axis to split along, 0 = 'users', 1 = 'items'. Defaults to 1 ('items')
+        """
+        if shared_split:
+            train, test = train_test_split(
+                range(self.data.shape[1]), train_size=n_train_items
+            )
+            self.train_mask, self.test_mask = train, test
+        else:
+            split_list = [
+                train_test_split(range(self.data.shape[1]), train_size=n_train_items)
+                for i in range(self.data.shape[0])
+            ]
+            self.train_mask = np.array(list(map(lambda x: x[0], split_list)))
+            self.test_mask = np.array(list(map(lambda x: x[1], split_list)))
 
     def split_train_test(self, n_train_items=0.1):
         """
@@ -469,21 +494,21 @@ class BaseCF(object):
         if dataset == "all":
             if self.is_mask:
                 if self.is_mask_dilated:
-                    actual = self.masked_data.values[self.dilated_mask]
-                    predicted = self.predictions.values[self.dilated_mask]
+                    actual = self.masked_data.values[self.dilated_mask.values]
+                    predicted = self.predictions.values[self.dilated_mask.values]
                 else:
-                    actual = self.masked_data.values[self.train_mask]
-                    predicted = self.predictions.values[self.train_mask]
+                    actual = self.masked_data.values[self.train_mask.values]
+                    predicted = self.predictions.values[self.train_mask.values]
             else:
                 actual = self.data.values.flatten()
                 predicted = self.predictions.values.flatten()
         elif self.is_mask:
             if dataset == "train":
-                actual = self.masked_data.values[self.train_mask]
-                predicted = self.predictions.values[self.train_mask]
+                actual = self.masked_data.values[self.train_mask.values]
+                predicted = self.predictions.values[self.train_mask.values]
             else:  # test
-                actual = self.data.values[~self.train_mask]
-                predicted = self.predictions.values[~self.train_mask]
+                actual = self.data.values[~self.train_mask.values]
+                predicted = self.predictions.values[~self.train_mask.values]
                 if np.all(np.isnan(actual)):
                     raise ValueError(
                         "No test data available. Use data='all' or 'train'"
@@ -610,6 +635,8 @@ class KNN(BaseCF):
         super().__init__(data, mask, n_train_items)
         self.subject_similarity = None
 
+    # TODO speed up cosine (use sklearn pairwise)
+    # TODO remove correlation but make sure pearson can handle null values
     def fit(self, metric="pearson", dilate_ts_n_samples=None, **kwargs):
 
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
@@ -631,6 +658,7 @@ class KNN(BaseCF):
             return np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))
 
         if metric in ["pearson", "kendall", "spearman"]:
+            # Get user x user similarity matrix
             sim = data.T.corr(method=metric)
         elif metric in ["correlation", "cosine"]:
             sim = pd.DataFrame(np.zeros((data.shape[0], data.shape[0])))
