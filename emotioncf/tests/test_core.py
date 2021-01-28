@@ -46,8 +46,8 @@ def basecf_method_test(cf=None, dataset=None):
     assert isinstance(sub_mse, np.ndarray)
     assert len(sub_mse) == cf.data.shape[0]
     assert mse > 0
-    assert r > 0
-    assert np.mean(sub_r) > 0
+    assert np.abs(r) > 0
+    assert np.abs(np.mean(sub_r)) > 0
     print(dataset)
     print(("mse: %s") % mse)
     print(("r: %s") % r)
@@ -138,24 +138,28 @@ def test_cf_nnmf_mult():
 def test_cf_nnmf_sgd():
     cf = NNMF_sgd(simulate_data(data_type="data_wide"))
     cf.fit(
-        n_iterations=20,
+        n_iterations=30,
         user_fact_reg=0,
         item_fact_reg=0,
         user_bias_reg=0,
         item_bias_reg=0,
         learning_rate=0.001,
+        verbose=True,
     )
+    cf.plot_learning()
     cf.predict()
 
     cf.split_train_test(n_train_items=50)
     cf.fit(
-        n_iterations=20,
+        n_iterations=1000,
         user_fact_reg=0,
         item_fact_reg=0,
         user_bias_reg=0,
         item_bias_reg=0,
         learning_rate=0.001,
+        verbose=True,
     )
+    cf.plot_learning()
     basecf_method_all_tests(cf=cf)
 
     cf.fit(
@@ -166,7 +170,9 @@ def test_cf_nnmf_sgd():
         item_bias_reg=0,
         learning_rate=0.001,
         dilate_ts_n_samples=2,
+        verbose=True,
     )
+    cf.plot_learning()
     cf.predict()
     basecf_method_all_tests(cf=cf)
 

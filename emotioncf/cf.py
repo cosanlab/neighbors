@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 from scipy.stats import pearsonr
 from copy import deepcopy
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
@@ -858,6 +860,7 @@ class NNMF_sgd(BaseCF):
 
     def __init__(self, data, mask=None, n_train_items=None):
         super().__init__(data, mask, n_train_items)
+        self.delta_history = None
 
     def fit(
         self,
@@ -867,9 +870,11 @@ class NNMF_sgd(BaseCF):
         item_bias_reg=0.0,
         user_bias_reg=0.0,
         learning_rate=0.001,
-        n_iterations=100,
+        n_iterations=5000,
+        tol=0.001,
         verbose=False,
         dilate_ts_n_samples=None,
+        save_learning=True,
         **kwargs,
     ):
 
@@ -877,8 +882,9 @@ class NNMF_sgd(BaseCF):
 
         Args:
             n_factors (int): Number of factors or components
-            max_iterations (int):  maximum number of interations (default=100)
+            n_iterations (int):  maximum number of interations (default=100)
             error_limit (float): error tolerance (default=1e-6)
+            save_learning (bool): when true saves a history of the normalized error at each iteration. Default True.
             fit_error_limit (float): fit error tolerance (default=1e-6)
             verbose (bool): verbose output during fitting procedure (default=True)
             dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
@@ -886,6 +892,12 @@ class NNMF_sgd(BaseCF):
         """
 
         # initialize variables
+        if verbose:
+            print("-----")
+            print(f"Max Iter: {n_iterations}")
+            print(f"Convergence Tol: {tol}")
+            print("-----")
+
         n_users, n_items = self.data.shape
         if n_factors is None:
             n_factors = n_items
@@ -925,9 +937,15 @@ class NNMF_sgd(BaseCF):
 
         # train weights
         ctr = 1
-        while ctr <= n_iterations:
-            if ctr % 10 == 0 and verbose:
-                print("\tCurrent Iteration: {}".format(ctr))
+        last_e = 0
+        delta = "init"
+        max_norm = data.abs().max().max()
+        self.error_history = []
+        converged = False
+        for ctr in tqdm(range(1, n_iterations + 1), desc="iter"):
+            if (ctr - 1) % 10 == 0 and verbose:
+                print(f"\tCurrent Iteration: {ctr}")
+                print(f"\tCurrent delta: {delta}\t | tol: {tol}")
 
             training_indices = np.arange(len(sample_row))
             np.random.shuffle(training_indices)
@@ -955,8 +973,51 @@ class NNMF_sgd(BaseCF):
                 self.item_vecs[i, :] += learning_rate * (
                     e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i, :]
                 )
-            ctr += 1
+            # Normalize the current error with respect to the max of the dataset
+            norm_e = np.abs(e) / max_norm
+            # Compute the delta
+            delta = np.abs(np.abs(norm_e) - np.abs(last_e))
+            if save_learning:
+                self.error_history.append(norm_e)
+            if delta < tol:
+                converged = True
+                break
+            # Save the last normalize error
+            last_e = norm_e
         self.is_fit = True
+        self._n_iter = ctr
+        self._delta = delta
+        self._norm_e = norm_e
+        self.converged = converged
+        if verbose:
+            if self.converged:
+                print("\tCONVERGED!")
+                print(f"\n\tFinal Iteration: {self._n_iter}")
+                print(f"\tFinal delta: {np.round(self._delta)}")
+            else:
+                print("\tFAILED TO CONVERGE (n_iter reached)")
+                print(f"\n\tFinal Iteration: {self._n_iter}")
+                print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
+            print(f"\tFinal norm error: {np.round(self._norm_e, 5)} (min: 0, max:1)")
+
+    def plot_learning(self, save=False):
+        if self.is_fit:
+            if len(self.error_history) > 0:
+                f, ax = plt.subplots(1, 1, figsize=(8, 6))
+                _ = ax.plot(range(1, len(self.error_history) + 1), self.error_history)
+                ax.set(
+                    xlabel="Iteration",
+                    ylabel="Normalized Error",
+                    title=f"Final Normalized Error: {np.round(self._norm_e, 3)}\nConverged: {self.converged}",
+                )
+                if save:
+                    plt.savefig(save, bbox_inches="tight")
+            else:
+                raise ValueError(
+                    "Learning curved was not saved during fit. save_learning was False"
+                )
+        else:
+            raise ValueError("Model has not been fit.")
 
     def predict(self, **kwargs):
 
