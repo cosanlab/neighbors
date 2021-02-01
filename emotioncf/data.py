@@ -32,9 +32,7 @@ def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"
         )
 
     ratings = df[columns]
-    ratings = ratings.pivot(
-        index=columns[0], columns=columns[1], values=columns[2]
-    ).reset_index(drop=True)
+    ratings = ratings.pivot(index=columns[0], columns=columns[1], values=columns[2])
     try:
         if force_float:
             ratings = ratings.apply(pd.to_numeric, errors=errors)

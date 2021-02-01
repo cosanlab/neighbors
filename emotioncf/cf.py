@@ -362,8 +362,8 @@ class BaseCF(object):
         ax[2].set_ylabel("Predicted Ratings")
         ax[2].set_title("Predicted Ratings")
 
-        r = self.get_corr(dataset=dataset)
-        print("Correlation: %s" % r)
+        r = self.get_sub_corr(dataset=dataset).mean()
+        print("Average Subject Correlation: %s" % r)
 
         return f, r
 
@@ -843,7 +843,6 @@ class NNMF_mult(BaseCF):
         self.is_predict = True
 
 
-# TODO: add stopping criteria as argument
 # TODO: see if we can easily pass hyperparams skleanr grid-search
 # TODO: see if we can manage sparse arrays and swap out pandas for numpy
 # TODO: see if we can use a real sgd optimizer
@@ -860,7 +859,6 @@ class NNMF_sgd(BaseCF):
 
     def __init__(self, data, mask=None, n_train_items=None):
         super().__init__(data, mask, n_train_items)
-        self.delta_history = None
 
     def fit(
         self,
