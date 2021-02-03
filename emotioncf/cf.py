@@ -748,10 +748,10 @@ class NNMF_mult(BaseCF):
         self,
         n_factors=None,
         max_iterations=100,
-        error_limit=1e-6,
         fit_error_limit=1e-6,
         verbose=False,
         dilate_ts_n_samples=None,
+        save_learning=True,
         **kwargs,
     ):
 
@@ -764,6 +764,7 @@ class NNMF_mult(BaseCF):
             fit_error_limit (float): fit error tolerance (default=1e-6)
             verbose (bool): verbose output during fitting procedure (default=True)
             dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
+            save_learning (bool; optional): save a list of the error rate over iterations; Default True
 
         """
 
@@ -797,8 +798,8 @@ class NNMF_mult(BaseCF):
 
         ctr = 1
         fit_residual = 100
+        self.error_history = []
         while ctr <= max_iterations or fit_residual < fit_error_limit:
-            # while ctr <= max_iterations or curRes < error_limit or fit_residual < fit_error_limit:
             # Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
             self.W *= np.dot(masked_X, self.H.T) / np.dot(
                 mask * np.dot(self.W, self.H), self.H.T
@@ -816,11 +817,13 @@ class NNMF_mult(BaseCF):
             err = mask * (X_est_prev - X_est)
             fit_residual = np.sqrt(np.sum(err ** 2))
             X_est_prev = X_est
+
+            if save_learning:
+                self.error_history.append(fit_residual)
             # curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')
             if ctr % 10 == 0 and verbose:
                 print("\tCurrent Iteration {}:".format(ctr))
                 print("\tfit residual", np.round(fit_residual, 4))
-                # print('\ttotal residual', np.round(curRes, 4))
             ctr += 1
         self.is_fit = True
 
@@ -845,8 +848,6 @@ class NNMF_mult(BaseCF):
 
 # TODO: see if we can easily pass hyperparams skleanr grid-search
 # TODO: see if we can manage sparse arrays and swap out pandas for numpy
-# TODO: see if we can use a real sgd optimizer
-# TODO: fix but when training size is really small, probably related to no variance in correlating predictions with actual
 class NNMF_sgd(BaseCF):
     """Train non negative matrix factorization model using stochastic gradient descent.
     Allows masking to only learn the train weights.
