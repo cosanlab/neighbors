@@ -9,11 +9,12 @@
         <meta name="description" content="A Python package to perform collaborative filtering on emotion datasets">
       
       
+      
+      
         <link rel="canonical" href="https://cosanlab.github.io/emotionCF/">
       
-      
       <link rel="shortcut icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.0.2">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
     
     
       
@@ -21,10 +22,10 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.38780c08.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.cb6bc1d0.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.3f72e892.min.css">
+        <link rel="stylesheet" href="assets/stylesheets/palette.39b8e14a.min.css">
         
       
     
@@ -32,7 +33,7 @@
     
       
         
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
       
@@ -54,6 +55,7 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
       
   
+    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
@@ -69,7 +71,9 @@
       
     </div>
     
-      <header class="md-header" data-md-component="header">
+      
+
+<header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
     <a href="https://cosanlab.github.io/emotionCF" title="EmotionCF" class="md-header-nav__button md-logo" aria-label="EmotionCF">
       
@@ -81,18 +85,20 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
     </label>
     <div class="md-header-nav__title" data-md-component="header-title">
-      
-        <div class="md-header-nav__ellipsis">
-          <span class="md-header-nav__topic md-ellipsis">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             EmotionCF
           </span>
-          <span class="md-header-nav__topic md-ellipsis">
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             
               Home
             
           </span>
         </div>
-      
+      </div>
     </div>
     
       <label class="md-header-nav__button md-icon" for="__search">
@@ -103,7 +109,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
@@ -151,10 +157,16 @@
         <div class="md-main__inner md-grid">
           
             
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="https://cosanlab.github.io/emotionCF" title="EmotionCF" class="md-nav__button md-logo" aria-label="EmotionCF">
       
@@ -185,25 +197,27 @@
       
 
   
-
-
-  <li class="md-nav__item md-nav__item--active">
+  
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
       
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
         Home
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-    
-    <a href="." class="md-nav__link md-nav__link--active">
-      Home
-    </a>
-    
+      </a>
       
+        
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -239,8 +253,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#intialize-a-cf-instance" class="md-nav__link">
-    Intialize a cf instance
+  <a href="#initialize-a-model-instance" class="md-nav__link">
+    Initialize a model instance
   </a>
   
 </li>
@@ -316,70 +330,79 @@
     </ul>
   
 </nav>
-    
-  </li>
+      
+    </li>
+  
 
     
       
       
       
 
-
-  <li class="md-nav__item">
-    <a href="development/" class="md-nav__link">
-      Development
-    </a>
-  </li>
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="development/" class="md-nav__link">
+        Development
+      </a>
+    </li>
+  
 
     
       
       
       
 
-
-  <li class="md-nav__item md-nav__item--nested">
+  
+  
+  
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
-    
-    <label class="md-nav__link" for="nav-3">
-      API Reference
-      <span class="md-nav__icon md-icon"></span>
-    </label>
-    <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        <span class="md-nav__icon md-icon"></span>
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+      
+      <label class="md-nav__link" for="nav-3">
         API Reference
+        <span class="md-nav__icon md-icon"></span>
       </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="nav-3">
+          <span class="md-nav__icon md-icon"></span>
+          API Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/data/" class="md-nav__link">
+        data
+      </a>
+    </li>
+  
+
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/cf/" class="md-nav__link">
+        cf
+      </a>
+    </li>
+  
 
-
-  <li class="md-nav__item">
-    <a href="api/data/" class="md-nav__link">
-      data
-    </a>
-  </li>
-
-        
           
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="api/cf/" class="md-nav__link">
-      cf
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
+        </ul>
+      </nav>
+    </li>
+  
 
     
   </ul>
@@ -389,7 +412,8 @@
               </div>
             
             
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -428,8 +452,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#intialize-a-cf-instance" class="md-nav__link">
-    Intialize a cf instance
+  <a href="#initialize-a-model-instance" class="md-nav__link">
+    Initialize a model instance
   </a>
   
 </li>
@@ -527,38 +551,47 @@
 <div class="highlight"><pre><span></span><code>pip install git+https://github.com/cosanlab/emotionCF.git
 </code></pre></div>
 <h2 id="example-usage">Example Usage</h2>
+<p>All algorithms in the emotionCF toolbox operates on 2d pandas dataframes with rows as unique <em>users</em> and columns as unique <em>items</em>.  </p>
 <h3 id="create-a-subject-by-item-matrix">Create a subject by item matrix</h3>
-<p>The emotionCF toolbox operates on pandas dataframes that contain ratings for each subject by each item.  There is a function to easily convert a long format pandas dataframe that contains ['Subject','Item','Rating] as columns, <code>create_sub_by_item_matrix()</code>.  These data can be passed onto any <code>cf</code> class.</p>
+<p>The toolbox contains a helper function <code>create_sub_by_item_matrix()</code> to convert a long-form dataframe into this format provided it has 3 columns named <code>['Subject', 'Item', 'Rating']</code> or equivalent (see the <code>columns</code> keyword argument of <code>create_sub_by_item_matrix</code> ).</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">emotioncf.data</span> <span class="kn">import</span> <span class="n">create_sub_by_item_matrix</span>
 
 <span class="n">ratings</span> <span class="o">=</span> <span class="n">create_sub_by_item_matrix</span><span class="p">(</span><span class="n">long_format_df</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="intialize-a-cf-instance">Intialize a cf instance</h3>
-<p>Initialize a new cf instance by passing in the subject by item ratings pandas DataFrame</p>
-<div class="highlight"><pre><span></span><code>from emotioncf.cf import KNN
+<h3 id="initialize-a-model-instance">Initialize a model instance</h3>
+<p>Before you can fit a model on your data you need to initialize a new model instance by passing in your user x item dataframe:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">emotioncf.cf</span> <span class="kn">import</span> <span class="n">KNN</span>
 
-cf = KNN(ratings)
+<span class="n">cf</span> <span class="o">=</span> <span class="n">KNN</span><span class="p">(</span><span class="n">ratings</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="split-data-into-train-and-test">Split Data into Train and Test</h3>
-<p>It is easy to split a ratings matrix into training and test items using the <code>split_train_test()</code> method.  It creates a binary mask called <code>.train_mask</code> field that indicates the training values.</p>
-<div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">split_train_test</span><span class="p">(</span><span class="n">n_train_items</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<p>It is easy to split your data into training and test sets using the <code>split_train_test()</code> method on any model instance. This creates a binary mask saved into the model object itself and accessible at <code>model.train_mask</code>. Unlike libraries like <code>sklearn</code>, splitting data this way chooses a <em>different</em> random subset of <em>items</em> per user to perform training. All <em>users</em> are always included in training set, but each user will have a different random set of <em>items</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># use 50% of the items for training per user</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">split_train_test</span><span class="p">(</span><span class="n">n_train_items</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span> 
+<span class="c1"># contains the training mask:</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">train_mask</span>
 </code></pre></div>
 <h3 id="estimate-model">Estimate Model</h3>
-<p>Each model can be estimated using the <code>fit()</code> method</p>
+<p>Each model can be estimated using its <code>fit()</code> method. If no data splitting is done, then <em>all data</em> is used for training.</p>
 <div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="predict-new-ratings">Predict New Ratings</h3>
-<p>Missing data from the matrix can then be filled in using the <code>predict()</code> method.  This creates a pandas dataframe of the predicted subject by item matrix in the <code>predicted_ratings</code> field.</p>
+<p>To generate predictions, used a model's <code>predict()</code> method. This creates a pandas dataframe of the predicted subject by item matrix within the model object itself, accessible at <code>model.predicted_ratings</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="evaluate-model-predictions">Evaluate Model Predictions</h3>
-<p>There are several methods to aid in evaluating the performance of the model, including overall mean squared error <code>get_mse()</code>, overall correlation <code>get_corr()</code>, and correlation for each subject <code>get_sub_corr()</code>.  Each method can be run on all of the data using the default <code>'all'</code> flag.  If the data has been split into test and training, it is also possible to explicitly evaluate how well the model performs on the <code>'test'</code> and <code>'train'</code> data.</p>
+<p>There are several methods to aid in evaluating the performance of the model including:
+- overall mean squared error <code>.get_mse()</code>
+- overall correlation <code>.get_corr()</code>
+- mean-squared-error separately per user <code>.get_sub_mse()</code>
+- correlation for each subject <code>.get_sub_corr()</code></p>
+<p>Additionally, each method takes a string argument to indicate what dataset performance should be calculated for: <code>'train'</code>, <code>'test'</code>, or <code>'all'</code>. Defaults to <code>'test'</code>. </p>
 <div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">get_mse</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
-<span class="n">cf</span><span class="o">.</span><span class="n">get_corr</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">get_corr</span><span class="p">()</span> <span class="c1"># &#39;test&#39;</span>
 <span class="n">cf</span><span class="o">.</span><span class="n">get_sub_corr</span><span class="p">(</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="mean">Mean</h3>
-<p>An easy control model for collaborative filtering is to demonstrate how well the models perform over simply using the item means.  We initalize a class instance and then the model can be estimated and new ratings predicted.  We can get the overall mean squared error on the predicted ratings.</p>
+<p>An easy control model for collaborative filtering is to demonstrate how well the models perform over simply using the item means.  We initialize a class instance and then the model can be estimated and new ratings predicted.  We can get the overall mean squared error on the predicted ratings.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">emotioncf.cf</span> <span class="kn">import</span> <span class="n">Mean</span>
 
 <span class="n">cf</span> <span class="o">=</span> <span class="n">Mean</span><span class="p">(</span><span class="n">ratings</span><span class="p">)</span>
@@ -567,7 +600,7 @@ cf = KNN(ratings)
 <span class="n">cf</span><span class="o">.</span><span class="n">get_mse</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="k-nearest-neighbors">K-Nearest Neighbors</h3>
-<p>EmotionCF uses a standard API to estimate and predict data.  Though the KNN approach is not technically a model, we still use the fit method to estimate data.  This calculates a similarity matrix between subjects using ['correlation','cosine'] methods.  We can then predict the left out ratings using the top <code>k</code> nearest neighbors.  We can evaluate how well the model works for all data points using <code>get_corr()</code> and <code>get_mse()</code> methods.  We can also get the correlation for each subject's indivdiual data using <code>get_sub_corr()</code> method.  So far we have found that this method does not perform well when there aren't many overlapping samples across items and users.</p>
+<p>EmotionCF uses a standard API to estimate and predict data.  Though the KNN approach is not technically a model, we still use the fit method to estimate data.  This calculates a similarity matrix between subjects using ['correlation','cosine'] methods.  We can then predict the left out ratings using the top <code>k</code> nearest neighbors.  We can evaluate how well the model works for all data points using <code>get_corr()</code> and <code>get_mse()</code> methods.  We can also get the correlation for each subject's individual data using <code>get_sub_corr()</code> method.  So far we have found that this method does not perform well when there aren't many overlapping samples across items and users.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">emotioncf.cf</span> <span class="kn">import</span> <span class="n">KNN</span>
 
 <span class="n">cf</span> <span class="o">=</span> <span class="n">KNN</span><span class="p">(</span><span class="n">ratings</span><span class="p">)</span>
@@ -608,8 +641,8 @@ cf = KNN(ratings)
 <span class="n">cf</span><span class="o">.</span><span class="n">plot_predictions</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="working-with-time-series-data">Working with Time-Series Data</h3>
-<p>This tool has also been designed to work with timeseries data.</p>
-<p>For example, cf instances can be downsampled across items, where items refers to time samples. You must specify the <code>sampling_freq</code> of the data, and the <code>target</code>, where target must have a <code>target_type</code> of ['hz','samples','seconds'].  Downsampling is performed by averaging over bin windows.  In this example we downsample a dataset from 10hz to 5hz.</p>
+<p>This tool has also been designed to work with time-series data.</p>
+<p>For example, cf instances can be downsampled across items, where items refers to time samples. You must specify the <code>sampling_freq</code> of the data, and the <code>target</code>, where target must have a <code>target_type</code> of ['hz','samples','seconds'].  Downsampling is performed by averaging over bin windows.  In this example we downsample a dataset from 10Hz to 5Hz.</p>
 <div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">sampling_freq</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;hz&#39;</span><span class="p">)</span>
 </code></pre></div>
 <p>It is also possible to leverage presumed autocorrelation when training models by using the <code>dilate_ts_n_samples=n_samples</code> keyword.  This flag will convolve a boxcar regressor with each subject's sample from <code>cf.train_mask</code> <code>n_samples</code>.  The dilation will be centered on each sample.  The intuition here is that if a subject rates an item at a given time point, say '50', they likely will have rated time points immediately preceding and following similarly (e.g., [50,50,50]).  This is due to autocorrelation in the data.  More presumed autocorrelation will likely benefit from a higher number of samples being selected.  This will allow time series that are sparsely sampled to be estimated more accurately.</p>
@@ -680,15 +713,15 @@ cf = KNN(ratings)
       
     </div>
     
-      <script src="assets/javascripts/vendor.77e55a48.min.js"></script>
-      <script src="assets/javascripts/bundle.9554a270.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="assets/javascripts/vendor.18f0862e.min.js"></script>
+      <script src="assets/javascripts/bundle.994580cf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({
           base: ".",
           features: [],
           search: Object.assign({
-            worker: "assets/javascripts/worker/search.4ac00218.min.js"
+            worker: "assets/javascripts/worker/search.9c0e82ba.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
