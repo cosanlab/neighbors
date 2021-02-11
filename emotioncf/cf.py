@@ -824,7 +824,7 @@ class NNMF_mult(BaseCF):
             # Save this iteration's predictions
             X_est_prev = X_est
             # Update the residuals
-            current_resid = np.linalg.norm(masked_X - mask * X_est, order="fro")
+            current_resid = np.linalg.norm(masked_X - mask * X_est, ord="fro")
             # Norm the residual with respect to the max of the dataset so we can use a common convergence threshold
             current_resid /= masked_X.max()
 
