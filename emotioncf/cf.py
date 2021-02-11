@@ -17,7 +17,7 @@ __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
 class BaseCF(object):
 
-    """ Base Collaborative Filtering Class """
+    """ Base Collaborative Filtering Class. All other models inherit from this class which means they have access to all its methods and attributes. """
 
     def __init__(self, data, mask=None, n_train_items=None):
         """
@@ -53,7 +53,7 @@ class BaseCF(object):
         out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, mask={self.is_mask}, is_mask_dilated={self.is_mask_dilated})"
         return out
 
-    def get_mse(self, dataset="all"):
+    def get_mse(self, dataset="test"):
         """Get overall mean squared error for predicted compared to actual for all items and subjects.
 
         Args:
@@ -73,7 +73,7 @@ class BaseCF(object):
 
         return np.nanmean((pred - actual) ** 2)
 
-    def get_corr(self, dataset="all"):
+    def get_corr(self, dataset="test"):
         """Get overall correlation for predicted compared to actual for all items and subjects.
 
         Args:
@@ -95,7 +95,7 @@ class BaseCF(object):
         nans = np.logical_or(np.isnan(actual), np.isnan(pred))
         return pearsonr(actual[~nans], pred[~nans])[0]
 
-    def get_sub_corr(self, dataset="all"):
+    def get_sub_corr(self, dataset="test"):
         """Calculate observed/predicted correlation for each subject in matrix
 
         Args:
@@ -171,7 +171,7 @@ class BaseCF(object):
             raise ValueError("Must run split_train_test() before using this option.")
         return np.array(r)
 
-    def get_sub_mse(self, dataset="all"):
+    def get_sub_mse(self, dataset="test"):
         """Calculate observed/predicted mse for each subject in matrix
 
         Args:
@@ -303,7 +303,7 @@ class BaseCF(object):
         """Create plot of actual and predicted data
 
         Args:
-            data (str): plot 'all' data, the 'train' data, or the 'test' data
+            dataset (str): plot 'all' data, the 'train' data, or the 'test' data
 
         Returns:
             r (float): Correlation
@@ -491,7 +491,7 @@ class BaseCF(object):
         """
 
         if dataset not in ["all", "train", "test"]:
-            raise ValueError("data must be ['all','train','test']")
+            raise ValueError("data must be one of ['all','train','test']")
 
         if dataset == "all":
             if self.is_mask:
@@ -591,7 +591,6 @@ class Mean(BaseCF):
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
         Args:
-            metric (str): type of similarity {"correlation","cosine"}
             dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
 
         """
@@ -608,12 +607,9 @@ class Mean(BaseCF):
             self.mean = self.data.mean(skipna=True, axis=0)
         self.is_fit = True
 
-    def predict(self, **kwargs):
+    def predict(self):
 
         """Predict missing items using other subject's item means.
-
-        Args:
-            k (int): number of closest neighbors to use
 
         Returns:
             predicted_rating (Dataframe): adds field to object instance
@@ -749,6 +745,7 @@ class NNMF_mult(BaseCF):
         n_factors=None,
         max_iterations=100,
         fit_error_limit=1e-6,
+        error_limit=1e-6,
         verbose=False,
         dilate_ts_n_samples=None,
         save_learning=True,
@@ -797,9 +794,16 @@ class NNMF_mult(BaseCF):
         X_est_prev = np.dot(self.W, self.H)
 
         ctr = 1
-        fit_residual = 100
+        # TODO change to np.inf but make sure it doesn't screw up < fit_error_limit
+        fit_residual = -np.inf
+        current_resid = -np.inf
+        error_limit = error_limit
         self.error_history = []
-        while ctr <= max_iterations or fit_residual < fit_error_limit:
+        while (
+            ctr <= max_iterations
+            or current_resid < error_limit
+            or fit_residual < fit_error_limit
+        ):
             # Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
             self.W *= np.dot(masked_X, self.H.T) / np.dot(
                 mask * np.dot(self.W, self.H), self.H.T
@@ -814,12 +818,18 @@ class NNMF_mult(BaseCF):
 
             # Evaluate
             X_est = np.dot(self.W, self.H)
+            # This is basically error gradient for convergence purposes
             err = mask * (X_est_prev - X_est)
             fit_residual = np.sqrt(np.sum(err ** 2))
+            # Save this iteration's predictions
             X_est_prev = X_est
+            # Update the residuals
+            current_resid = np.linalg.norm(masked_X - mask * X_est, order="fro")
+            # Norm the residual with respect to the max of the dataset so we can use a common convergence threshold
+            current_resid /= masked_X.max()
 
             if save_learning:
-                self.error_history.append(fit_residual)
+                self.error_history.append(current_resid)
             # curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')
             if ctr % 10 == 0 and verbose:
                 print("\tCurrent Iteration {}:".format(ctr))
@@ -827,13 +837,10 @@ class NNMF_mult(BaseCF):
             ctr += 1
         self.is_fit = True
 
-    def predict(self, **kwargs):
+    def predict(self):
 
         """Predict Subject's missing items using NNMF with multiplicative updating
 
-        Args:
-            data (Dataframe): pandas dataframe instance of data
-            k (int): number of closest neighbors to use
         Returns:
             predicted_rating (Dataframe): adds field to object instance
         """
@@ -876,18 +883,21 @@ class NNMF_sgd(BaseCF):
         save_learning=True,
         **kwargs,
     ):
-
-        """Fit NNMF collaborative filtering model to train data using stochastic gradient descent.
+        """
+        Fit NNMF collaborative filtering model using stochastic-gradient-descent
 
         Args:
-            n_factors (int): Number of factors or components
-            n_iterations (int):  maximum number of interations (default=100)
-            error_limit (float): error tolerance (default=1e-6)
-            save_learning (bool): when true saves a history of the normalized error at each iteration. Default True.
-            fit_error_limit (float): fit error tolerance (default=1e-6)
-            verbose (bool): verbose output during fitting procedure (default=True)
-            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
-
+            n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.
+            item_fact_reg (float, optional): item factor regularization to apply. Defaults to 0.0.
+            user_fact_reg (float, optional): user factor regularization to apply. Defaults to 0.0.
+            item_bias_reg (float, optional): item factor bias term to apply. Defaults to 0.0.
+            user_bias_reg (float, optional): user factor bias term to apply. Defaults to 0.0.
+            learning_rate (float, optional): how quickly to integrate errors during training. Defaults to 0.001.
+            n_iterations (int, optional): total number of training iterations if convergence is not achieved. Defaults to 5000.
+            tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
+            verbose (bool, optional): print information about training. Defaults to False.
+            dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
+            save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
         """
 
         # initialize variables
@@ -1000,6 +1010,16 @@ class NNMF_sgd(BaseCF):
             print(f"\tFinal norm error: {np.round(self._norm_e, 5)} (min: 0, max:1)")
 
     def plot_learning(self, save=False):
+        """
+        Plot training error over iterations for diagnostic purposes
+
+        Args:
+            save (bool/str/Path, optional): if a string or path is provided will save the figure to that location. Defaults to False.
+
+        Returns:
+            tuple: (figure handle, axes handle)
+        """
+
         if self.is_fit:
             if len(self.error_history) > 0:
                 f, ax = plt.subplots(1, 1, figsize=(8, 6))
@@ -1011,20 +1031,18 @@ class NNMF_sgd(BaseCF):
                 )
                 if save:
                     plt.savefig(save, bbox_inches="tight")
+                return f, ax
             else:
                 raise ValueError(
-                    "Learning curved was not saved during fit. save_learning was False"
+                    "Learning was not saved during fit. save_learning was False"
                 )
         else:
             raise ValueError("Model has not been fit.")
 
-    def predict(self, **kwargs):
+    def predict(self):
 
         """Predict Subject's missing items using NNMF with stochastic gradient descent
 
-        Args:
-            data (Dataframe): pandas dataframe instance of data
-            k (int): number of closest neighbors to use
         Returns:
             predicted_rating (Dataframe): adds field to object instance
         """

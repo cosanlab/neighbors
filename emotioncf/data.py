@@ -15,10 +15,10 @@ def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"
         df (Dataframe): input dataframe
         columns (list): list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier ("Subject"), the second a unique item identifier ("Item", "Timepoint"), and the last the rating made by the individual on that item ("Rating"). Defaults to ["Subject", "Item", "Rating"]
         force_float (bool): force the resulting output to be float data types with errors being set to NaN; Default True
-        errors (string): how to handle errors in pd.to_numeric; Default 'coerce'
+        errors (string): how to handle errors in pd.to_numeric; Default 'raise'
 
     Return:
-        ratings: user x item rating Dataframe
+        pd.DataFrame: user x item rating Dataframe
 
     """
 

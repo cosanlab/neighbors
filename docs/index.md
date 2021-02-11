@@ -13,9 +13,10 @@ pip install git+https://github.com/cosanlab/emotionCF.git
 
 ## Example Usage
 
-### Create a subject by item matrix
+All algorithms in the emotionCF toolbox operates on 2d pandas dataframes with rows as unique *users* and columns as unique *items*.  
 
-The emotionCF toolbox operates on pandas dataframes that contain ratings for each subject by each item.  There is a function to easily convert a long format pandas dataframe that contains ['Subject','Item','Rating] as columns, `create_sub_by_item_matrix()`.  These data can be passed onto any `cf` class.
+### Create a subject by item matrix
+The toolbox contains a helper function `create_sub_by_item_matrix()` to convert a long-form dataframe into this format provided it has 3 columns named `['Subject', 'Item', 'Rating']` or equivalent (see the `columns` keyword argument of `create_sub_by_item_matrix` ).
 
 ```python
 from emotioncf.data import create_sub_by_item_matrix
@@ -23,47 +24,56 @@ from emotioncf.data import create_sub_by_item_matrix
 ratings = create_sub_by_item_matrix(long_format_df)
 ```
 
-### Intialize a cf instance
-Initialize a new cf instance by passing in the subject by item ratings pandas DataFrame
+### Initialize a model instance
+Before you can fit a model on your data you need to initialize a new model instance by passing in your user x item dataframe:
 
-```
+```python
 from emotioncf.cf import KNN
 
 cf = KNN(ratings)
 ```
 
 ### Split Data into Train and Test
-It is easy to split a ratings matrix into training and test items using the `split_train_test()` method.  It creates a binary mask called `.train_mask` field that indicates the training values.
+It is easy to split your data into training and test sets using the `split_train_test()` method on any model instance. This creates a binary mask saved into the model object itself and accessible at `model.train_mask`. Unlike libraries like `sklearn`, splitting data this way chooses a *different* random subset of *items* per user to perform training. All *users* are always included in training set, but each user will have a different random set of *items*.
 
 ```python
-cf.split_train_test(n_train_items=50)
+# use 50% of the items for training per user
+cf.split_train_test(n_train_items=.5) 
+# contains the training mask:
+cf.train_mask
 ```
 
 ### Estimate Model
-Each model can be estimated using the `fit()` method
+Each model can be estimated using its `fit()` method. If no data splitting is done, then *all data* is used for training.
 
 ```python
 cf.fit()
 ```
 
 ### Predict New Ratings
-Missing data from the matrix can then be filled in using the `predict()` method.  This creates a pandas dataframe of the predicted subject by item matrix in the `predicted_ratings` field.
+To generate predictions, used a model's `predict()` method. This creates a pandas dataframe of the predicted subject by item matrix within the model object itself, accessible at `model.predicted_ratings`.
 
 ```python
 cf.predict()
 ```
 
 ### Evaluate Model Predictions
-There are several methods to aid in evaluating the performance of the model, including overall mean squared error `get_mse()`, overall correlation `get_corr()`, and correlation for each subject `get_sub_corr()`.  Each method can be run on all of the data using the default `'all'` flag.  If the data has been split into test and training, it is also possible to explicitly evaluate how well the model performs on the `'test'` and `'train'` data.
+There are several methods to aid in evaluating the performance of the model including:
+- overall mean squared error `.get_mse()`
+- overall correlation `.get_corr()`
+- mean-squared-error separately per user `.get_sub_mse()`
+- correlation for each subject `.get_sub_corr()`
+
+Additionally, each method takes a string argument to indicate what dataset performance should be calculated for: `'train'`, `'test'`, or `'all'`. Defaults to `'test'`. 
 
 ```python
 cf.get_mse('all')
-cf.get_corr('test')
+cf.get_corr() # 'test'
 cf.get_sub_corr('train')
 ```
 
 ### Mean
-An easy control model for collaborative filtering is to demonstrate how well the models perform over simply using the item means.  We initalize a class instance and then the model can be estimated and new ratings predicted.  We can get the overall mean squared error on the predicted ratings.
+An easy control model for collaborative filtering is to demonstrate how well the models perform over simply using the item means.  We initialize a class instance and then the model can be estimated and new ratings predicted.  We can get the overall mean squared error on the predicted ratings.
 
 ```python
 from emotioncf.cf import Mean
@@ -75,7 +85,7 @@ cf.get_mse('all')
 ```
 
 ### K-Nearest Neighbors
-EmotionCF uses a standard API to estimate and predict data.  Though the KNN approach is not technically a model, we still use the fit method to estimate data.  This calculates a similarity matrix between subjects using ['correlation','cosine'] methods.  We can then predict the left out ratings using the top `k` nearest neighbors.  We can evaluate how well the model works for all data points using `get_corr()` and `get_mse()` methods.  We can also get the correlation for each subject's indivdiual data using `get_sub_corr()` method.  So far we have found that this method does not perform well when there aren't many overlapping samples across items and users.
+EmotionCF uses a standard API to estimate and predict data.  Though the KNN approach is not technically a model, we still use the fit method to estimate data.  This calculates a similarity matrix between subjects using ['correlation','cosine'] methods.  We can then predict the left out ratings using the top `k` nearest neighbors.  We can evaluate how well the model works for all data points using `get_corr()` and `get_mse()` methods.  We can also get the correlation for each subject's individual data using `get_sub_corr()` method.  So far we have found that this method does not perform well when there aren't many overlapping samples across items and users.
 
 ```python
 from emotioncf.cf import KNN
@@ -127,9 +137,9 @@ cf.plot_predictions()
 ```
 
 ### Working with Time-Series Data
-This tool has also been designed to work with timeseries data.
+This tool has also been designed to work with time-series data.
 
-For example, cf instances can be downsampled across items, where items refers to time samples. You must specify the `sampling_freq` of the data, and the `target`, where target must have a `target_type` of ['hz','samples','seconds'].  Downsampling is performed by averaging over bin windows.  In this example we downsample a dataset from 10hz to 5hz.
+For example, cf instances can be downsampled across items, where items refers to time samples. You must specify the `sampling_freq` of the data, and the `target`, where target must have a `target_type` of ['hz','samples','seconds'].  Downsampling is performed by averaging over bin windows.  In this example we downsample a dataset from 10Hz to 5Hz.
 
 ```python
 cf.downsample(sampling_freq=10,target=5, target_type='hz')
