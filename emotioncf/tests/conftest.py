@@ -1,3 +1,11 @@
+"""
+Define pytest "fixtures" aka the "Arrange" or "Setup" step of test-driven-development:
+
+1. Arrange
+2. Act
+3. Assert
+
+"""
 import pytest
 import numpy as np
 import pandas as pd

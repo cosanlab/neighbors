@@ -1,3 +1,6 @@
+"""
+Test auxiliary functions
+"""
 import pandas as pd
 from emotioncf.data import create_sub_by_item_matrix
 
