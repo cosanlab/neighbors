@@ -27,8 +27,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda init bash
-          conda activate "${{ matrix.python-version }}"
-          conda env list
+          conda activate test
           conda install -y pip numpy pandas scipy matplotlib seaborn scikit-learn
           conda install -y -c conda-forge pytest pytest-xdist
           pip install -r requirements.txt
@@ -36,8 +35,7 @@ jobs:
       - name: Run Tests
         run: |
           conda init bash
-          conda activate "${{ matrix.python-version }}"
-          conda env list
+          conda activate test
           pytest -s -n auto
 
       # - name: Coveralls
