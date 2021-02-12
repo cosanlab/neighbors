@@ -28,6 +28,7 @@ jobs:
         run: |
           conda init bash
           conda activate test
+          conda env list
           conda install -y pip numpy pandas scipy matplotlib seaborn scikit-learn
           conda install -y -c conda-forge pytest pytest-xdist
           pip install -r requirements.txt
@@ -35,7 +36,7 @@ jobs:
       - name: Run Tests
         run: |
           conda init bash
-          conda activate test
+          conda info --envs
           pytest -s -n auto
 
       # - name: Coveralls
