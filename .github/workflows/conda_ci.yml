@@ -17,13 +17,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Set up Miniconda
+      - name: Download and setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Dependencies
+      - name: Install Dependencies and Run Tests
         shell: bash -l {0}
         run: |
           conda init bash
@@ -32,11 +32,6 @@ jobs:
           conda install -y pip numpy pandas scipy matplotlib seaborn scikit-learn
           conda install -y -c conda-forge pytest pytest-xdist
           pip install -r requirements.txt
-
-      - name: Run Tests
-        run: |
-          conda init bash
-          conda info --envs
           pytest -s -n auto
 
       # - name: Coveralls
