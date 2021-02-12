@@ -1,0 +1,3 @@
+# emotioncf.base
+
+::: emotioncf.base

@@ -1,8 +1,8 @@
 """
-Test auxiliary functions
+Test utility functions
 """
 import pandas as pd
-from emotioncf.data import create_sub_by_item_matrix
+from emotioncf import create_sub_by_item_matrix
 
 
 def test_create_sub_by_item_matrix(simulate_long_data):

@@ -3,7 +3,7 @@ Test core algorithms
 """
 import numpy as np
 import pandas as pd
-from emotioncf.cf import Mean, KNN, NNMF_mult, NNMF_sgd
+from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd
 import matplotlib.pyplot as plt
 import pytest
 

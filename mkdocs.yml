@@ -12,10 +12,16 @@ markdown_extensions:
   - pymdownx.highlight
 nav:
   - Home: index.md
+  - Quick Overview: overview.md
   - Development: development.md
   - API Reference:
-      - data: api/data.md
-      - cf: api/cf.md
+      - emotioncf.utils: api/utils.md
+      - emotioncf.cf:
+          - Base: api/base.md
+          - Mean: api/mean.md
+          - KNN: api/knn.md
+          - NNMF_mult: api/nmf_m.md
+          - NNMF_sgd: api/nmf_s.md
 plugins:
   - search
   - mkdocstrings:

@@ -1,5 +1,7 @@
 # Development
 
+Each new push or pull-request to the code base for this toolbox will automatically be run through testing and documentation building via github actions.
+
 To develop this package or its documentation locally you will need to install a few extra dependencies.
 
 ## Installation
@@ -25,6 +27,10 @@ Please format your code using black. If you've installed the development depende
 
 Now anytime you try to commit new changes, git will automatically run black before the commit and warn you if certain files need to be formatted.
 
+
+## Editing continuous integration
+
+To change how the automatic workflow builds are specified, make the relevant edits in `.github/workflows/conda_ci.yml`.
 
 ## Documentation
 
