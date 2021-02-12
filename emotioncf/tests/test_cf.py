@@ -165,6 +165,7 @@ def test_cf_nnmf_sgd(
     cf.fit(
         n_iterations=n_iterations,
         tol=tol,
+        verbose=True,
     )
     cf.plot_learning()
     plt.close()
@@ -175,6 +176,7 @@ def test_cf_nnmf_sgd(
         n_iterations=n_iterations,
         tol=tol,
         dilate_ts_n_samples=dilate_ts_n_samples,
+        verbose=True,
     )
     cf.predict()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
