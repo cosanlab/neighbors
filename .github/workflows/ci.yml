@@ -32,7 +32,7 @@ jobs:
       - name: Run Tests
         run: |
           # coverage run --source emotioncf -m py.test -s
-          pytest --cov=emotioncf -s -n auto
+          pytest --cov=emotioncf -s
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
