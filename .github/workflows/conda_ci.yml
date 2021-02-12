@@ -21,21 +21,23 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
-          auto-update-conda: true
           python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         shell: bash -l {0}
         run: |
-          conda create -y --name "${{ matrix.python-version }}" python=${{ matrix.python-version }} pip numpy pandas scipy matplotlib seaborn scikit-learn
+          conda init bash
           conda activate "${{ matrix.python-version }}"
           conda env list
+          conda install -y pip numpy pandas scipy matplotlib seaborn scikit-learn
           conda install -y -c conda-forge pytest pytest-xdist
           pip install -r requirements.txt
 
       - name: Run Tests
         run: |
+          conda init bash
           conda activate "${{ matrix.python-version }}"
+          conda env list
           pytest -s -n auto
 
       # - name: Coveralls
