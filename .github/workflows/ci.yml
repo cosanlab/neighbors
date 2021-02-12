@@ -28,6 +28,11 @@ jobs:
           pip install pytest-cov
           pip install pytest-xdist
           pip install -r requirements.txt
+      - name: Diagnostics
+        run: |
+          pwd
+          python --version
+          ls
       - name: Test with pytest
         run: |
-          pytest --cov=emotioncf -s tests
+          pytest --cov=emotioncf -s
