@@ -4,15 +4,35 @@
      <lastmod>2021-02-12</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
+     <loc>https://cosanlab.github.io/emotionCF/overview/</loc>
+     <lastmod>2021-02-12</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
      <loc>https://cosanlab.github.io/emotionCF/development/</loc>
      <lastmod>2021-02-12</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
-     <loc>https://cosanlab.github.io/emotionCF/api/data/</loc>
+     <loc>https://cosanlab.github.io/emotionCF/api/utils/</loc>
      <lastmod>2021-02-12</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
-     <loc>https://cosanlab.github.io/emotionCF/api/cf/</loc>
+     <loc>https://cosanlab.github.io/emotionCF/api/base/</loc>
+     <lastmod>2021-02-12</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://cosanlab.github.io/emotionCF/api/mean/</loc>
+     <lastmod>2021-02-12</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://cosanlab.github.io/emotionCF/api/knn/</loc>
+     <lastmod>2021-02-12</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://cosanlab.github.io/emotionCF/api/nmf_m/</loc>
+     <lastmod>2021-02-12</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://cosanlab.github.io/emotionCF/api/nmf_s/</loc>
      <lastmod>2021-02-12</lastmod>
      <changefreq>daily</changefreq>
     </url>

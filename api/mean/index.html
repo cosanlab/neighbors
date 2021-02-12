@@ -11,14 +11,14 @@
       
       
       
-        <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/data/">
+        <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/mean/">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.8">
     
     
       
-        <title>data - EmotionCF</title>
+        <title>Mean - EmotionCF</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#data" class="md-skip">
+        <a href="#emotioncfmodelsmean" class="md-skip">
           Skip to content
         </a>
       
@@ -94,7 +94,7 @@
         <div class="md-header-nav__topic">
           <span class="md-ellipsis">
             
-              data
+              Mean
             
           </span>
         </div>
@@ -215,6 +215,21 @@
   
   
     <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        Quick Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../development/" class="md-nav__link">
         Development
       </a>
@@ -235,19 +250,67 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
       
-      <label class="md-nav__link" for="nav-3">
+      <label class="md-nav__link" for="nav-4">
         API Reference
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="nav-3">
+        <label class="md-nav__title" for="nav-4">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        emotioncf.utils
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4-2" type="checkbox" id="nav-4-2" checked>
+      
+      <label class="md-nav__link" for="nav-4-2">
+        emotioncf.cf
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="emotioncf.cf" data-md-level="2">
+        <label class="md-nav__title" for="nav-4-2">
+          <span class="md-nav__icon md-icon"></span>
+          emotioncf.cf
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../base/" class="md-nav__link">
+        Base
+      </a>
+    </li>
+  
+
           
             
   
@@ -263,12 +326,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          data
+          Mean
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        data
+        Mean
       </a>
       
         
@@ -285,15 +348,22 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.data" class="md-nav__link">
-    emotioncf.data
+  <a href="#emotioncf.models.Mean" class="md-nav__link">
+    emotioncf.models.Mean
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.data.create_sub_by_item_matrix" class="md-nav__link">
-    create_sub_by_item_matrix()
+  <a href="#emotioncf.models.Mean.fit" class="md-nav__link">
+    fit()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.models.Mean.predict" class="md-nav__link">
+    predict()
   </a>
   
 </li>
@@ -311,9 +381,39 @@
   
   
     <li class="md-nav__item">
-      <a href="../cf/" class="md-nav__link">
-        cf
+      <a href="../knn/" class="md-nav__link">
+        KNN
       </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nmf_m/" class="md-nav__link">
+        NNMF_mult
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nmf_s/" class="md-nav__link">
+        NNMF_sgd
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -349,15 +449,22 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.data" class="md-nav__link">
-    emotioncf.data
+  <a href="#emotioncf.models.Mean" class="md-nav__link">
+    emotioncf.models.Mean
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.data.create_sub_by_item_matrix" class="md-nav__link">
-    create_sub_by_item_matrix()
+  <a href="#emotioncf.models.Mean.fit" class="md-nav__link">
+    fit()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.models.Mean.predict" class="md-nav__link">
+    predict()
   </a>
   
 </li>
@@ -374,27 +481,27 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/cosanlab/emotionCF/edit/master/docs/api/data.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/cosanlab/emotionCF/edit/master/docs/api/mean.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="data">data</h1>
-<div class="doc doc-object doc-module">
-<h3 class="hidden-toc" id="emotioncf.data" style="visibility: hidden; position: absolute;">
+                <h1 id="emotioncfmodelsmean">emotioncf.models.Mean</h1>
+<div class="doc doc-object doc-class">
+<h3 class="hidden-toc" id="emotioncf.models.Mean" style="visibility: hidden; position: absolute;">
         </h3>
 <div class="doc doc-contents first">
-<p>Functions that perform various data transformations</p>
+<p>The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.</p>
 <div class="doc doc-children">
-<div class="doc doc-object doc-function">
-<h3 class="doc doc-heading" id="emotioncf.data.create_sub_by_item_matrix">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="emotioncf.models.Mean.fit">
 
-<code class="highlight language-python"><span class="n">create_sub_by_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'raise'</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
       </h3>
 <div class="doc doc-contents ">
-<p>Convert a pandas long data frame of a single rating into a subject by item matrix</p>
+<p>Fit collaborative model to train data.  Calculate similarity between subjects across items</p>
 <p><strong>Parameters:</strong></p>
 <table>
 <thead>
@@ -407,39 +514,52 @@
 </thead>
 <tbody>
 <tr>
-<td><code>df</code></td>
-<td><code>Dataframe</code></td>
+<td><code>dilate_ts_n_samples</code></td>
+<td><code>int</code></td>
 <td>
-<p>input dataframe</p>
-</td>
-<td><em>required</em></td>
-</tr>
-<tr>
-<td><code>columns</code></td>
-<td><code>list</code></td>
-<td>
-<p>list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier ("Subject"), the second a unique item identifier ("Item", "Timepoint"), and the last the rating made by the individual on that item ("Rating"). Defaults to ["Subject", "Item", "Rating"]</p>
+<p>will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</p>
 </td>
 <td><code>None</code></td>
 </tr>
-<tr>
-<td><code>force_float</code></td>
-<td><code>bool</code></td>
-<td>
-<p>force the resulting output to be float data types with errors being set to NaN; Default True</p>
-</td>
-<td><code>True</code></td>
-</tr>
-<tr>
-<td><code>errors</code></td>
-<td><code>string</code></td>
-<td>
-<p>how to handle errors in pd.to_numeric; Default 'raise'</p>
-</td>
-<td><code>'raise'</code></td>
-</tr>
 </tbody>
 </table>
+<details class="quote">
+          <summary>Source code in <code>emotioncf/models.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="sd">"""Fit collaborative model to train data.  Calculate similarity between subjects across items</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</span>
+
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dilate_ts_n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dilate_ts_rating_samples</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">dilate_ts_n_samples</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="emotioncf.models.Mean.predict">
+
+<code class="highlight language-python"><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+      </h3>
+<div class="doc doc-contents ">
+<p>Predict missing items using other subject's item means.</p>
 <p><strong>Returns:</strong></p>
 <table>
 <thead>
@@ -450,52 +570,32 @@
 </thead>
 <tbody>
 <tr>
-<td><code>pd.DataFrame</code></td>
+<td><code>predicted_rating (Dataframe)</code></td>
 <td>
-<p>user x item rating Dataframe</p>
+<p>adds field to object instance</p>
 </td>
 </tr>
 </tbody>
 </table>
 <details class="quote">
-          <summary>Source code in <code>emotioncf/data.py</code></summary>
+          <summary>Source code in <code>emotioncf/models.py</code></summary>
           <div class="highlight">
-<pre><span></span><code><span class="k">def</span> <span class="nf">create_sub_by_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">):</span>
+<pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-    <span class="sd">"""Convert a pandas long data frame of a single rating into a subject by item matrix</span>
+    <span class="sd">"""Predict missing items using other subject's item means.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        df (Dataframe): input dataframe</span>
-<span class="sd">        columns (list): list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier ("Subject"), the second a unique item identifier ("Item", "Timepoint"), and the last the rating made by the individual on that item ("Rating"). Defaults to ["Subject", "Item", "Rating"]</span>
-<span class="sd">        force_float (bool): force the resulting output to be float data types with errors being set to NaN; Default True</span>
-<span class="sd">        errors (string): how to handle errors in pd.to_numeric; Default 'raise'</span>
-
-<span class="sd">    Return:</span>
-<span class="sd">        pd.DataFrame: user x item rating Dataframe</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        predicted_rating (Dataframe): adds field to object instance</span>
 
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"df must be pandas instance"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Subject"</span><span class="p">,</span> <span class="s2">"Item"</span><span class="p">,</span> <span class="s2">"Rating"</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"df is missing some or all of the following columns: </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must fit() model first before using this method."</span><span class="p">)</span>
 
-    <span class="n">ratings</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
-    <span class="n">ratings</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">force_float</span><span class="p">:</span>
-            <span class="n">ratings</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">"Auto-converting data to floats failed, probably because you have non-numeric data in some rows. You can set errors = 'coerce' to set these failures to NaN"</span>
-        <span class="p">)</span>
-        <span class="k">raise</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">ratings</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">is_predict</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre>
 </div>
 </details>
@@ -522,7 +622,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../../development/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../base/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -531,19 +631,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Development
+                Base
               </div>
             </div>
           </a>
         
         
-          <a href="../cf/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../knn/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                cf
+                KNN
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">

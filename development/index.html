@@ -213,6 +213,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        Quick Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -267,6 +282,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#editing-continuous-integration" class="md-nav__link">
+    Editing continuous integration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation" class="md-nav__link">
     Documentation
   </a>
@@ -312,14 +334,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
       
-      <label class="md-nav__link" for="nav-3">
+      <label class="md-nav__link" for="nav-4">
         API Reference
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="nav-3">
+        <label class="md-nav__title" for="nav-4">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -331,8 +353,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/data/" class="md-nav__link">
-        data
+      <a href="../api/utils/" class="md-nav__link">
+        emotioncf.utils
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4-2" type="checkbox" id="nav-4-2" >
+      
+      <label class="md-nav__link" for="nav-4-2">
+        emotioncf.cf
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="emotioncf.cf" data-md-level="2">
+        <label class="md-nav__title" for="nav-4-2">
+          <span class="md-nav__icon md-icon"></span>
+          emotioncf.cf
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/base/" class="md-nav__link">
+        Base
       </a>
     </li>
   
@@ -343,9 +399,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/cf/" class="md-nav__link">
-        cf
+      <a href="../api/mean/" class="md-nav__link">
+        Mean
       </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/knn/" class="md-nav__link">
+        KNN
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/nmf_m/" class="md-nav__link">
+        NNMF_mult
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/nmf_s/" class="md-nav__link">
+        NNMF_sgd
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -402,6 +500,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#editing-continuous-integration" class="md-nav__link">
+    Editing continuous integration
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation" class="md-nav__link">
     Documentation
   </a>
@@ -446,6 +551,7 @@
                 
                 
                 <h1 id="development">Development</h1>
+<p>Each new push or pull-request to the code base for this toolbox will automatically be run through testing and documentation building via github actions.</p>
 <p>To develop this package or its documentation locally you will need to install a few extra dependencies.</p>
 <h2 id="installation">Installation</h2>
 <p><code>pip install -r requirements-dev.txt</code></p>
@@ -464,6 +570,8 @@ black --check .
 </li>
 </ul>
 <p>Now anytime you try to commit new changes, git will automatically run black before the commit and warn you if certain files need to be formatted.</p>
+<h2 id="editing-continuous-integration">Editing continuous integration</h2>
+<p>To change how the automatic workflow builds are specified, make the relevant edits in <code>.github/workflows/conda_ci.yml</code>.</p>
 <h2 id="documentation">Documentation</h2>
 <p>Documentation is built with <a href="https://www.mkdocs.org/">mkdocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs material theme</a> and <a href="https://pawamoy.github.io/mkdocstrings/">mkdocstrings</a> extension. </p>
 <h3 id="live-server">Live server</h3>
@@ -489,7 +597,7 @@ black --check .
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href=".." class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../overview/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -498,19 +606,19 @@ black --check .
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Home
+                Quick Overview
               </div>
             </div>
           </a>
         
         
-          <a href="../api/data/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../api/utils/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                data
+                emotioncf.utils
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
