@@ -1,7 +1,8 @@
 # Emotion CF
-
-[![Build Status](https://travis-ci.org/cosanlab/emotionCF.svg?branch=master)](https://travis-ci.org/cosanlab/emotionCF)
-[![Coverage Status](https://coveralls.io/repos/github/ljchang/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/ljchang/emotionCF?branch=master)
+![Build Status](https://github.com/cosanlab/emotionCF/workflows/EmotionCF/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/cosanlab/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/emotionCF?branch=master)
+![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue)
+![Platforms](https://img.shields.io/badge/platform-linux%20%7C%20osx%20%7C%20win-blue)
 
 **A Python package for collaborative filtering on emotion datasets**
 
