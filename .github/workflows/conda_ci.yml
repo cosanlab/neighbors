@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         shell: bash -l {0}
         run: |
-        conda create --name "${{ matrix.python-version}}" python=${{ matrix.python-version }} pip numpy pandas scipy matplotlib seaborn scikit-learn -y
+        conda create -y --name "${{ matrix.python-version }}" python=${{ matrix.python-version }} pip numpy pandas scipy matplotlib seaborn scikit-learn
         conda activate "${{ matrix.python-version }}"
         pip install pytest
         pip install pytest-xdist
