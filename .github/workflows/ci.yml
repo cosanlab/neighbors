@@ -27,12 +27,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           pip install pytest-xdist
-          pip install coveralls
+          pip install python-coveralls
           pip install -r requirements.txt
 
       - name: Run Tests
         run: |
-          coverage run --source=emotioncf -m pytest -s -n auto
+          coverage run --source emotioncf -m py.test -s
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
