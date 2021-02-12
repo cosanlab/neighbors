@@ -48,9 +48,11 @@ class BaseCF(object):
 
         if n_train_items is not None:
             self.split_train_test(n_train_items=n_train_items)
+        else:
+            self.n_train_items = n_train_items
 
     def __repr__(self):
-        out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, mask={self.is_mask}, is_mask_dilated={self.is_mask_dilated})"
+        out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, is_predict={self.is_predict}, is_mask={self.is_mask}, is_mask_dilated={self.is_mask_dilated})"
         return out
 
     def get_mse(self, dataset="test"):
@@ -299,11 +301,12 @@ class BaseCF(object):
         self.masked_data = self.data[self.train_mask]
         self.is_mask = True
 
-    def plot_predictions(self, dataset="train", heatmapkwargs={}):
+    def plot_predictions(self, dataset="train", verbose=True, heatmapkwargs={}):
         """Create plot of actual and predicted data
 
         Args:
             dataset (str): plot 'all' data, the 'train' data, or the 'test' data
+            verbose (bool; optional): print the averaged subject correlation while plotting; Default True
 
         Returns:
             r (float): Correlation
@@ -363,7 +366,8 @@ class BaseCF(object):
         ax[2].set_title("Predicted Ratings")
 
         r = self.get_sub_corr(dataset=dataset).mean()
-        print("Average Subject Correlation: %s" % r)
+        if verbose:
+            print("Average Subject Correlation: %s" % r)
 
         return f, r
 
@@ -739,6 +743,10 @@ class NNMF_mult(BaseCF):
         super().__init__(data, mask, n_train_items)
         self.H = None
         self.W = None
+        self.n_factors = None
+
+    def __repr__(self):
+        return f"{super().__repr__()[:-1]}, n_factors={self.n_factors})"
 
     def fit(
         self,
@@ -772,6 +780,8 @@ class NNMF_mult(BaseCF):
         if n_factors is None:
             n_factors = n_items
 
+        self.n_factors = n_factors
+
         # Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_factors)
         avg = np.sqrt(np.nanmean(self.data) / n_factors)
         self.H = avg * np.random.rand(n_items, n_factors)  # H = Y
@@ -795,6 +805,7 @@ class NNMF_mult(BaseCF):
 
         ctr = 1
         # TODO change to np.inf but make sure it doesn't screw up < fit_error_limit
+        # TODO: Go over matrix math below, something is up with it cause n_factors doesn't work
         fit_residual = -np.inf
         current_resid = -np.inf
         error_limit = error_limit
@@ -867,6 +878,10 @@ class NNMF_sgd(BaseCF):
 
     def __init__(self, data, mask=None, n_train_items=None):
         super().__init__(data, mask, n_train_items)
+        self.n_factors = None
+
+    def __repr__(self):
+        return f"{super().__repr__()[:-1]}, n_factors={self.n_factors})"
 
     def fit(
         self,
@@ -901,15 +916,11 @@ class NNMF_sgd(BaseCF):
         """
 
         # initialize variables
-        if verbose:
-            print("-----")
-            print(f"Max Iter: {n_iterations}")
-            print(f"Convergence Tol: {tol}")
-            print("-----")
-
         n_users, n_items = self.data.shape
         if n_factors is None:
             n_factors = n_items
+
+        self.n_factors = n_factors
 
         if dilate_ts_n_samples is not None:
             self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
@@ -947,52 +958,59 @@ class NNMF_sgd(BaseCF):
         # train weights
         ctr = 1
         last_e = 0
-        delta = "init"
+        delta = np.inf
         max_norm = data.abs().max().max()
         self.error_history = []
         converged = False
-        for ctr in tqdm(range(1, n_iterations + 1), desc="iter"):
-            if (ctr - 1) % 10 == 0 and verbose:
-                print(f"\tCurrent Iteration: {ctr}")
-                print(f"\tCurrent delta: {delta}\t | tol: {tol}")
+        norm_e = np.inf
+        with tqdm(total=n_iterations) as t:
+            for ctr in range(1, n_iterations + 1):
+                if verbose:
+                    t.set_description(
+                        f"Norm Error: {np.round(100*norm_e, 2)}% Delta Convg: {np.round(delta, 4)}||{tol}"
+                    )
+                    # t.set_postfix(Delta=f"{np.round(delta, 4)}")
 
-            training_indices = np.arange(len(sample_row))
-            np.random.shuffle(training_indices)
+                training_indices = np.arange(len(sample_row))
+                np.random.shuffle(training_indices)
 
-            for idx in training_indices:
-                u = sample_row[idx]
-                i = sample_col[idx]
-                prediction = self._predict_single(u, i)
+                for idx in training_indices:
+                    u = sample_row[idx]
+                    i = sample_col[idx]
+                    prediction = self._predict_single(u, i)
 
-                # Use changes in e to determine tolerance
-                e = data.iloc[u, i] - prediction  # error
+                    # Use changes in e to determine tolerance
+                    e = data.iloc[u, i] - prediction  # error
 
-                # Update biases
-                self.user_bias[u] += learning_rate * (
-                    e - self.user_bias_reg * self.user_bias[u]
-                )
-                self.item_bias[i] += learning_rate * (
-                    e - self.item_bias_reg * self.item_bias[i]
-                )
+                    # Update biases
+                    self.user_bias[u] += learning_rate * (
+                        e - self.user_bias_reg * self.user_bias[u]
+                    )
+                    self.item_bias[i] += learning_rate * (
+                        e - self.item_bias_reg * self.item_bias[i]
+                    )
 
-                # Update latent factors
-                self.user_vecs[u, :] += learning_rate * (
-                    e * self.item_vecs[i, :] - self.user_fact_reg * self.user_vecs[u, :]
-                )
-                self.item_vecs[i, :] += learning_rate * (
-                    e * self.user_vecs[u, :] - self.item_fact_reg * self.item_vecs[i, :]
-                )
-            # Normalize the current error with respect to the max of the dataset
-            norm_e = np.abs(e) / max_norm
-            # Compute the delta
-            delta = np.abs(np.abs(norm_e) - np.abs(last_e))
-            if save_learning:
-                self.error_history.append(norm_e)
-            if delta < tol:
-                converged = True
-                break
-            # Save the last normalize error
-            last_e = norm_e
+                    # Update latent factors
+                    self.user_vecs[u, :] += learning_rate * (
+                        e * self.item_vecs[i, :]
+                        - self.user_fact_reg * self.user_vecs[u, :]
+                    )
+                    self.item_vecs[i, :] += learning_rate * (
+                        e * self.user_vecs[u, :]
+                        - self.item_fact_reg * self.item_vecs[i, :]
+                    )
+                # Normalize the current error with respect to the max of the dataset
+                norm_e = np.abs(e) / max_norm
+                # Compute the delta
+                delta = np.abs(np.abs(norm_e) - np.abs(last_e))
+                if save_learning:
+                    self.error_history.append(norm_e)
+                if delta < tol:
+                    converged = True
+                    break
+                t.update()
+        # Save the last normalize error
+        last_e = norm_e
         self.is_fit = True
         self._n_iter = ctr
         self._delta = delta
@@ -1000,14 +1018,15 @@ class NNMF_sgd(BaseCF):
         self.converged = converged
         if verbose:
             if self.converged:
-                print("\tCONVERGED!")
+                print("\n\tCONVERGED!")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
-                print(f"\tFinal delta: {np.round(self._delta)}")
+                print(f"\tFinal Delta: {np.round(self._delta)}")
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
                 print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
-            print(f"\tFinal norm error: {np.round(self._norm_e, 5)} (min: 0, max:1)")
+
+            print(f"\tFinal Norm Error: {np.round(100*norm_e, 2)}%")
 
     def plot_learning(self, save=False):
         """
