@@ -30,4 +30,4 @@ jobs:
           pip install -r requirements.txt
       - name: Test with pytest
         run: |
-          pytest -n auto --cov=emotioncf tests/ --cov-report=xml --cov-report=html
+          pytest --cov=emotioncf -s tests/ -n auto
