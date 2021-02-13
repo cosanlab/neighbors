@@ -33,14 +33,28 @@ class Base(object):
         self.predictions = None
         self.is_fit = False
         self.is_predict = False
+        self.is_mask = False
         self.is_mask_dilated = False
         self.dilated_mask = None
+        self.train_mask = None
+        self.masked_data = None
+
+        # Check for null values in input data and if they exist treat the data as already masked
+        if data.isnull().any().any():
+            print("data contains NaNs...treating as pre-masked")
+            self.train_mask = ~data.isnull()
+            self.masked_data = self.data[self.train_mask]
+            self.is_mask = True
+
+        # Otherwise apply any user provided mask
         if mask is not None:
+            if self.is_mask:
+                raise ValueError(
+                    "mask was provided, but data already contains missing values that were used for the train_mask"
+                )
             self.train_mask = mask
             self.masked_data = self.data[self.train_mask]
             self.is_mask = True
-        else:
-            self.is_mask = False
 
         if n_train_items is not None:
             self.split_train_test(n_train_items=n_train_items)
@@ -563,6 +577,7 @@ class BaseNMF(Base):
 
     def __init__(self, data, mask=None, n_train_items=None):
         super().__init__(data, mask, n_train_items)
+        self.error_history = []
 
     def plot_learning(self, save=False):
         """

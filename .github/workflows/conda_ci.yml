@@ -11,7 +11,6 @@ on:
     branches:
       - main
       - master
-      - paper_updates
 
 jobs:
   # Job (1): Run testing in parallel against multiples OSs and Python versions

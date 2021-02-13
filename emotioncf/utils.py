@@ -5,8 +5,9 @@ Utility functions and helpers
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
+from scipy.spatial.distance import pdist, squareform
 
-__all__ = ["create_sub_by_item_matrix", "get_size_in_mb", "get_sparsity"]
+__all__ = ["create_sub_by_item_matrix", "get_size_in_mb", "get_sparsity", "nanpdist"]
 
 
 def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"):
@@ -61,3 +62,44 @@ def get_sparsity(arr):
         return 1 - (np.count_nonzero(arr) / arr.size)
     else:
         raise TypeError("input must be a numpy array")
+
+
+def nanpdist(arr, metric="euclidean", return_square=True):
+    """
+    Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.
+
+    Args:
+        arr (np.ndarray): 2d array
+        metric (str; optional): distance metric to use. Must be supported by scipy
+        return_square (boo; optional): return a symmetric 2d distance matrix like sklearn instead of a 1d vector like pdist; Default True
+
+    Return:
+        np.ndarray: symmetric 2d array of distances
+    """
+
+    has_nans = pd.DataFrame(arr).isnull().any().any()
+    if not has_nans:
+        out = pdist(arr, metric=metric)
+    else:
+        nrows = arr.shape[0]
+        out = np.zeros(nrows * (nrows - 1) // 2, dtype=float)
+        mask = np.isfinite(arr)
+        vec_mask = np.zeros(arr.shape[1], dtype=bool)
+        k = 0
+        for row1_idx in range(nrows - 1):
+            for row2_idx in range(row1_idx + 1, nrows):
+                vec_mask = np.logical_and(mask[row1_idx], mask[row2_idx])
+                masked_row1, masked_row2 = (
+                    arr[row1_idx][vec_mask],
+                    arr[row2_idx][vec_mask],
+                )
+                out[k] = pdist(np.vstack([masked_row1, masked_row2]), metric=metric)
+                k += 1
+
+    if return_square:
+        if out.ndim == 1:
+            out = squareform(out)
+    else:
+        if out.ndim == 2:
+            out = squareform(out)
+    return out

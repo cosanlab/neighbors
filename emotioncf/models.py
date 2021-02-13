@@ -4,9 +4,9 @@ Core algorithms for collaborative filtering
 
 import pandas as pd
 import numpy as np
-from scipy.stats import pearsonr
 from tqdm import tqdm
 from .base import Base, BaseNMF
+from .utils import nanpdist
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -75,8 +75,12 @@ class KNN(Base):
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
         Args:
-            metric (str): type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.
+            metric (str; optional): type of similarity. One of 'pearson', 'spearman', 'kendall', 'cosine', or 'correlation'. 'correlation' is just an alias for 'pearson'. Default 'pearson'.
         """
+
+        metrics = ["pearson", "spearman", "kendall", "cosine", "correlation"]
+        if metric not in metrics:
+            raise ValueError(f"metric must be one of {metrics}")
 
         if self.is_mask:
             data = self.data[self.train_mask]
@@ -87,33 +91,16 @@ class KNN(Base):
             data = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
             data = data[self.dilated_mask]
 
-        def cosine_similarity(x, y):
-            return np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))
-
         if metric in ["pearson", "kendall", "spearman"]:
-            # Get user x user similarity matrix
+            # Fall back to pandas
             sim = data.T.corr(method=metric)
-        elif metric in ["correlation", "cosine"]:
-            sim = pd.DataFrame(np.zeros((data.shape[0], data.shape[0])))
-            sim.columns = data.index
-            sim.index = data.index
-            for x in data.iterrows():
-                for y in data.iterrows():
-                    if metric == "correlation":
-                        sim.loc[x[0], y[0]] = pearsonr(
-                            x[1][(~x[1].isnull()) & (~y[1].isnull())],
-                            y[1][(~x[1].isnull()) & (~y[1].isnull())],
-                        )[0]
-                    elif metric == "cosine":
-                        sim.loc[x[0], y[0]] = cosine_similarity(
-                            x[1][(~x[1].isnull()) & (~y[1].isnull())],
-                            y[1][(~x[1].isnull()) & (~y[1].isnull())],
-                        )
         else:
-            raise NotImplementedError(
-                "%s is not implemented yet. Try ['pearson','spearman','correlation','cosine']"
-                % metric
+            sim = pd.DataFrame(
+                1 - nanpdist(data.to_numpy(), metric=metric),
+                index=data.index,
+                columns=data.index,
             )
+
         self.subject_similarity = sim
         self.is_fit = True
 
@@ -261,7 +248,7 @@ class NNMF_mult(BaseNMF):
             fit_residual = np.sqrt(np.sum(err ** 2))
             # Save this iteration's predictions
             X_est_prev = X_est
-            # Update the residuals
+            # Update the residuals; note that the norm = RMSE not MSE
             current_resid = np.linalg.norm(masked_X - mask * X_est, ord="fro")
             # Norm the residual with respect to the max of the dataset so we can use a common convergence threshold
             current_resid /= masked_X.max()
