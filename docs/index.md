@@ -1,5 +1,5 @@
 # Emotion CF
-![Build Status](https://github.com/cosanlab/emotionCF/workflows/EmotionCF/badge.svg)
+[![Build Status](https://github.com/cosanlab/emotionCF/workflows/EmotionCF/badge.svg)](https://github.com/cosanlab/emotionCF/actions?query=workflow%3AEmotionCF)
 [![Coverage Status](https://coveralls.io/repos/github/cosanlab/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/emotionCF?branch=master)
 ![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue)
 ![Platforms](https://img.shields.io/badge/platform-linux%20%7C%20osx%20%7C%20win-blue)
