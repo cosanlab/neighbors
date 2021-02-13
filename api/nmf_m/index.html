@@ -660,7 +660,7 @@
         <span class="n">fit_residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">err</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
         <span class="c1"># Save this iteration's predictions</span>
         <span class="n">X_est_prev</span> <span class="o">=</span> <span class="n">X_est</span>
-        <span class="c1"># Update the residuals</span>
+        <span class="c1"># Update the residuals; note that the norm = RMSE not MSE</span>
         <span class="n">current_resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">masked_X</span> <span class="o">-</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">X_est</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s2">"fro"</span><span class="p">)</span>
         <span class="c1"># Norm the residual with respect to the max of the dataset so we can use a common convergence threshold</span>
         <span class="n">current_resid</span> <span class="o">/=</span> <span class="n">masked_X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>

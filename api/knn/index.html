@@ -515,9 +515,9 @@
 <tbody>
 <tr>
 <td><code>metric</code></td>
-<td><code>str</code></td>
+<td><code>str; optional</code></td>
 <td>
-<p>type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.</p>
+<p>type of similarity. One of 'pearson', 'spearman', 'kendall', 'cosine', or 'correlation'. 'correlation' is just an alias for 'pearson'. Default 'pearson'.</p>
 </td>
 <td><code>'pearson'</code></td>
 </tr>
@@ -531,8 +531,12 @@
     <span class="sd">"""Fit collaborative model to train data.  Calculate similarity between subjects across items</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        metric (str): type of similarity {"pearson",,"spearman","correlation","cosine"}.  Note pearson and spearman are way faster.</span>
+<span class="sd">        metric (str; optional): type of similarity. One of 'pearson', 'spearman', 'kendall', 'cosine', or 'correlation'. 'correlation' is just an alias for 'pearson'. Default 'pearson'.</span>
 <span class="sd">    """</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">,</span> <span class="s2">"kendall"</span><span class="p">,</span> <span class="s2">"cosine"</span><span class="p">,</span> <span class="s2">"correlation"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"metric must be one of </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span><span class="p">]</span>
@@ -543,33 +547,16 @@
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dilate_ts_rating_samples</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">dilate_ts_n_samples</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-
     <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"kendall"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">]:</span>
-        <span class="c1"># Get user x user similarity matrix</span>
+        <span class="c1"># Fall back to pandas</span>
         <span class="n">sim</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"correlation"</span><span class="p">,</span> <span class="s2">"cosine"</span><span class="p">]:</span>
-        <span class="n">sim</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
-        <span class="n">sim</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span>
-        <span class="n">sim</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span>
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">"correlation"</span><span class="p">:</span>
-                    <span class="n">sim</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span>
-                        <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][(</span><span class="o">~</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())],</span>
-                        <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][(</span><span class="o">~</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())],</span>
-                    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">"cosine"</span><span class="p">:</span>
-                    <span class="n">sim</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span>
-                        <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][(</span><span class="o">~</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())],</span>
-                        <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][(</span><span class="o">~</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())],</span>
-                    <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">"</span><span class="si">%s</span><span class="s2"> is not implemented yet. Try ['pearson','spearman','correlation','cosine']"</span>
-            <span class="o">%</span> <span class="n">metric</span>
+        <span class="n">sim</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="n">nanpdist</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">),</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
         <span class="p">)</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">subject_similarity</span> <span class="o">=</span> <span class="n">sim</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre>

@@ -327,6 +327,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#emotioncf.utils.nanpdist" class="md-nav__link">
+    nanpdist()
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -477,6 +484,13 @@
         <li class="md-nav__item">
   <a href="#emotioncf.utils.get_sparsity" class="md-nav__link">
     get_sparsity()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.utils.nanpdist" class="md-nav__link">
+    nanpdist()
   </a>
   
 </li>
@@ -661,6 +675,116 @@
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"input must be a numpy array"</span><span class="p">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="emotioncf.utils.nanpdist">
+
+<code class="highlight language-python"><span class="n">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">'euclidean'</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+      </h3>
+<div class="doc doc-contents ">
+<p>Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>arr</code></td>
+<td><code>np.ndarray</code></td>
+<td>
+<p>2d array</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>metric</code></td>
+<td><code>str; optional</code></td>
+<td>
+<p>distance metric to use. Must be supported by scipy</p>
+</td>
+<td><code>'euclidean'</code></td>
+</tr>
+<tr>
+<td><code>return_square</code></td>
+<td><code>boo; optional</code></td>
+<td>
+<p>return a symmetric 2d distance matrix like sklearn instead of a 1d vector like pdist; Default True</p>
+</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>np.ndarray</code></td>
+<td>
+<p>symmetric 2d array of distances</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">"euclidean"</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arr (np.ndarray): 2d array</span>
+<span class="sd">        metric (str; optional): distance metric to use. Must be supported by scipy</span>
+<span class="sd">        return_square (boo; optional): return a symmetric 2d distance matrix like sklearn instead of a 1d vector like pdist; Default True</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        np.ndarray: symmetric 2d array of distances</span>
+<span class="sd">    """</span>
+
+    <span class="n">has_nans</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_nans</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nrows</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nrows</span> <span class="o">*</span> <span class="p">(</span><span class="n">nrows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">vec_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">row1_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">row2_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">row1_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nrows</span><span class="p">):</span>
+                <span class="n">vec_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="n">row1_idx</span><span class="p">],</span> <span class="n">mask</span><span class="p">[</span><span class="n">row2_idx</span><span class="p">])</span>
+                <span class="n">masked_row1</span><span class="p">,</span> <span class="n">masked_row2</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">arr</span><span class="p">[</span><span class="n">row1_idx</span><span class="p">][</span><span class="n">vec_mask</span><span class="p">],</span>
+                    <span class="n">arr</span><span class="p">[</span><span class="n">row2_idx</span><span class="p">][</span><span class="n">vec_mask</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">masked_row1</span><span class="p">,</span> <span class="n">masked_row2</span><span class="p">]),</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+                <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">return_square</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
 </code></pre>
 </div>
 </details>
