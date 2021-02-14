@@ -4,7 +4,7 @@ Test utility functions
 
 import numpy as np
 import pandas as pd
-from emotioncf import create_sub_by_item_matrix, nanpdist
+from emotioncf import create_sub_by_item_matrix, nanpdist, create_train_test_mask
 
 
 def test_create_sub_by_item_matrix(simulate_long_data):
@@ -42,3 +42,19 @@ def test_nanpdist(simulate_wide_data):
     calc_corr_mat = 1 - nanpdist(df.to_numpy(), metric="correlation")
     pd_corr_mat = df.T.corr(method="pearson").to_numpy()
     assert np.allclose(calc_corr_mat, pd_corr_mat)
+
+
+def test_create_train_test_mask(simulate_wide_data):
+    mask = create_train_test_mask(simulate_wide_data, n_train_items=0.1)
+    assert mask.shape == simulate_wide_data.shape
+    assert all(mask.sum(1) == 10)
+
+    mask = create_train_test_mask(simulate_wide_data, n_train_items=19)
+    assert mask.shape == simulate_wide_data.shape
+    assert all(mask.sum(1) == 19)
+
+    masked_data = simulate_wide_data[mask]
+    assert isinstance(masked_data, pd.DataFrame)
+    assert masked_data.shape == simulate_wide_data.shape
+    assert ~simulate_wide_data.isnull().any().any()
+    assert masked_data.isnull().any().any()

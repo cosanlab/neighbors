@@ -7,7 +7,13 @@ import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.spatial.distance import pdist, squareform
 
-__all__ = ["create_sub_by_item_matrix", "get_size_in_mb", "get_sparsity", "nanpdist"]
+__all__ = [
+    "create_sub_by_item_matrix",
+    "get_size_in_mb",
+    "get_sparsity",
+    "nanpdist",
+    "create_train_test_mask",
+]
 
 
 def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"):
@@ -104,3 +110,43 @@ def nanpdist(arr, metric="euclidean", return_square=True):
         if out.ndim == 2:
             out = squareform(out)
     return out
+
+
+def create_train_test_mask(data, n_train_items=0.1):
+    """
+    Given a pandas dataframe create a boolean mask such that n_train_items columns are `True` and the rest are `False`. Critically, each row is masked independently. This function does not alter the input dataframe.
+
+    Args:
+        data (pd.DataFrame): input dataframe
+        n_train_items (float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items. Defaults to 0.1 (10% of the columns of data).
+
+    Raises:
+        TypeError: [description]
+
+    Returns:
+        pd.DataFrame: boolean dataframe of same shape as data
+    """
+
+    if data.isnull().any().any():
+        raise ValueError("data already contains NaNs and further masking is ambiguous!")
+
+    if isinstance(n_train_items, (float, np.floating)) and 1 >= n_train_items > 0:
+        n_train_items = int(np.round(data.shape[1] * n_train_items))
+
+    elif isinstance(n_train_items, (int, np.integer)):
+        n_train_items = n_train_items
+
+    else:
+        raise TypeError(
+            f"n_train_items must be an integer or a float between 0-1, not {type(n_train_items)} with value {n_train_items}"
+        )
+
+    n_test_items = data.shape[1] - n_train_items
+    mask = np.array([True] * n_train_items + [False] * n_test_items)
+    mask = np.vstack(
+        [
+            np.random.choice(mask, replace=False, size=mask.shape)
+            for _ in range(data.shape[0])
+        ]
+    )
+    return pd.DataFrame(mask, index=data.index, columns=data.columns)

@@ -3,7 +3,8 @@ Test core algorithms
 """
 import numpy as np
 import pandas as pd
-from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd
+from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd, create_train_test_mask
+from emotioncf.base import Base
 import matplotlib.pyplot as plt
 import pytest
 
@@ -246,3 +247,50 @@ def test_downsample(simulate_wide_data):
     assert cf.dilated_mask.shape == (50, 50)
     assert cf.train_mask.shape == (50, 50)
     assert cf.predictions.shape == (50, 50)
+
+
+def test_base_class(simulate_wide_data):
+
+    # Init
+    model = Base(simulate_wide_data)
+    assert ~model.data.isnull().any().any()
+    assert model.train_mask is None
+    assert model.n_train_items is None
+
+    with pytest.raises(ValueError):
+        model.get_data("train")
+
+    # Masking from training size
+    model = Base(simulate_wide_data, n_train_items=0.1)
+    assert ~model.data.isnull().any().any()
+    assert model.masked_data.isnull().any().any()
+    assert model.is_mask is True
+    assert model.train_mask is not None
+
+    # Masking from input mask
+    mask = create_train_test_mask(simulate_wide_data)
+    model = Base(simulate_wide_data, mask=mask)
+    assert ~model.data.isnull().any().any()
+    assert model.masked_data.isnull().any().any()
+    assert model.is_mask is True
+    assert model.train_mask is not None
+
+    # Ensure get_data respects mask
+    train = model.get_data("train")
+    test = model.get_data("test")
+    all_data = model.get_data()
+
+    assert train.isnull().sum().sum() > test.isnull().sum().sum()
+    assert ~all_data.isnull().any().any()
+
+    with pytest.raises(ValueError):
+        model = Base(simulate_wide_data, mask=mask, n_train_items=0.1)
+
+    # Mask dilation
+    masked_data = model.dilate_mask(n_samples=5)
+    assert model.is_mask_dilated is True
+    assert masked_data.equals(model.masked_data)
+    assert masked_data.isnull().sum().sum() > mask.sum().sum()
+
+    # Make sure get_data respects dilation
+    assert train.isnull().sum().sum() > model.get_data("train").isnull().sum().sum()
