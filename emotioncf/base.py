@@ -596,7 +596,7 @@ class BaseNMF(Base):
             ax.set(
                 xlabel="Iteration",
                 ylabel="Normalized RMSE",
-                title=f"Final Normalized RMSE: {np.round(self._norm_e, 3)}\nConverged: {self.converged}",
+                title=f"Final Normalized RMSE: {np.round(self._norm_rmse, 3)}\nConverged: {self.converged}",
             )
             if save:
                 plt.savefig(save, bbox_inches="tight")

@@ -46,7 +46,7 @@ def sgd(
             print(
                 "Iter:",
                 this_iter,
-                " Norm Error:",
+                " Norm RMSE:",
                 disp_norm_error,
                 "%  Delta Convg:",
                 disp_delta,
@@ -128,7 +128,7 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
             print(
                 "Iter:",
                 this_iter,
-                " Norm Error:",
+                " Norm RMSE:",
                 disp_norm_error,
                 "%  Delta Convg:",
                 disp_delta,
