@@ -1,27 +1,15 @@
 [run]
-include = emotioncf/*
- 
+relative_files = True
+
 [report]
-exclude_lines =
+show_missing = True
+exclude_lines = 
     pragma: no cover
- 
-    # Don't complain about missing debug-only code:
     def __repr__
-    if self\.debug
- 
-    # Don't complain if tests don't hit defensive assertion code:
     raise AssertionError
     raise NotImplementedError
-    raise ValueError
- 
-    # Don't complain if non-runnable code isn't run:
-    if 0:
     if __name__ == .__main__.:
- 
-omit =
-    emotioncf/__init__*
-    emotioncf/version.*
-    emotioncf/tests/*
-     
-show_missing = True
-
+omit = 
+    **/__init__*
+    **/tests/*
+    **/version.*

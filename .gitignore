@@ -1,7 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
+.pytest_cache/
+.vscode
 
 # C extensions
 *.so
@@ -87,3 +87,16 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Locally build mkdocs site
+site/
+
+# Conda environment
+environment.yml
+environment-lock.yml
+
+# Development notebookd
+dev
+.environment.yml
+*.pdf
+.ipython_logs

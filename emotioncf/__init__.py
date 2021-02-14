@@ -1,4 +1,4 @@
-# Import key objects into namespace
-
-from .cf import Mean, KNN
-from .data import create_sub_by_item_matrix
+# flake8: noqa
+from .base import Base, BaseNMF
+from .models import Mean, KNN, NNMF_mult, NNMF_sgd
+from .utils import create_sub_by_item_matrix, get_size_in_mb, get_sparsity, nanpdist

@@ -1,0 +1,41 @@
+site_name: EmotionCF
+site_description: "A Python package to perform collaborative filtering on emotion datasets"
+site_url: "https://cosanlab.github.io/emotionCF"
+repo_url: "https://github.com/cosanlab/emotionCF"
+repo_name: "cosanlab/emotioncf"
+theme:
+  name: material
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.superfences
+  - pymdownx.highlight
+nav:
+  - Home: index.md
+  - Quick Overview: overview.md
+  - Development: development.md
+  - API Reference:
+      - emotioncf.utils: api/utils.md
+      - emotioncf.cf:
+          - Base: api/base.md
+          - Mean: api/mean.md
+          - KNN: api/knn.md
+          - NNMF_mult: api/nmf_m.md
+          - NNMF_sgd: api/nmf_s.md
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          selection:
+            filters:
+              - "!^__"
+              - "!^_"
+          rendering:
+            show_source: true
+            show_if_no_docstring: false
+            show_category_heading: false
+            heading_level: 3
+      watch:
+        - emotioncf
