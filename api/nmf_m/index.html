@@ -491,17 +491,21 @@
 <h3 class="hidden-toc" id="emotioncf.models.NNMF_mult" style="visibility: hidden; position: absolute;">
         </h3>
 <div class="doc doc-contents first">
-<p>The Non-negative Matrix Factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items. Training is performed via multiplicative updating and continues until convergence or the maximum number of training iterations has been reached. The number of factors, convergence, and maximum iterations can be controlled with the <code>n_factors</code>, <code>tol</code>, and <code>max_iterations</code> arguments to the <code>.fit</code> method. By default the number of factors = the number items.</p>
+<p>The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.</p>
+<p>Training is performed via multiplicative updating and continues until convergence or the maximum number of training iterations has been reached. Unlike the <code>NNMF_sgd</code>, this implementation takes no hyper-parameters and thus is simpler and faster to use, but less flexible, i.e. no regularization.</p>
+<p>The number of factors, convergence, and maximum iterations can be controlled with the <code>n_factors</code>, <code>tol</code>, and <code>max_iterations</code> arguments to the <code>.fit</code> method. By default the number of factors = the number items.</p>
+<p>The implementation here follows closely that of Lee &amp; Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf</p>
 <div class="doc doc-children">
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="emotioncf.models.NNMF_mult.fit">
 
-<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fit_error_limit</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">error_limit</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_learning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
       </h3>
 <div class="doc doc-contents ">
 <p>Fit NNMF collaborative filtering model to train data using multiplicative updating.</p>
+<p>Given non-negative matrix <code>V</code> find non-negative factors <code>W</code> and <code>H</code> by minimizing <code>||V - WH||^2</code>.</p>
 <p><strong>Parameters:</strong></p>
 <table>
 <thead>
@@ -517,31 +521,31 @@
 <td><code>n_factors</code></td>
 <td><code>int</code></td>
 <td>
-<p>Number of factors or components</p>
+<p>number of factors to learn. Defaults to None which includes all factors.</p>
 </td>
 <td><code>None</code></td>
 </tr>
 <tr>
-<td><code>max_iterations</code></td>
+<td><code>n_iterations</code></td>
 <td><code>int</code></td>
 <td>
-<p>maximum number of interations (default=100)</p>
+<p>total number of training iterations if convergence is not achieved. Defaults to 5000.</p>
 </td>
-<td><code>100</code></td>
+<td><code>5000</code></td>
 </tr>
 <tr>
-<td><code>error_limit</code></td>
+<td><code>tol</code></td>
 <td><code>float</code></td>
 <td>
-<p>error tolerance (default=1e-6)</p>
+<p>Convergence criteria. Model is considered converged if the change in error during training &lt; tol. Defaults to 0.001.</p>
 </td>
 <td><code>1e-06</code></td>
 </tr>
 <tr>
-<td><code>fit_error_limit</code></td>
-<td><code>float</code></td>
+<td><code>eps</code></td>
+<td><code>float; optiona</code></td>
 <td>
-<p>fit error tolerance (default=1e-6)</p>
+<p>small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.</p>
 </td>
 <td><code>1e-06</code></td>
 </tr>
@@ -549,7 +553,7 @@
 <td><code>verbose</code></td>
 <td><code>bool</code></td>
 <td>
-<p>verbose output during fitting procedure (default=True)</p>
+<p>print information about training. Defaults to False.</p>
 </td>
 <td><code>False</code></td>
 </tr>
@@ -557,17 +561,17 @@
 <td><code>dilate_ts_n_samples</code></td>
 <td><code>int</code></td>
 <td>
-<p>will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</p>
+<p>How many items to dilate by prior to training. Defaults to None.</p>
 </td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>save_learning</code></td>
-<td><code>bool; optional</code></td>
+<td><code>bool</code></td>
 <td>
-<p>save a list of the error rate over iterations; Default True</p>
+<p>Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.</p>
 </td>
-<td><code>True</code></td>
+<td><em>required</em></td>
 </tr>
 </tbody>
 </table>
@@ -577,29 +581,26 @@
 <pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">fit_error_limit</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
-    <span class="n">error_limit</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">n_iterations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">save_learning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="sd">"""Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
 
+<span class="sd">    Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        n_factors (int): Number of factors or components</span>
-<span class="sd">        max_iterations (int):  maximum number of interations (default=100)</span>
-<span class="sd">        error_limit (float): error tolerance (default=1e-6)</span>
-<span class="sd">        fit_error_limit (float): fit error tolerance (default=1e-6)</span>
-<span class="sd">        verbose (bool): verbose output during fitting procedure (default=True)</span>
-<span class="sd">        dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</span>
-<span class="sd">        save_learning (bool; optional): save a list of the error rate over iterations; Default True</span>
-
+<span class="sd">        n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.</span>
+<span class="sd">        n_iterations (int, optional): total number of training iterations if convergence is not achieved. Defaults to 5000.</span>
+<span class="sd">        tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training &lt; tol. Defaults to 0.001.</span>
+<span class="sd">        eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.</span>
+<span class="sd">        verbose (bool, optional): print information about training. Defaults to False.</span>
+<span class="sd">        dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
+<span class="sd">        save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.</span>
 <span class="sd">    """</span>
-
-    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-5</span>
 
     <span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 
@@ -608,11 +609,14 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="n">n_factors</span>
 
-    <span class="c1"># Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_factors)</span>
+    <span class="c1"># Initialize W and H at non-negative scaled random values</span>
+    <span class="c1"># We use random initialization scaled by the data, like sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334</span>
     <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_factors</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">avg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>  <span class="c1"># H = Y</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">avg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>  <span class="c1"># W = A</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">avg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="n">n_items</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">avg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
 
+    <span class="c1"># Appropriately handle mask</span>
+    <span class="c1"># TODO: refactor this masking block to match the SGD implementation</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dilate_ts_n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">masked_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dilate_ts_rating_samples</span><span class="p">(</span>
@@ -627,52 +631,41 @@
         <span class="n">masked_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
-    <span class="n">X_est_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span>
+    <span class="c1"># Ger data randge for norm_mse</span>
+    <span class="n">data_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 
-    <span class="n">ctr</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="c1"># TODO change to np.inf but make sure it doesn't screw up &lt; fit_error_limit</span>
-    <span class="c1"># TODO: Go over matrix math below, something is up with it cause n_factors doesn't work</span>
-    <span class="n">fit_residual</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="n">current_resid</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="n">error_limit</span> <span class="o">=</span> <span class="n">error_limit</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">while</span> <span class="p">(</span>
-        <span class="n">ctr</span> <span class="o">&lt;=</span> <span class="n">max_iterations</span>
-        <span class="ow">or</span> <span class="n">current_resid</span> <span class="o">&lt;</span> <span class="n">error_limit</span>
-        <span class="ow">or</span> <span class="n">fit_residual</span> <span class="o">&lt;</span> <span class="n">fit_error_limit</span>
-    <span class="p">):</span>
-        <span class="c1"># Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">masked_X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
-            <span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">T</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="c1"># Run multiplicative updating</span>
+    <span class="n">error_history</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">norm_rmse</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">mult</span><span class="p">(</span>
+        <span class="n">masked_X</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span>
+        <span class="n">data_range</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">,</span>
+        <span class="n">tol</span><span class="p">,</span>
+        <span class="n">n_iterations</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
 
-        <span class="c1"># Update H: Matlab: Y=Y.*((A'*(W.*X))./(A'*(W.*(A*Y))));</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">masked_X</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
-
-        <span class="c1"># Evaluate</span>
-        <span class="n">X_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span>
-        <span class="c1"># This is basically error gradient for convergence purposes</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">*</span> <span class="p">(</span><span class="n">X_est_prev</span> <span class="o">-</span> <span class="n">X_est</span><span class="p">)</span>
-        <span class="n">fit_residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">err</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
-        <span class="c1"># Save this iteration's predictions</span>
-        <span class="n">X_est_prev</span> <span class="o">=</span> <span class="n">X_est</span>
-        <span class="c1"># Update the residuals; note that the norm = RMSE not MSE</span>
-        <span class="n">current_resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">masked_X</span> <span class="o">-</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">X_est</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s2">"fro"</span><span class="p">)</span>
-        <span class="c1"># Norm the residual with respect to the max of the dataset so we can use a common convergence threshold</span>
-        <span class="n">current_resid</span> <span class="o">/=</span> <span class="n">masked_X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">save_learning</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_resid</span><span class="p">)</span>
-        <span class="c1"># curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')</span>
-        <span class="k">if</span> <span class="n">ctr</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Current Iteration </span><span class="si">{}</span><span class="s2">:"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ctr</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">fit residual"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">fit_residual</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-        <span class="n">ctr</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># Save outputs to model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span> <span class="o">=</span> <span class="n">error_history</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span> <span class="o">=</span> <span class="n">n_iter</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_norm_rmse</span> <span class="o">=</span> <span class="n">norm_rmse</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">converged</span> <span class="o">=</span> <span class="n">converged</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">CONVERGED!"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 </code></pre>
 </div>
 </details>
