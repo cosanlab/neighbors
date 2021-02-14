@@ -181,6 +181,15 @@ def test_cf_nnmf_sgd(
     cf.predict()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
 
+    print("\nTESTING OPTIMIZED SGD")
+    cf.fit(
+        n_iterations=1000,
+        tol=tol,
+        dilate_ts_n_samples=dilate_ts_n_samples,
+        verbose=True,
+        fast_sgd=True,
+    )
+
 
 def test_downsample(simulate_wide_data):
     cf = Mean(simulate_wide_data)

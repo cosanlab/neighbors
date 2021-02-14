@@ -64,6 +64,7 @@ def get_sparsity(arr):
         raise TypeError("input must be a numpy array")
 
 
+# Can try to speed this up with numba, but lose support for pandas and scipy so we'd have to rewrite distance functions in numpy/python
 def nanpdist(arr, metric="euclidean", return_square=True):
     """
     Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.

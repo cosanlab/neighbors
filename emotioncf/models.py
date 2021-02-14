@@ -7,6 +7,7 @@ import numpy as np
 from tqdm import tqdm
 from .base import Base, BaseNMF
 from .utils import nanpdist
+from ._fit import sgd
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -306,6 +307,7 @@ class NNMF_sgd(BaseNMF):
         verbose=False,
         dilate_ts_n_samples=None,
         save_learning=True,
+        fast_sgd=False,
         **kwargs,
     ):
         """
@@ -323,6 +325,7 @@ class NNMF_sgd(BaseNMF):
             verbose (bool, optional): print information about training. Defaults to False.
             dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
             save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
+            fast_sdg (bool; optional): Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False
         """
 
         # initialize variables
@@ -349,6 +352,8 @@ class NNMF_sgd(BaseNMF):
             sample_row, sample_col = zip(*np.argwhere(~np.isnan(data.values)))
             self.global_bias = data.values[~np.isnan(data.values)].mean()
 
+        # Convert tuples in case user asks for fast sgd cause numba complains
+        sample_row, sample_col = np.array(sample_row), np.array(sample_col)
         # initialize latent vectors
         self.user_vecs = np.random.normal(
             scale=1.0 / n_factors, size=(n_users, n_factors)
@@ -373,54 +378,100 @@ class NNMF_sgd(BaseNMF):
         self.error_history = []
         converged = False
         norm_e = np.inf
-        with tqdm(total=n_iterations) as t:
-            for ctr in range(1, n_iterations + 1):
-                if verbose:
-                    t.set_description(
-                        f"Norm Error: {np.round(100*norm_e, 2)}% Delta Convg: {np.round(delta, 4)}||{tol}"
-                    )
-                    # t.set_postfix(Delta=f"{np.round(delta, 4)}")
+        if fast_sgd:
+            (
+                error_history,
+                converged,
+                ctr,
+                delta,
+                norm_e,
+                user_bias,
+                user_vecs,
+                item_bias,
+                item_vecs,
+            ) = sgd(
+                data.to_numpy(),
+                self.global_bias,
+                max_norm,
+                tol,
+                self.user_bias,
+                self.user_vecs,
+                self.user_bias_reg,
+                self.user_fact_reg,
+                self.item_bias,
+                self.item_vecs,
+                self.item_bias_reg,
+                self.item_fact_reg,
+                n_iterations,
+                sample_row,
+                sample_col,
+                learning_rate,
+                verbose,
+            )
+            # Save outputs to model
+            (
+                self.error_history,
+                self.user_bias,
+                self.user_vecs,
+                self.item_bias,
+                self.item_vecs,
+            ) = (
+                error_history,
+                user_bias,
+                user_vecs,
+                item_bias,
+                item_vecs,
+            )
 
-                training_indices = np.arange(len(sample_row))
-                np.random.shuffle(training_indices)
+        else:
+            with tqdm(total=n_iterations) as t:
+                for ctr in range(1, n_iterations + 1):
+                    if verbose:
+                        t.set_description(
+                            f"Norm Error: {np.round(100*norm_e, 2)}% Delta Convg: {np.round(delta, 4)}||{tol}"
+                        )
+                        # t.set_postfix(Delta=f"{np.round(delta, 4)}")
 
-                for idx in training_indices:
-                    u = sample_row[idx]
-                    i = sample_col[idx]
-                    prediction = self._predict_single(u, i)
+                    training_indices = np.arange(len(sample_row))
+                    np.random.shuffle(training_indices)
 
-                    # Use changes in e to determine tolerance
-                    e = data.iloc[u, i] - prediction  # error
+                    for idx in training_indices:
+                        u = sample_row[idx]
+                        i = sample_col[idx]
+                        prediction = self._predict_single(u, i)
 
-                    # Update biases
-                    self.user_bias[u] += learning_rate * (
-                        e - self.user_bias_reg * self.user_bias[u]
-                    )
-                    self.item_bias[i] += learning_rate * (
-                        e - self.item_bias_reg * self.item_bias[i]
-                    )
+                        # Use changes in e to determine tolerance
+                        e = data.iloc[u, i] - prediction  # error
 
-                    # Update latent factors
-                    self.user_vecs[u, :] += learning_rate * (
-                        e * self.item_vecs[i, :]
-                        - self.user_fact_reg * self.user_vecs[u, :]
-                    )
-                    self.item_vecs[i, :] += learning_rate * (
-                        e * self.user_vecs[u, :]
-                        - self.item_fact_reg * self.item_vecs[i, :]
-                    )
-                # Normalize the current error with respect to the max of the dataset
-                norm_e = np.abs(e) / max_norm
-                # Compute the delta
-                delta = np.abs(np.abs(norm_e) - np.abs(last_e))
-                if save_learning:
-                    self.error_history.append(norm_e)
-                if delta < tol:
-                    converged = True
-                    break
-                t.update()
-        # Save the last normalize error
-        last_e = norm_e
+                        # Update biases
+                        self.user_bias[u] += learning_rate * (
+                            e - self.user_bias_reg * self.user_bias[u]
+                        )
+                        self.item_bias[i] += learning_rate * (
+                            e - self.item_bias_reg * self.item_bias[i]
+                        )
+
+                        # Update latent factors
+                        self.user_vecs[u, :] += learning_rate * (
+                            e * self.item_vecs[i, :]
+                            - self.user_fact_reg * self.user_vecs[u, :]
+                        )
+                        self.item_vecs[i, :] += learning_rate * (
+                            e * self.user_vecs[u, :]
+                            - self.item_fact_reg * self.item_vecs[i, :]
+                        )
+                    # Normalize the current error with respect to the max of the dataset
+                    norm_e = np.abs(e) / max_norm
+                    # Compute the delta
+                    delta = np.abs(np.abs(norm_e) - np.abs(last_e))
+                    if save_learning:
+                        self.error_history.append(norm_e)
+                    if delta < tol:
+                        converged = True
+                        break
+                    t.update()
+            # Save the last normalize error
+            last_e = norm_e
         self.is_fit = True
         self._n_iter = ctr
         self._delta = delta
