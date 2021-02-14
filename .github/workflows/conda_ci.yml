@@ -60,7 +60,7 @@ jobs:
         run: |
           conda activate test
           conda env list
-          conda install -y pip numpy pandas scipy matplotlib seaborn scikit-learn
+          conda install -y pip numpy pandas scipy matplotlib seaborn scikit-learn numba
           conda install -y -c conda-forge pytest coveralls
           pip install . -r requirements.txt
 

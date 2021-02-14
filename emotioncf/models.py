@@ -4,10 +4,9 @@ Core algorithms for collaborative filtering
 
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
 from .base import Base, BaseNMF
 from .utils import nanpdist
-from ._fit import sgd
+from ._fit import sgd, mult
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -69,8 +68,6 @@ class KNN(Base):
         super().__init__(data, mask, n_train_items)
         self.subject_similarity = None
 
-    # TODO speed up cosine (use sklearn pairwise)
-    # TODO remove correlation but make sure pearson can handle null values
     def fit(self, metric="pearson", dilate_ts_n_samples=None, **kwargs):
 
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
@@ -151,13 +148,20 @@ class KNN(Base):
 
 class NNMF_mult(BaseNMF):
     """
-    The Non-negative Matrix Factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items. Training is performed via multiplicative updating and continues until convergence or the maximum number of training iterations has been reached. The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
+    The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.
+
+    Training is performed via multiplicative updating and continues until convergence or the maximum number of training iterations has been reached. Unlike the `NNMF_sgd`, this implementation takes no hyper-parameters and thus is simpler and faster to use, but less flexible, i.e. no regularization.
+
+    The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
+
+    The implementation here follows closely that of Lee & Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf
+
     """
 
     def __init__(self, data, mask=None, n_train_items=None):
         super().__init__(data, mask, n_train_items)
-        self.H = None
-        self.W = None
+        self.H = None  # factors x items
+        self.W = None  # user x factors
         self.n_factors = None
 
     def __repr__(self):
@@ -166,29 +170,26 @@ class NNMF_mult(BaseNMF):
     def fit(
         self,
         n_factors=None,
-        max_iterations=100,
-        fit_error_limit=1e-6,
-        error_limit=1e-6,
+        n_iterations=5000,
+        tol=1e-6,
+        eps=1e-6,
         verbose=False,
         dilate_ts_n_samples=None,
-        save_learning=True,
-        **kwargs,
     ):
 
         """Fit NNMF collaborative filtering model to train data using multiplicative updating.
 
+        Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.
+
         Args:
-            n_factors (int): Number of factors or components
-            max_iterations (int):  maximum number of interations (default=100)
-            error_limit (float): error tolerance (default=1e-6)
-            fit_error_limit (float): fit error tolerance (default=1e-6)
-            verbose (bool): verbose output during fitting procedure (default=True)
-            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
-            save_learning (bool; optional): save a list of the error rate over iterations; Default True
-
+            n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.
+            n_iterations (int, optional): total number of training iterations if convergence is not achieved. Defaults to 5000.
+            tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
+            eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.
+            verbose (bool, optional): print information about training. Defaults to False.
+            dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
+            save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
         """
-
-        eps = 1e-5
 
         n_users, n_items = self.data.shape
 
@@ -197,11 +198,14 @@ class NNMF_mult(BaseNMF):
 
         self.n_factors = n_factors
 
-        # Initial guesses for solving X ~= WH. H is random [0,1] scaled by sqrt(X.mean() / n_factors)
+        # Initialize W and H at non-negative scaled random values
+        # We use random initialization scaled by the data, like sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
         avg = np.sqrt(np.nanmean(self.data) / n_factors)
-        self.H = avg * np.random.rand(n_items, n_factors)  # H = Y
-        self.W = avg * np.random.rand(n_users, n_factors)  # W = A
+        self.H = avg * np.random.rand(n_factors, n_items)
+        self.W = avg * np.random.rand(n_users, n_factors)
 
+        # Appropriately handle mask
+        # TODO: refactor this masking block to match the SGD implementation
         if self.is_mask:
             if dilate_ts_n_samples is not None:
                 masked_X = self._dilate_ts_rating_samples(
@@ -216,52 +220,41 @@ class NNMF_mult(BaseNMF):
             masked_X = self.data.values
             mask = np.ones(self.data.shape)
 
-        X_est_prev = np.dot(self.W, self.H)
+        # Ger data randge for norm_mse
+        data_range = self.data.max().max() - self.data.min().min()
 
-        ctr = 1
-        # TODO change to np.inf but make sure it doesn't screw up < fit_error_limit
-        # TODO: Go over matrix math below, something is up with it cause n_factors doesn't work
-        fit_residual = -np.inf
-        current_resid = -np.inf
-        error_limit = error_limit
-        self.error_history = []
-        while (
-            ctr <= max_iterations
-            or current_resid < error_limit
-            or fit_residual < fit_error_limit
-        ):
-            # Update W: A=A.*(((W.*X)*Y')./((W.*(A*Y))*Y'));
-            self.W *= np.dot(masked_X, self.H.T) / np.dot(
-                mask * np.dot(self.W, self.H), self.H.T
-            )
-            self.W = np.maximum(self.W, eps)
+        # Run multiplicative updating
+        error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
+            masked_X,
+            self.W,
+            self.H,
+            data_range,
+            eps,
+            tol,
+            n_iterations,
+            verbose,
+        )
 
-            # Update H: Matlab: Y=Y.*((A'*(W.*X))./(A'*(W.*(A*Y))));
-            self.H *= np.dot(self.W.T, masked_X) / np.dot(
-                self.W.T, mask * np.dot(self.W, self.H)
-            )
-            self.H = np.maximum(self.H, eps)
-
-            # Evaluate
-            X_est = np.dot(self.W, self.H)
-            # This is basically error gradient for convergence purposes
-            err = mask * (X_est_prev - X_est)
-            fit_residual = np.sqrt(np.sum(err ** 2))
-            # Save this iteration's predictions
-            X_est_prev = X_est
-            # Update the residuals; note that the norm = RMSE not MSE
-            current_resid = np.linalg.norm(masked_X - mask * X_est, ord="fro")
-            # Norm the residual with respect to the max of the dataset so we can use a common convergence threshold
-            current_resid /= masked_X.max()
-
-            if save_learning:
-                self.error_history.append(current_resid)
-            # curRes = linalg.norm(mask * (masked_X - X_est), ord='fro')
-            if ctr % 10 == 0 and verbose:
-                print("\tCurrent Iteration {}:".format(ctr))
-                print("\tfit residual", np.round(fit_residual, 4))
-            ctr += 1
+        # Save outputs to model
+        self.W, self.H = W, H
+        self.error_history = error_history
         self.is_fit = True
+        self._n_iter = n_iter
+        self._delta = delta
+        self._norm_rmse = norm_rmse
+        self.converged = converged
+
+        if verbose:
+            if self.converged:
+                print("\n\tCONVERGED!")
+                print(f"\n\tFinal Iteration: {self._n_iter}")
+                print(f"\tFinal Delta: {np.round(self._delta)}")
+            else:
+                print("\tFAILED TO CONVERGE (n_iter reached)")
+                print(f"\n\tFinal Iteration: {self._n_iter}")
+                print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
+
+            print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
 
     def predict(self):
 
@@ -279,11 +272,13 @@ class NNMF_mult(BaseNMF):
         self.is_predict = True
 
 
-# TODO: see if we can easily pass hyperparams skleanr grid-search
-# TODO: see if we can manage sparse arrays and swap out pandas for numpy
 class NNMF_sgd(BaseNMF):
     """
-    The Non-negative Matrix Factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items. Training is performed via stochastic-gradient-descent. Unlike `NNMF_mult` errors during training are used to update latent factors *separately* for each user/item combination. The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
+    The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.
+
+    Training is performed via stochastic-gradient-descent and continues until convergence or the maximum number of iterations has been reached. Unlike `NNMF_mult` errors during training are used to update latent factors *separately* for each user/item combination. Additionally this implementation is more flexible as it supports hyperparameters for various kinds of regularization at the cost of increased computation time.
+
+    The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
 
     """
 
@@ -303,12 +298,9 @@ class NNMF_sgd(BaseNMF):
         user_bias_reg=0.0,
         learning_rate=0.001,
         n_iterations=5000,
-        tol=0.001,
+        tol=1e-6,
         verbose=False,
         dilate_ts_n_samples=None,
-        save_learning=True,
-        fast_sgd=False,
-        **kwargs,
     ):
         """
         Fit NNMF collaborative filtering model using stochastic-gradient-descent
@@ -334,10 +326,17 @@ class NNMF_sgd(BaseNMF):
             n_factors = n_items
 
         self.n_factors = n_factors
+        self.item_fact_reg = item_fact_reg
+        self.user_fact_reg = user_fact_reg
+        self.item_bias_reg = item_bias_reg
+        self.user_bias_reg = user_bias_reg
+        self.error_history = []
 
+        # Perform dilation if requested
         if dilate_ts_n_samples is not None:
             self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
 
+        # Appropriately handle mask
         if self.is_mask:
             if self.is_mask_dilated:
                 data = self.masked_data[self.dilated_mask]
@@ -352,9 +351,12 @@ class NNMF_sgd(BaseNMF):
             sample_row, sample_col = zip(*np.argwhere(~np.isnan(data.values)))
             self.global_bias = data.values[~np.isnan(data.values)].mean()
 
-        # Convert tuples in case user asks for fast sgd cause numba complains
+        # Convert tuples cause numba complains
         sample_row, sample_col = np.array(sample_row), np.array(sample_col)
-        # initialize latent vectors
+
+        # Initialize user and item biases and latent vectors
+        self.user_bias = np.zeros(n_users)
+        self.item_bias = np.zeros(n_items)
         self.user_vecs = np.random.normal(
             scale=1.0 / n_factors, size=(n_users, n_factors)
         )
@@ -362,120 +364,58 @@ class NNMF_sgd(BaseNMF):
             scale=1.0 / n_factors, size=(n_items, n_factors)
         )
 
-        # Initialize biases
-        self.user_bias = np.zeros(n_users)
-        self.item_bias = np.zeros(n_items)
-        self.item_fact_reg = item_fact_reg
-        self.user_fact_reg = user_fact_reg
-        self.item_bias_reg = item_bias_reg
-        self.user_bias_reg = user_bias_reg
+        # Get data range for norm_rmse
+        data_range = self.data.max().max() - self.data.min().min()
 
-        # train weights
-        ctr = 1
-        last_e = 0
-        delta = np.inf
-        max_norm = data.abs().max().max()
-        self.error_history = []
-        converged = False
-        norm_e = np.inf
-        if fast_sgd:
-            (
-                error_history,
-                converged,
-                ctr,
-                delta,
-                norm_e,
-                user_bias,
-                user_vecs,
-                item_bias,
-                item_vecs,
-            ) = sgd(
-                data.to_numpy(),
-                self.global_bias,
-                max_norm,
-                tol,
-                self.user_bias,
-                self.user_vecs,
-                self.user_bias_reg,
-                self.user_fact_reg,
-                self.item_bias,
-                self.item_vecs,
-                self.item_bias_reg,
-                self.item_fact_reg,
-                n_iterations,
-                sample_row,
-                sample_col,
-                learning_rate,
-                verbose,
-            )
-            # Save outputs to model
-            (
-                self.error_history,
-                self.user_bias,
-                self.user_vecs,
-                self.item_bias,
-                self.item_vecs,
-            ) = (
-                error_history,
-                user_bias,
-                user_vecs,
-                item_bias,
-                item_vecs,
-            )
+        # Run SGD
+        (
+            error_history,
+            converged,
+            n_iter,
+            delta,
+            norm_rmse,
+            user_bias,
+            user_vecs,
+            item_bias,
+            item_vecs,
+        ) = sgd(
+            data.to_numpy(),
+            self.global_bias,
+            data_range,
+            tol,
+            self.user_bias,
+            self.user_vecs,
+            self.user_bias_reg,
+            self.user_fact_reg,
+            self.item_bias,
+            self.item_vecs,
+            self.item_bias_reg,
+            self.item_fact_reg,
+            n_iterations,
+            sample_row,
+            sample_col,
+            learning_rate,
+            verbose,
+        )
+        # Save outputs to model
+        (
+            self.error_history,
+            self.user_bias,
+            self.user_vecs,
+            self.item_bias,
+            self.item_vecs,
+        ) = (
+            error_history,
+            user_bias,
+            user_vecs,
+            item_bias,
+            item_vecs,
+        )
 
-        else:
-            with tqdm(total=n_iterations) as t:
-                for ctr in range(1, n_iterations + 1):
-                    if verbose:
-                        t.set_description(
-                            f"Norm Error: {np.round(100*norm_e, 2)}% Delta Convg: {np.round(delta, 4)}||{tol}"
-                        )
-                        # t.set_postfix(Delta=f"{np.round(delta, 4)}")
-
-                    training_indices = np.arange(len(sample_row))
-                    np.random.shuffle(training_indices)
-
-                    for idx in training_indices:
-                        u = sample_row[idx]
-                        i = sample_col[idx]
-                        prediction = self._predict_single(u, i)
-
-                        # Use changes in e to determine tolerance
-                        e = data.iloc[u, i] - prediction  # error
-
-                        # Update biases
-                        self.user_bias[u] += learning_rate * (
-                            e - self.user_bias_reg * self.user_bias[u]
-                        )
-                        self.item_bias[i] += learning_rate * (
-                            e - self.item_bias_reg * self.item_bias[i]
-                        )
-
-                        # Update latent factors
-                        self.user_vecs[u, :] += learning_rate * (
-                            e * self.item_vecs[i, :]
-                            - self.user_fact_reg * self.user_vecs[u, :]
-                        )
-                        self.item_vecs[i, :] += learning_rate * (
-                            e * self.user_vecs[u, :]
-                            - self.item_fact_reg * self.item_vecs[i, :]
-                        )
-                    # Normalize the current error with respect to the max of the dataset
-                    norm_e = np.abs(e) / max_norm
-                    # Compute the delta
-                    delta = np.abs(np.abs(norm_e) - np.abs(last_e))
-                    if save_learning:
-                        self.error_history.append(norm_e)
-                    if delta < tol:
-                        converged = True
-                        break
-                    t.update()
-            # Save the last normalize error
-            last_e = norm_e
         self.is_fit = True
-        self._n_iter = ctr
+        self._n_iter = n_iter
         self._delta = delta
-        self._norm_e = norm_e
+        self._norm_rmse = norm_rmse
         self.converged = converged
         if verbose:
             if self.converged:
@@ -487,7 +427,7 @@ class NNMF_sgd(BaseNMF):
                 print(f"\n\tFinal Iteration: {self._n_iter}")
                 print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
 
-            print(f"\tFinal Norm Error: {np.round(100*norm_e, 2)}%")
+            print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
 
     def predict(self):
 

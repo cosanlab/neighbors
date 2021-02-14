@@ -39,7 +39,7 @@ class Base(object):
         self.train_mask = None
         self.masked_data = None
 
-        # Check for null values in input data and if they exist treat the data as already masked
+        # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():
             print("data contains NaNs...treating as pre-masked")
             self.train_mask = ~data.isnull()
@@ -591,20 +591,15 @@ class BaseNMF(Base):
         """
 
         if self.is_fit:
-            if len(self.error_history) > 0:
-                f, ax = plt.subplots(1, 1, figsize=(8, 6))
-                _ = ax.plot(range(1, len(self.error_history) + 1), self.error_history)
-                ax.set(
-                    xlabel="Iteration",
-                    ylabel="Normalized Error",
-                    title=f"Final Normalized Error: {np.round(self._norm_e, 3)}\nConverged: {self.converged}",
-                )
-                if save:
-                    plt.savefig(save, bbox_inches="tight")
-                return f, ax
-            else:
-                raise ValueError(
-                    "Learning was not saved during fit. save_learning was False"
-                )
+            f, ax = plt.subplots(1, 1, figsize=(8, 6))
+            _ = ax.plot(range(1, len(self.error_history) + 1), self.error_history)
+            ax.set(
+                xlabel="Iteration",
+                ylabel="Normalized RMSE",
+                title=f"Final Normalized RMSE: {np.round(self._norm_e, 3)}\nConverged: {self.converged}",
+            )
+            if save:
+                plt.savefig(save, bbox_inches="tight")
+            return f, ax
         else:
             raise ValueError("Model has not been fit.")

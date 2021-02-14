@@ -115,29 +115,54 @@ def test_cf_knn(metric, k, n_train_items, dilate_ts_n_samples, simulate_wide_dat
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
 
 
-# TODO: Test doesn't pass with n_factors != None because matrix shapes don't line up. Need to fix
 @pytest.mark.parametrize(
-    ["n_factors", "n_train_items", "dilate_ts_n_samples"],
-    [(None, 20, None), (10, 0.5, 2)],
+    ["n_iterations", "n_train_items", "tol", "dilate_ts_n_samples", "n_factors"],
+    [
+        (100, 0.1, 0.001, None, 10),
+        (30, 50, 0.0001, None, None),
+        (10, 0.5, 0.001, 2, 5),
+        (5000, 0.5, 1e-12, 2, 5),
+    ],
 )
 def test_cf_nnmf_mult(
-    n_train_items, dilate_ts_n_samples, n_factors, simulate_wide_data
+    n_iterations, n_train_items, tol, dilate_ts_n_samples, n_factors, simulate_wide_data
 ):
-    if True:
-        print("NNMF MULT TESTING TEMPORARILY DISABLED")
-        return
     disp_dict = {
+        "n_iterations": n_iterations,
         "n_train_items": n_train_items,
+        "tol": tol,
         "dilate_ts_n_samples": dilate_ts_n_samples,
         "n_factors": n_factors,
     }
+
     cf = NNMF_mult(simulate_wide_data)
     print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
-    cf.fit()
+
+    # Initial fitting on all data
+    cf.fit(
+        n_iterations=n_iterations,
+        tol=tol,
+        verbose=True,
+    )
+    cf.plot_learning()
+    plt.close()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
+
+    # Predictions on all data
     cf.predict()
-    cf.split_train_test(n_train_items=50)
-    cf.fit(n_factors=n_factors, dilate_ts_n_samples=2)
+
+    # Now split
+    cf.split_train_test(n_train_items=n_train_items)
+
+    # Return fit
+    cf.fit(
+        n_iterations=n_iterations,
+        tol=tol,
+        dilate_ts_n_samples=dilate_ts_n_samples,
+        verbose=True,
+    )
+
+    # Rerun predict
     cf.predict()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
 
@@ -148,6 +173,7 @@ def test_cf_nnmf_mult(
         (100, 0.1, 0.001, None, 10),
         (30, 50, 0.0001, None, None),
         (10, 0.5, 0.001, 2, 5),
+        (5000, 0.5, 1e-12, 2, 5),
     ],
 )
 def test_cf_nnmf_sgd(
@@ -160,8 +186,11 @@ def test_cf_nnmf_sgd(
         "dilate_ts_n_samples": dilate_ts_n_samples,
         "n_factors": n_factors,
     }
+
     cf = NNMF_sgd(simulate_wide_data)
     print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
+
+    # Initial fitting on all data
     cf.fit(
         n_iterations=n_iterations,
         tol=tol,
@@ -170,25 +199,24 @@ def test_cf_nnmf_sgd(
     cf.plot_learning()
     plt.close()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
+
+    # Predictions on all data
     cf.predict()
+
+    # Now split
     cf.split_train_test(n_train_items=n_train_items)
+
+    # Return fit
     cf.fit(
         n_iterations=n_iterations,
         tol=tol,
         dilate_ts_n_samples=dilate_ts_n_samples,
         verbose=True,
     )
+
+    # Rerun predict
     cf.predict()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
-
-    print("\nTESTING OPTIMIZED SGD")
-    cf.fit(
-        n_iterations=1000,
-        tol=tol,
-        dilate_ts_n_samples=dilate_ts_n_samples,
-        verbose=True,
-        fast_sgd=True,
-    )
 
 
 def test_downsample(simulate_wide_data):
