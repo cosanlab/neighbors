@@ -6,8 +6,9 @@ show_missing = True
 exclude_lines = 
     pragma: no cover
     def __repr__
-    raise AssertionError
-    raise NotImplementedError
+    raise
+    except
+    print(
     if __name__ == .__main__.:
 omit = 
     **/__init__*
