@@ -36,7 +36,7 @@ jobs:
           # Rather than include 3.9 in the python versions, do it here so we can ignore failures on mac and windows with 3.9 (they have install issues)
           - os: ubuntu-latest
             python-version: 3.9
-            ok-fail: false
+            ok-fail: true
           - os: macos-latest
             python-version: 3.9
             ok-fail: true
