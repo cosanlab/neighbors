@@ -496,7 +496,7 @@
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="emotioncf.models.NNMF_sgd.fit">
 
-<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">item_fact_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">user_fact_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">item_bias_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">user_bias_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_learning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">item_fact_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">user_fact_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">item_bias_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">user_bias_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_learning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fast_sgd</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
       </h3>
@@ -601,6 +601,14 @@
 </td>
 <td><code>True</code></td>
 </tr>
+<tr>
+<td><code>fast_sdg</code></td>
+<td><code>bool; optional</code></td>
+<td>
+<p>Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False</p>
+</td>
+<td><em>required</em></td>
+</tr>
 </tbody>
 </table>
 <details class="quote">
@@ -619,6 +627,7 @@
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">save_learning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">fast_sgd</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">"""</span>
@@ -636,6 +645,7 @@
 <span class="sd">        verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">        dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
 <span class="sd">        save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.</span>
+<span class="sd">        fast_sdg (bool; optional): Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False</span>
 <span class="sd">    """</span>
 
     <span class="c1"># initialize variables</span>
@@ -662,6 +672,8 @@
         <span class="n">sample_row</span><span class="p">,</span> <span class="n">sample_col</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_bias</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
+    <span class="c1"># Convert tuples in case user asks for fast sgd cause numba complains</span>
+    <span class="n">sample_row</span><span class="p">,</span> <span class="n">sample_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sample_row</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sample_col</span><span class="p">)</span>
     <span class="c1"># initialize latent vectors</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
         <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_factors</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
@@ -686,54 +698,100 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">converged</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">norm_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_iterations</span><span class="p">)</span> <span class="k">as</span> <span class="n">t</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">ctr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="n">t</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_e</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">% Delta Convg: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">||</span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2">"</span>
-                <span class="p">)</span>
-                <span class="c1"># t.set_postfix(Delta=f"{np.round(delta, 4)}")</span>
+    <span class="k">if</span> <span class="n">fast_sgd</span><span class="p">:</span>
+        <span class="p">(</span>
+            <span class="n">error_history</span><span class="p">,</span>
+            <span class="n">converged</span><span class="p">,</span>
+            <span class="n">ctr</span><span class="p">,</span>
+            <span class="n">delta</span><span class="p">,</span>
+            <span class="n">norm_e</span><span class="p">,</span>
+            <span class="n">user_bias</span><span class="p">,</span>
+            <span class="n">user_vecs</span><span class="p">,</span>
+            <span class="n">item_bias</span><span class="p">,</span>
+            <span class="n">item_vecs</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">sgd</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_bias</span><span class="p">,</span>
+            <span class="n">max_norm</span><span class="p">,</span>
+            <span class="n">tol</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_bias_reg</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_fact_reg</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_bias_reg</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_fact_reg</span><span class="p">,</span>
+            <span class="n">n_iterations</span><span class="p">,</span>
+            <span class="n">sample_row</span><span class="p">,</span>
+            <span class="n">sample_col</span><span class="p">,</span>
+            <span class="n">learning_rate</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Save outputs to model</span>
+        <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">error_history</span><span class="p">,</span>
+            <span class="n">user_bias</span><span class="p">,</span>
+            <span class="n">user_vecs</span><span class="p">,</span>
+            <span class="n">item_bias</span><span class="p">,</span>
+            <span class="n">item_vecs</span><span class="p">,</span>
+        <span class="p">)</span>
 
-            <span class="n">training_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_row</span><span class="p">))</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">training_indices</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_iterations</span><span class="p">)</span> <span class="k">as</span> <span class="n">t</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ctr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="n">t</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_e</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">% Delta Convg: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">||</span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                    <span class="c1"># t.set_postfix(Delta=f"{np.round(delta, 4)}")</span>
 
-            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">training_indices</span><span class="p">:</span>
-                <span class="n">u</span> <span class="o">=</span> <span class="n">sample_row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                <span class="n">i</span> <span class="o">=</span> <span class="n">sample_col</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_single</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">training_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_row</span><span class="p">))</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">training_indices</span><span class="p">)</span>
 
-                <span class="c1"># Use changes in e to determine tolerance</span>
-                <span class="n">e</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prediction</span>  <span class="c1"># error</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">training_indices</span><span class="p">:</span>
+                    <span class="n">u</span> <span class="o">=</span> <span class="n">sample_row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="n">sample_col</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                    <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_single</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
 
-                <span class="c1"># Update biases</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_bias_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_bias_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="p">)</span>
+                    <span class="c1"># Use changes in e to determine tolerance</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">prediction</span>  <span class="c1"># error</span>
 
-                <span class="c1"># Update latent factors</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">e</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_fact_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="p">:]</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">e</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="p">:]</span>
-                    <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_fact_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
-                <span class="p">)</span>
-            <span class="c1"># Normalize the current error with respect to the max of the dataset</span>
-            <span class="n">norm_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_norm</span>
-            <span class="c1"># Compute the delta</span>
-            <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">norm_e</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">last_e</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">save_learning</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm_e</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
-                <span class="n">converged</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">break</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-    <span class="c1"># Save the last normalize error</span>
-    <span class="n">last_e</span> <span class="o">=</span> <span class="n">norm_e</span>
+                    <span class="c1"># Update biases</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_bias_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_bias_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Update latent factors</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="n">e</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+                        <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_fact_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="n">e</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="p">:]</span>
+                        <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_fact_reg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="p">)</span>
+                <span class="c1"># Normalize the current error with respect to the max of the dataset</span>
+                <span class="n">norm_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_norm</span>
+                <span class="c1"># Compute the delta</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">norm_e</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">last_e</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">save_learning</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm_e</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
+                    <span class="n">converged</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="c1"># Save the last normalize error</span>
+        <span class="n">last_e</span> <span class="o">=</span> <span class="n">norm_e</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span> <span class="o">=</span> <span class="n">ctr</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
