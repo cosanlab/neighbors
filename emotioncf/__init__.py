@@ -7,4 +7,5 @@ from .utils import (
     get_sparsity,
     nanpdist,
     create_train_test_mask,
+    load_movielens,
 )

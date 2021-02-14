@@ -9,9 +9,6 @@ Define pytest "fixtures" aka the "Arrange" or "Setup" step of test-driven-develo
 import pytest
 import numpy as np
 import pandas as pd
-from zipfile import ZipFile
-from io import BytesIO
-from urllib.request import urlopen
 
 
 @pytest.fixture(scope="module")
@@ -42,20 +39,3 @@ def simulate_long_data(simulate_wide_data):
         sub["Subject"] = row[0]
         out = out.append(sub)
     return out
-
-
-@pytest.fixture(scope="module")
-def load_movielens():
-    """Download and create a dataframe from the 100k movielens dataset"""
-    url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip"
-    # With python context managers we don't need to save any temporary files
-    print("Getting movielens...")
-    with urlopen(url) as resp:
-        with ZipFile(BytesIO(resp.read())) as myzip:
-            with myzip.open("ml-100k/u.data") as myfile:
-                df = pd.read_csv(
-                    myfile,
-                    delimiter="\t",
-                    names=["Subject", "Item", "Rating", "Timestamp"],
-                )
-    return df
