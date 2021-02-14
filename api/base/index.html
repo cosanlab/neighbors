@@ -351,6 +351,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#emotioncf.base.Base.dilate_mask" class="md-nav__link">
+    dilate_mask()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#emotioncf.base.Base.downsample" class="md-nav__link">
     downsample()
   </a>
@@ -360,6 +367,13 @@
           <li class="md-nav__item">
   <a href="#emotioncf.base.Base.get_corr" class="md-nav__link">
     get_corr()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#emotioncf.base.Base.get_data" class="md-nav__link">
+    get_data()
   </a>
   
 </li>
@@ -539,6 +553,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#emotioncf.base.Base.dilate_mask" class="md-nav__link">
+    dilate_mask()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#emotioncf.base.Base.downsample" class="md-nav__link">
     downsample()
   </a>
@@ -548,6 +569,13 @@
           <li class="md-nav__item">
   <a href="#emotioncf.base.Base.get_corr" class="md-nav__link">
     get_corr()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#emotioncf.base.Base.get_data" class="md-nav__link">
+    get_data()
   </a>
   
 </li>
@@ -654,6 +682,74 @@
 <div class="doc doc-contents ">
 <p>All other models and base classes inherit from this class.</p>
 <div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h4 class="doc doc-heading" id="emotioncf.base.Base.dilate_mask">
+
+<code class="highlight language-python"><span class="n">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+      </h4>
+<div class="doc doc-contents ">
+<p>Helper function to dilate sparse time-series data by n_samples.
+Overlapping data will be averaged. This method computes and stores the dilated mask in <code>.dilated_mask</code> and internally updates the <code>.masked_data</code> as well as returns it. Repeated calls to this method do not stack, but rather perform a new dilation on the original masked data. This is an alias to <code>._dilate_ts_rating_samples</code></p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n_samples</code></td>
+<td><code>int</code></td>
+<td>
+<p>Number of samples to dilate data</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>masked_data (Dataframe)</code></td>
+<td>
+<p>dataframe instance that has been dilated by n_samples</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">"""Helper function to dilate sparse time-series data by n_samples.</span>
+<span class="sd">    Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data` as well as returns it. Repeated calls to this method do not stack, but rather perform a new dilation on the original masked data. This is an alias to `._dilate_ts_rating_samples`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n_samples (int):  Number of samples to dilate data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        masked_data (Dataframe): dataframe instance that has been dilated by n_samples</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dilate_ts_rating_samples</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
 <div class="doc doc-object doc-method">
 <h4 class="doc doc-heading" id="emotioncf.base.Base.downsample">
 
@@ -858,6 +954,86 @@
     <span class="c1"># Handle nans when computing correlation</span>
     <span class="n">nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">actual</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span> <span class="n">pred</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h4 class="doc doc-heading" id="emotioncf.base.Base.get_data">
+
+<code class="highlight language-python"><span class="n">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">'all'</span><span class="p">)</span></code>
+
+
+      </h4>
+<div class="doc doc-contents ">
+<p>Helper function to quickly retrieve a model's data while respecting any masking or dilation that has been performed.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataset</code></td>
+<td><code>str</code></td>
+<td>
+<p>what data to retreive, must be one of 'all' (ignore mask), 'train' (possible dilated training data), 'test' (testing data). Defaults to "all".</p>
+</td>
+<td><code>'all'</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pd.DataFrame</code></td>
+<td>
+<p>requested data</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">"all"</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Helper function to quickly retrieve a model's data while respecting any masking or dilation that has been performed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset (str, optional): what data to retreive, must be one of 'all' (ignore mask), 'train' (possible dilated training data), 'test' (testing data). Defaults to "all".</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: requested data</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"data has not been masked to produce training and testing splits. Call .split_train_test() first"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask_dilated</span><span class="p">:</span>
+        <span class="n">train_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">train_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">"train"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">train_mask</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">"test"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">train_mask</span><span class="p">]</span>
 </code></pre>
 </div>
 </details>
@@ -1369,26 +1545,7 @@
 <span class="sd">        n_train_items (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default .1 (10% of the data)</span>
 <span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_train_items</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">))</span> <span class="ow">and</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="n">n_train_items</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_train_items</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_train_items</span><span class="p">))</span>
-
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_train_items</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_train_items</span> <span class="o">=</span> <span class="n">n_train_items</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"n_train_items must be an integer or a float between 0-1, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">n_train_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">n_train_items</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-        <span class="n">sub_train_rating_item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_train_items</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sub</span><span class="p">,</span> <span class="n">sub_train_rating_item</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-
+    <span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span> <span class="o">=</span> <span class="n">create_train_test_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">n_train_items</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">train_mask</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_mask</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre>

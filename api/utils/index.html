@@ -314,6 +314,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#emotioncf.utils.create_train_test_mask" class="md-nav__link">
+    create_train_test_mask()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#emotioncf.utils.get_size_in_mb" class="md-nav__link">
     get_size_in_mb()
   </a>
@@ -323,6 +330,13 @@
         <li class="md-nav__item">
   <a href="#emotioncf.utils.get_sparsity" class="md-nav__link">
     get_sparsity()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.utils.load_movielens" class="md-nav__link">
+    load_movielens()
   </a>
   
 </li>
@@ -475,6 +489,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#emotioncf.utils.create_train_test_mask" class="md-nav__link">
+    create_train_test_mask()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#emotioncf.utils.get_size_in_mb" class="md-nav__link">
     get_size_in_mb()
   </a>
@@ -484,6 +505,13 @@
         <li class="md-nav__item">
   <a href="#emotioncf.utils.get_sparsity" class="md-nav__link">
     get_sparsity()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.utils.load_movielens" class="md-nav__link">
+    load_movielens()
   </a>
   
 </li>
@@ -635,6 +663,124 @@
 </div>
 </div>
 <div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="emotioncf.utils.create_train_test_mask">
+
+<code class="highlight language-python"><span class="n">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_train_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span></code>
+
+
+      </h3>
+<div class="doc doc-contents ">
+<p>Given a pandas dataframe create a boolean mask such that n_train_items columns are <code>True</code> and the rest are <code>False</code>. Critically, each row is masked independently. This function does not alter the input dataframe.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td><code>pd.DataFrame</code></td>
+<td>
+<p>input dataframe</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>n_train_items</code></td>
+<td><code>float</code></td>
+<td>
+<p>if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items. Defaults to 0.1 (10% of the columns of data).</p>
+</td>
+<td><code>0.1</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TypeError</code></td>
+<td>
+<p>[description]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pd.DataFrame</code></td>
+<td>
+<p>boolean dataframe of same shape as data</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_train_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Given a pandas dataframe create a boolean mask such that n_train_items columns are `True` and the rest are `False`. Critically, each row is masked independently. This function does not alter the input dataframe.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (pd.DataFrame): input dataframe</span>
+<span class="sd">        n_train_items (float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items. Defaults to 0.1 (10% of the columns of data).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: [description]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: boolean dataframe of same shape as data</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"data already contains NaNs and further masking is ambiguous!"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_train_items</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">))</span> <span class="ow">and</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="n">n_train_items</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">n_train_items</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_train_items</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_train_items</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+        <span class="n">n_train_items</span> <span class="o">=</span> <span class="n">n_train_items</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"n_train_items must be an integer or a float between 0-1, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">n_train_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">n_train_items</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="n">n_test_items</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">n_train_items</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_train_items</span> <span class="o">+</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_test_items</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
 <h3 class="doc doc-heading" id="emotioncf.utils.get_size_in_mb">
 
 <code class="highlight language-python"><span class="n">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
@@ -675,6 +821,37 @@
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"input must be a numpy array"</span><span class="p">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="emotioncf.utils.load_movielens">
+
+<code class="highlight language-python"><span class="n">load_movielens</span><span class="p">()</span></code>
+
+
+      </h3>
+<div class="doc doc-contents ">
+<p>Download and create a dataframe from the 100k movielens dataset</p>
+<details class="quote">
+          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">load_movielens</span><span class="p">():</span>
+    <span class="sd">"""Download and create a dataframe from the 100k movielens dataset"""</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">"http://files.grouplens.org/datasets/movielens/ml-100k.zip"</span>
+    <span class="c1"># With python context managers we don't need to save any temporary files</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Getting movielens..."</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span> <span class="k">as</span> <span class="n">myzip</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"ml-100k/u.data"</span><span class="p">)</span> <span class="k">as</span> <span class="n">myfile</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                    <span class="n">myfile</span><span class="p">,</span>
+                    <span class="n">delimiter</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span>
+                    <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">,</span> <span class="s2">"Item"</span><span class="p">,</span> <span class="s2">"Rating"</span><span class="p">,</span> <span class="s2">"Timestamp"</span><span class="p">],</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
 </code></pre>
 </div>
 </details>
