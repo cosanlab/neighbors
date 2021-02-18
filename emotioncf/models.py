@@ -16,11 +16,11 @@ class Mean(Base):
     The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(self, data, mask=None, n_mask_items=None):
+        super().__init__(data, mask, n_mask_items)
         self.mean = None
 
-    def fit(self, dilate_ts_n_samples=None, **kwargs):
+    def fit(self, dilate_by_nsamples=None):
 
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
@@ -29,33 +29,22 @@ class Mean(Base):
 
         """
 
-        if self.is_mask:
-            if dilate_ts_n_samples is not None:
-                _ = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-                self.mean = self.masked_data[self.dilated_mask].mean(
-                    skipna=True, axis=0
-                )
-            else:
-                self.mean = self.masked_data[self.train_mask].mean(skipna=True, axis=0)
-        else:
-            self.mean = self.data.mean(skipna=True, axis=0)
+        self.dilate_mask(dilate_by_nsamples)
+        self.mean = self.masked_data.mean(skipna=True, axis=0)
+        self._predict()
         self.is_fit = True
 
-    def predict(self):
+    def _predict(self):
 
-        """Predict missing items using other subject's item means.
+        """Predict missing items using other subject's item means."""
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
+        predictions = self.masked_data.copy()
 
-        """
+        for row_idx, row in predictions.iterrows():
+            row[row.isnull()] = self.mean[row.isnull()]
+            predictions.iloc[row_idx] = row
 
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
-
-        self.predictions = self.data.copy()
-        for row in self.data.iterrows():
-            self.predictions.loc[row[0]] = self.mean
+        self.predictions = predictions
         self.is_predict = True
 
 
@@ -86,7 +75,7 @@ class KNN(Base):
 
         # If fit is being called more than once in a row with different k, but no other arguments are changing, reuse the last computed similarity matrix to save time. Otherwise re-calculate it
         if not skip_refit:
-            self.dilate_mask(dilate_by_nsamples=dilate_by_nsamples)
+            self.dilate_mask(dilate_by_nsamples)
             if metric in ["pearson", "kendall", "spearman"]:
                 # Fall back to pandas
                 sim = self.masked_data.T.corr(method=metric)
@@ -117,13 +106,13 @@ class KNN(Base):
         for user_idx in range(data.shape[0]):
             if k is not None:
                 top_subjects = (
-                    self.subject_similarity.loc[user_idx]
+                    self.subject_similarity.iloc[user_idx]
                     .drop(user_idx)
                     .sort_values(ascending=False)[: k + 1]
                 )
             else:
                 top_subjects = (
-                    self.subject_similarity.loc[user_idx]
+                    self.subject_similarity.iloc[user_idx]
                     .drop(user_idx)
                     .sort_values(ascending=False)
                 )

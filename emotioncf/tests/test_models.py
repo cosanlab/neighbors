@@ -70,24 +70,22 @@ def basecf_method_all_tests(cf=None):
 
 
 @pytest.mark.parametrize(
-    ["mask", "n_train_items", "dilate_ts_n_samples"],
-    [(None, None, None), (None, 20, None), (None, None, 2)],
+    ["mask", "n_mask_items", "dilate_by_nsamples"],
+    [(None, None, None), (None, 20, None), (None, 0.5, 2)],
 )
-def test_cf_mean(mask, n_train_items, dilate_ts_n_samples, simulate_wide_data):
+def test_cf_mean(mask, n_mask_items, dilate_by_nsamples, simulate_wide_data):
     disp_dict = {
         "mask": mask,
-        "n_train_items": n_train_items,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
+        "n_mask_items": n_mask_items,
+        "dilate_by_nsamples": dilate_by_nsamples,
     }
-    cf = Mean(simulate_wide_data, mask=mask, n_train_items=n_train_items)
+    cf = Mean(simulate_wide_data, mask=mask, n_mask_items=n_mask_items)
     print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
 
-    cf.fit(dilate_ts_n_samples=dilate_ts_n_samples)
+    cf.fit(dilate_by_nsamples=dilate_by_nsamples)
+    cf.create_masked_data()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
-    cf.predict()
-    cf.split_train_test()
-    cf.fit(dilate_ts_n_samples=dilate_ts_n_samples)
-    cf.predict()
+    cf.fit(dilate_by_nsamples=dilate_by_nsamples)
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
 
 

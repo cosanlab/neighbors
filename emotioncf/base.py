@@ -61,7 +61,7 @@ class Base(object):
 
         # Same for n_train_items
         if self.n_mask_items is not None:
-            if self.is_mask:
+            if self.is_masked:
                 raise ValueError(
                     "n_train_items was provided, but data already contains missing values that were used for masking. This is an ambiguous operation. If a n_train_items is provided data should not contain missing values!"
                 )
@@ -600,8 +600,8 @@ class Base(object):
 
     def dilate_mask(self, dilate_by_nsamples=None):
 
-        """Helper function to dilate sparse time-series data by n_samples.
-        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data` as well as returns it. Repeated calls to this method do not stack, but rather perform a new dilation on the original masked data. This is an alias to `._dilate_ts_rating_samples`
+        """Dilate sparse time-series data by n_samples.
+        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation. This is an alias to `._dilate_ts_rating_samples`
 
         Args:
             nsamples (int):  Number of samples to dilate data
