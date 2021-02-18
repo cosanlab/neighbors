@@ -166,3 +166,10 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
         last_e = norm_rmse
 
     return error_history, converged, this_iter, delta, norm_rmse, W, H
+
+
+def handle_mask(model):
+    if model.is_mask:
+        return model.masked_data.copy()
+    else:
+        return model.data.copy()

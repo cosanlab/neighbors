@@ -64,86 +64,81 @@ class KNN(Base):
     The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method.
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(self, data, mask=None, n_mask_items=None):
+        super().__init__(data, mask, n_mask_items)
         self.subject_similarity = None
+        self._last_metric = None
+        self._last_dilate_by_nsamples = None
 
-    def fit(self, metric="pearson", dilate_ts_n_samples=None, **kwargs):
+    def fit(self, k=None, metric="pearson", dilate_by_nsamples=None, skip_refit=False):
 
-        """Fit collaborative model to train data.  Calculate similarity between subjects across items
+        """Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.
 
         Args:
+            k (int): number of closest neighbors to use
             metric (str; optional): type of similarity. One of 'pearson', 'spearman', 'kendall', 'cosine', or 'correlation'. 'correlation' is just an alias for 'pearson'. Default 'pearson'.
+            skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.
         """
 
         metrics = ["pearson", "spearman", "kendall", "cosine", "correlation"]
         if metric not in metrics:
             raise ValueError(f"metric must be one of {metrics}")
 
-        if self.is_mask:
-            data = self.data[self.train_mask]
-        else:
-            data = self.data.copy()
+        # If fit is being called more than once in a row with different k, but no other arguments are changing, reuse the last computed similarity matrix to save time. Otherwise re-calculate it
+        if not skip_refit:
+            self.dilate_mask(dilate_by_nsamples=dilate_by_nsamples)
+            if metric in ["pearson", "kendall", "spearman"]:
+                # Fall back to pandas
+                sim = self.masked_data.T.corr(method=metric)
+            else:
+                sim = pd.DataFrame(
+                    1 - nanpdist(self.masked_data.to_numpy(), metric=metric),
+                    index=self.masked_data.index,
+                    columns=self.masked_data.index,
+                )
 
-        if dilate_ts_n_samples is not None:
-            data = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-            data = data[self.dilated_mask]
-
-        if metric in ["pearson", "kendall", "spearman"]:
-            # Fall back to pandas
-            sim = data.T.corr(method=metric)
-        else:
-            sim = pd.DataFrame(
-                1 - nanpdist(data.to_numpy(), metric=metric),
-                index=data.index,
-                columns=data.index,
-            )
-
-        self.subject_similarity = sim
+            self.subject_similarity = sim
+        self._predict(k=k)
         self.is_fit = True
 
-    def predict(self, k=None, **kwargs):
-        """Predict Subject's missing items using similarity based collaborative filtering.
+    def _predict(self, k=None):
+        """Make predictions using computed subject similarities.
 
         Args:
             k (int): number of closest neighbors to use
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
-
         """
 
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
+        data = self.masked_data if self.is_masked else self.data
+        predictions = []
 
-        if self.is_mask:
-            data = self.masked_data.copy()
-        else:
-            data = self.data.copy()
-
-        pred = pd.DataFrame(np.zeros(data.shape))
-        pred.columns = data.columns
-        pred.index = data.index
-        for row in data.iterrows():
+        # Get top k most similar other subjects for each subject
+        # We loop instead of apply because we want to retain row indices and column indices
+        for user_idx in range(data.shape[0]):
             if k is not None:
                 top_subjects = (
-                    self.subject_similarity.loc[row[0]]
-                    .drop(row[0])
-                    .sort_values(ascending=False)[0:k]
+                    self.subject_similarity.loc[user_idx]
+                    .drop(user_idx)
+                    .sort_values(ascending=False)[: k + 1]
                 )
             else:
                 top_subjects = (
-                    self.subject_similarity.loc[row[0]]
-                    .drop(row[0])
+                    self.subject_similarity.loc[user_idx]
+                    .drop(user_idx)
                     .sort_values(ascending=False)
                 )
-            top_subjects = top_subjects[~top_subjects.isnull()]  # remove nan subjects
-            for col in data.iteritems():
-                pred.loc[row[0], col[0]] = np.dot(
-                    top_subjects, self.data.loc[top_subjects.index, col[0]].T
-                ) / len(top_subjects)
-        self.predictions = pred
-        self.is_predict = True
+            # remove nan subjects
+            top_subjects = top_subjects[~top_subjects.isnull()]
+
+            # Get item predictions
+            predictions.append(
+                np.dot(top_subjects, self.data.loc[top_subjects.index])
+                / len(top_subjects)
+            )
+
+        self.predictions = pd.DataFrame(
+            predictions, index=data.index, columns=data.columns
+        )
 
 
 class NNMF_mult(BaseNMF):
@@ -206,6 +201,7 @@ class NNMF_mult(BaseNMF):
 
         # Appropriately handle mask
         # TODO: refactor this masking block to match the SGD implementation
+        # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix like this during the updates: https://arxiv.org/pdf/1612.06037.pdf
         if self.is_mask:
             if dilate_ts_n_samples is not None:
                 masked_X = self._dilate_ts_rating_samples(

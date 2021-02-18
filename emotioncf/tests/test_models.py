@@ -15,54 +15,52 @@ def basecf_method_test(cf=None, dataset=None):
     print(f"\n\nEval on: {dataset}")
 
     # Check masking
-    if cf.is_mask:
+    if cf.is_masked:
         print("model has mask")
-        assert cf.train_mask.shape == (50, 100)
+        assert cf.mask.shape == (50, 100)
     else:
         print("model has NO mask")
 
     # Check dilation
     if cf.is_mask_dilated:
-        assert cf.dilated_mask.sum(axis=1).sum() > cf.train_mask.sum(axis=1).sum()
+        assert cf.dilated_mask.sum(axis=1).sum() > cf.mask.sum(axis=1).sum()
 
-    # Check predict
-    if cf.is_predict:
-        print(".predict() has been called")
+    # Check fit
+    if cf.is_fit:
+        print("model has been fit")
+        # Check predictions
         assert cf.predictions.shape == (50, 100)
-    else:
-        print(".predict() has NOT been called")
 
-    # Check performance methods
-    if cf.is_fit and cf.is_predict:
-        if dataset == "all" or (cf.is_mask and dataset in ["train", "test"]):
-            mse = cf.get_mse(dataset=dataset)
-            r = cf.get_corr(dataset=dataset)
-            sub_r = cf.get_sub_corr(dataset=dataset)
-            sub_mse = cf.get_sub_mse(dataset=dataset)
-            assert isinstance(mse, float)
-            assert isinstance(r, float)
-            assert isinstance(sub_r, np.ndarray)
-            assert len(sub_r) == cf.data.shape[0]
-            assert isinstance(sub_mse, np.ndarray)
-            assert len(sub_mse) == cf.data.shape[0]
-            assert mse > 0
-            assert np.abs(r) > 0
-            assert np.abs(np.nanmean(sub_r)) > 0
-
-            cf.plot_predictions(dataset=dataset, verbose=True)
-            plt.close()
-            print(f"MSE: {mse}")
-
-    # Check long format structure
-    df = cf.to_long_df()
-    assert isinstance(df, pd.DataFrame)
-    assert "Condition" in df.columns
-    assert "Observed" in df["Condition"].unique()
-    if cf.is_predict:
+        # Check long format structure
+        df = cf.to_long_df()
+        assert isinstance(df, pd.DataFrame)
+        assert "Condition" in df.columns
+        assert "Observed" in df["Condition"].unique()
         assert "Predicted" in df["Condition"].unique()
         assert df.shape[0] == cf.data.shape[0] * cf.data.shape[1] * 2
-    if cf.is_mask:
-        assert "Mask" in df.columns
+        if cf.is_masked:
+            assert "Mask" in df.columns
+
+        # if dataset == "all" or (cf.is_mask and dataset in ["train", "test"]):
+        #     mse = cf.get_mse(dataset=dataset)
+        #     r = cf.get_corr(dataset=dataset)
+        #     sub_r = cf.get_sub_corr(dataset=dataset)
+        #     sub_mse = cf.get_sub_mse(dataset=dataset)
+        #     assert isinstance(mse, float)
+        #     assert isinstance(r, float)
+        #     assert isinstance(sub_r, np.ndarray)
+        #     assert len(sub_r) == cf.data.shape[0]
+        #     assert isinstance(sub_mse, np.ndarray)
+        #     assert len(sub_mse) == cf.data.shape[0]
+        #     assert mse > 0
+        #     assert np.abs(r) > 0
+        #     assert np.abs(np.nanmean(sub_r)) > 0
+
+        #     cf.plot_predictions(dataset=dataset, verbose=True)
+        #     plt.close()
+        #     print(f"MSE: {mse}")
+    else:
+        print("model NOT been fit")
 
 
 def basecf_method_all_tests(cf=None):
@@ -94,25 +92,25 @@ def test_cf_mean(mask, n_train_items, dilate_ts_n_samples, simulate_wide_data):
 
 
 @pytest.mark.parametrize(
-    ["metric", "k", "n_train_items", "dilate_ts_n_samples"],
+    ["metric", "k", "n_mask_items", "dilate_by_nsamples"],
     [("pearson", None, 50, 2), ("correlation", 10, 0.5, 2), ("cosine", 10, 0.95, None)],
 )
-def test_cf_knn(metric, k, n_train_items, dilate_ts_n_samples, simulate_wide_data):
+def test_cf_knn(metric, k, n_mask_items, dilate_by_nsamples, simulate_wide_data):
     disp_dict = {
         "metric": metric,
         "k": k,
-        "n_train_items": n_train_items,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
+        "n_mask_items": n_mask_items,
+        "dilate_by_nsamples": dilate_by_nsamples,
     }
     cf = KNN(simulate_wide_data)
     print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
 
-    cf.fit(metric=metric)
+    cf.fit(metric=metric, k=k)
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
-    cf.predict(k=k)
-    cf.split_train_test(n_train_items=n_train_items)
-    cf.fit(metric=metric, dilate_ts_n_samples=dilate_ts_n_samples)
-    cf.predict(k=k)
+    k = k + 1 if k is not None else k
+    cf.fit(metric=metric, k=k, skip_refit=True)
+    cf.create_masked_data(n_mask_items=n_mask_items)
+    cf.fit(metric=metric, k=k, dilate_by_nsamples=dilate_by_nsamples)
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
 
 

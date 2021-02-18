@@ -155,17 +155,20 @@ def create_train_test_mask(data, n_train_items=0.1):
     return pd.DataFrame(mask, index=data.index, columns=data.columns)
 
 
-def load_movielens():
+def load_movielens():  # pragma: no cover
     """Download and create a dataframe from the 100k movielens dataset"""
     url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip"
     # With python context managers we don't need to save any temporary files
     print("Getting movielens...")
-    with urlopen(url) as resp:
-        with ZipFile(BytesIO(resp.read())) as myzip:
-            with myzip.open("ml-100k/u.data") as myfile:
-                df = pd.read_csv(
-                    myfile,
-                    delimiter="\t",
-                    names=["Subject", "Item", "Rating", "Timestamp"],
-                )
-    return df
+    try:
+        with urlopen(url) as resp:
+            with ZipFile(BytesIO(resp.read())) as myzip:
+                with myzip.open("ml-100k/u.data") as myfile:
+                    df = pd.read_csv(
+                        myfile,
+                        delimiter="\t",
+                        names=["Subject", "Item", "Rating", "Timestamp"],
+                    )
+        return df
+    except Exception as e:
+        print(str(e))

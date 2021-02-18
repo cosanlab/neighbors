@@ -7,6 +7,7 @@ from scipy.stats import pearsonr
 from copy import deepcopy
 import matplotlib.pyplot as plt
 from .utils import create_train_test_mask
+from .results import Results
 
 __all__ = ["Base", "BaseNMF"]
 
@@ -16,7 +17,7 @@ class Base(object):
     All other models and base classes inherit from this class.
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
+    def __init__(self, data, mask=None, n_mask_items=None):
         """
         Initialize a base collaborative filtering model
 
@@ -33,41 +34,43 @@ class Base(object):
         self.data = data
         self.predictions = None
         self.is_fit = False
-        self.is_predict = False
-        self.is_mask = False
+        self.mask = None
+        self.is_masked = False
+        self.masked_data = data
         self.is_mask_dilated = False
         self.dilated_mask = None
-        self.train_mask = None
-        self.masked_data = None
-        self.n_train_items = n_train_items
+        self.dilated_by_nsamples = None
+        self.n_mask_items = n_mask_items
 
         # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():
             print("data contains NaNs...treating as pre-masked")
-            self.train_mask = ~data.isnull()
-            self.masked_data = self.data[self.train_mask]
-            self.is_mask = True
+            self.mask = ~data.isnull()
+            self.masked_data = self.data[self.mask]
+            self.is_masked = True
 
         # Otherwise apply any user provided mask or tell them data was pre-masked
         if mask is not None:
-            if self.is_mask:
+            if self.is_masked:
                 raise ValueError(
-                    "mask was provided, but data already contains missing values that were used for the train_mask. This is an ambiguous operation. If a mask is provided data should not contain NaNs"
+                    "mask was provided, but data already contains missing values that were used for masking. This is an ambiguous operation. If a mask is provided data should not contain missing values!"
                 )
-            self.train_mask = mask
-            self.masked_data = self.data[self.train_mask]
-            self.is_mask = True
+            self.mask = mask
+            self.masked_data = self.data[self.mask]
+            self.is_masked = True
 
         # Same for n_train_items
-        if n_train_items is not None:
+        if self.n_mask_items is not None:
             if self.is_mask:
                 raise ValueError(
-                    "n_train_items was provided, but data already contains missing values that were used for the train_mask. This is an ambiguous operation. If a n_train_items is provided data should not contain NaNs"
+                    "n_train_items was provided, but data already contains missing values that were used for masking. This is an ambiguous operation. If a n_train_items is provided data should not contain missing values!"
                 )
-            self.split_train_test(n_train_items=n_train_items)
+            self.create_masked_data(n_mask_items=self.n_mask_items)
 
     def __repr__(self):
-        out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, is_predict={self.is_predict}, is_mask={self.is_mask}, is_mask_dilated={self.is_mask_dilated})"
+        out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, is_masked={self.is_masked}, is_mask_dilated={self.is_mask_dilated})"
+        if self.is_mask_dilated:
+            out += f", dilated_by_nsamples={self.dilated_by_nsamples}"
         return out
 
     def get_data(self, dataset="all"):
@@ -96,8 +99,8 @@ class Base(object):
         if dataset == "test":
             return self.data[~train_mask]
 
-    def get_mse(self, dataset="test"):
-        """Get overall mean squared error for predicted compared to actual for all items and subjects.
+    def get_rmse(self, dataset="test"):
+        """Get root mean squared error for predicted compared to actual for all items and subjects. This value can be interpreted as the average amount of error on the *original* scale of the input data.
 
         Args:
             dataset (str): Get mse on 'all' data, the 'train' data, or the 'test' data
@@ -114,7 +117,7 @@ class Base(object):
 
         actual, pred = self._retrieve_predictions(dataset)
 
-        return np.nanmean((pred - actual) ** 2)
+        return np.sqrt(np.nanmean((pred - actual) ** 2))
 
     def get_corr(self, dataset="test"):
         """Get overall correlation for predicted compared to actual for all items and subjects.
@@ -289,17 +292,28 @@ class Base(object):
             raise ValueError("Must run split_train_test() before using this option.")
         return np.array(mse)
 
-    def split_train_test(self, n_train_items=0.1):
+    def create_masked_data(self, n_mask_items=0.1):
         """
-        Split data into training and testing sets
+        Create a mask and apply it to data using number of items or % of items
 
         Args:
-            n_train_items (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default .1 (10% of the data)
+            n_itmes (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default .1 (10% of the data)
         """
 
-        self.train_mask = create_train_test_mask(self.data, n_train_items)
-        self.masked_data = self.data[self.train_mask]
-        self.is_mask = True
+        if (
+            isinstance(n_mask_items, np.floating)
+            and (n_mask_items >= 1.0 or n_mask_items <= 0.0)
+        ) or (
+            isinstance(n_mask_items, int)
+            and (n_mask_items >= self.data.shape[1] or n_mask_items <= 0)
+        ):
+            raise TypeError(
+                "n_items should a float between 0-1 or an integer < the number of items"
+            )
+        self.mask = create_train_test_mask(self.data, n_mask_items)
+        self.masked_data = self.data[self.mask]
+        self.is_masked = True
+        self.n_mask_items = n_mask_items
 
     def plot_predictions(self, dataset="train", verbose=True, heatmapkwargs={}):
         """Create plot of actual and predicted data
@@ -462,14 +476,14 @@ class Base(object):
             tmp["Item"] = self.data.columns
             tmp["Subject"] = row[0]
             tmp["Condition"] = "Observed"
-            if self.is_mask:
+            if self.is_masked:
                 if self.is_mask_dilated:
                     tmp["Mask"] = self.dilated_mask.loc[row[0]]
                 else:
-                    tmp["Mask"] = self.train_mask.loc[row[0]]
+                    tmp["Mask"] = self.mask.loc[row[0]]
             observed = observed.append(tmp)
 
-        if self.is_predict:
+        if self.is_fit:
             predicted = pd.DataFrame(columns=["Subject", "Item", "Rating", "Condition"])
             for row in self.predictions.iterrows():
                 tmp = pd.DataFrame(columns=predicted.columns)
@@ -477,8 +491,8 @@ class Base(object):
                 tmp["Item"] = self.predictions.columns
                 tmp["Subject"] = row[0]
                 tmp["Condition"] = "Predicted"
-                if self.is_mask:
-                    tmp["Mask"] = self.train_mask.loc[row[0]]
+                if self.is_masked:
+                    tmp["Mask"] = self.mask.loc[row[0]]
                 predicted = predicted.append(tmp)
             observed = observed.append(predicted)
         return observed
@@ -524,7 +538,7 @@ class Base(object):
 
         return actual, predicted
 
-    def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
+    def _conv_ts_mean_overlap(self, sub_rating, nsamples=5):
 
         """Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
 
@@ -541,7 +555,7 @@ class Base(object):
         bin_sub_rating = ~sub_rating.isnull()
         if np.any(sub_rating.isnull()):
             sub_rating.fillna(0, inplace=True)
-        filt = np.ones(n_samples)
+        filt = np.ones(nsamples)
         bin_sub_rating_conv = np.convolve(bin_sub_rating, filt)[: len(bin_sub_rating)]
         sub_rating_conv = np.convolve(sub_rating, filt)[: len(sub_rating)]
         sub_rating_conv_mn = deepcopy(sub_rating_conv)
@@ -553,39 +567,52 @@ class Base(object):
         sub_rating_conv_mn[new_mask] = np.nan
         return sub_rating_conv_mn
 
-    def _dilate_ts_rating_samples(self, n_samples=None):
+    def _dilate_ts_rating_samples(self, dilate_by_nsamples=None):
 
         """Alias for `.dilate_mask`"""
 
-        if n_samples is None:
-            raise ValueError("Please specify number of samples to dilate.")
-
-        if not self.is_mask:
+        if not self.is_masked and dilate_by_nsamples is not None:
             raise ValueError("Make sure model instance has been masked.")
 
         # Always reset to the undilated mask first
-        self.masked_data = self.data[self.train_mask]
-        self.masked_data = self.masked_data.apply(
-            lambda x: self._conv_ts_mean_overlap(x, n_samples=n_samples),
-            axis=1,
-            result_type="broadcast",
-        )
-        self.dilated_mask = ~self.masked_data.isnull()
-        self.is_mask_dilated = True
-        return self.masked_data
+        self.masked_data = self.data[self.mask] if self.mask is not None else self.data
 
-    def dilate_mask(self, n_samples=None):
+        if dilate_by_nsamples is not None:
+            if isinstance(dilate_by_nsamples, np.floating) or (
+                dilate_by_nsamples >= self.data.shape[1]
+            ):
+                raise TypeError("nsamples should be an integer < the number of items")
+
+            # Update masked data with dilation
+            self.masked_data = self.masked_data.apply(
+                lambda x: self._conv_ts_mean_overlap(x, nsamples=dilate_by_nsamples),
+                axis=1,
+                result_type="broadcast",
+            )
+            # Save dilated mask
+            self.dilated_mask = ~self.masked_data.isnull()
+            self.is_mask_dilated = True
+            self.dilated_by_nsamples = dilate_by_nsamples
+        else:
+            self.dilated_mask = None
+            self.is_mask_dilated = False
+            self.dilated_by_nsamples = None
+
+    def dilate_mask(self, dilate_by_nsamples=None):
 
         """Helper function to dilate sparse time-series data by n_samples.
         Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data` as well as returns it. Repeated calls to this method do not stack, but rather perform a new dilation on the original masked data. This is an alias to `._dilate_ts_rating_samples`
 
         Args:
-            n_samples (int):  Number of samples to dilate data
+            nsamples (int):  Number of samples to dilate data
 
-        Returns:
-            masked_data (Dataframe): dataframe instance that has been dilated by n_samples
         """
-        return self._dilate_ts_rating_samples(n_samples=n_samples)
+
+        self._dilate_ts_rating_samples(dilate_by_nsamples=dilate_by_nsamples)
+
+    def summary(self):
+        """Summary"""
+        return Results()
 
 
 class BaseNMF(Base):
