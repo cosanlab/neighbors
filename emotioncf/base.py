@@ -136,7 +136,7 @@ class Base(object):
         else:
             if actual is not None:
 
-                actual, pred = actual.flatten(), pred.flatten()
+                actual, pred = actual.to_numpy().flatten(), pred.to_numpy().flatten()
 
                 if metric == "rmse":
                     return np.sqrt(np.nanmean((pred - actual) ** 2))
@@ -148,7 +148,7 @@ class Base(object):
                     nans = np.logical_or(np.isnan(actual), np.isnan(pred))
                     return pearsonr(actual[~nans], pred[~nans])[0]
             else:
-                raise ValueError(
+                warnings.warn(
                     "Cannot score predictions on missing data because true values were never observed!"
                 )
 
@@ -533,9 +533,6 @@ class Base(object):
         elif dataset == "missing":
             # This happens if the input data already has NaNs that were not the result of a masking operation by a model on dense data
             if self.masked_data.equals(self.data):
-                warnings.warn(
-                    "True values for missing data were never observed, only returning predictions"
-                )
                 return (None, self.predictions[self.masked_data.isnull()])
             else:
                 return (
@@ -615,7 +612,7 @@ class Base(object):
 
     def fit(self):
         """Replaced by sub-classes. This call just ensures that a model's data is sparse prior to fitting"""
-        if not self.is_masked or self.masked_data.equals(self.data):
+        if not self.is_masked:
             raise ValueError(
                 "You're trying to fit on a dense matrix, because model data has not been masked! Either call the `.create_masked_data` method prior to fitting or re-initialize the model and set the `mask` or `n_mask_items` arguments."
             )
