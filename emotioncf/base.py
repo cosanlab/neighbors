@@ -41,6 +41,7 @@ class Base(object):
         self.dilated_mask = None
         self.dilated_by_nsamples = None
         self.n_mask_items = n_mask_items
+        self.data_range = self.data.max().max() - self.data.min().min()
 
         # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():

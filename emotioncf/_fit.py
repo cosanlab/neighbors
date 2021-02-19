@@ -111,7 +111,7 @@ def sgd(
 
 @nb.njit(cache=True)
 def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
-    """NNMF Multiplicative update rule"""
+    """Lee & Seung (2001) multiplicative update rule"""
 
     last_e = 0
     error_history = []

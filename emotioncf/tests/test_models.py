@@ -113,7 +113,7 @@ def test_cf_knn(metric, k, n_mask_items, dilate_by_nsamples, simulate_wide_data)
 
 
 @pytest.mark.parametrize(
-    ["n_iterations", "n_train_items", "tol", "dilate_ts_n_samples", "n_factors"],
+    ["n_iterations", "n_mask_items", "tol", "dilate_by_nsamples", "n_factors"],
     [
         (100, 0.1, 0.001, None, 10),
         (30, 50, 0.0001, None, None),
@@ -122,13 +122,13 @@ def test_cf_knn(metric, k, n_mask_items, dilate_by_nsamples, simulate_wide_data)
     ],
 )
 def test_cf_nnmf_mult(
-    n_iterations, n_train_items, tol, dilate_ts_n_samples, n_factors, simulate_wide_data
+    n_iterations, n_mask_items, tol, dilate_by_nsamples, n_factors, simulate_wide_data
 ):
     disp_dict = {
         "n_iterations": n_iterations,
-        "n_train_items": n_train_items,
+        "n_mask_items": n_mask_items,
         "tol": tol,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
+        "dilate_by_nsamples": dilate_by_nsamples,
         "n_factors": n_factors,
     }
 
@@ -145,22 +145,14 @@ def test_cf_nnmf_mult(
     plt.close()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
 
-    # Predictions on all data
-    cf.predict()
-
     # Now split
-    cf.split_train_test(n_train_items=n_train_items)
-
-    # Return fit
+    cf.create_masked_data(n_mask_items=n_mask_items)
     cf.fit(
         n_iterations=n_iterations,
         tol=tol,
-        dilate_ts_n_samples=dilate_ts_n_samples,
+        dilate_by_nsamples=dilate_by_nsamples,
         verbose=True,
     )
-
-    # Rerun predict
-    cf.predict()
     _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
 
 

@@ -158,7 +158,7 @@ class NNMF_mult(BaseNMF):
         tol=1e-6,
         eps=1e-6,
         verbose=False,
-        dilate_ts_n_samples=None,
+        dilate_by_nsamples=None,
     ):
 
         """Fit NNMF collaborative filtering model to train data using multiplicative updating.
@@ -177,6 +177,11 @@ class NNMF_mult(BaseNMF):
 
         n_users, n_items = self.data.shape
 
+        if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
+            n_factors, np.floating
+        ):
+            raise TypeError("n_factors must be an integer < number of items")
+
         if n_factors is None:
             n_factors = n_items
 
@@ -188,32 +193,17 @@ class NNMF_mult(BaseNMF):
         self.H = avg * np.random.rand(n_factors, n_items)
         self.W = avg * np.random.rand(n_users, n_factors)
 
-        # Appropriately handle mask
-        # TODO: refactor this masking block to match the SGD implementation
-        # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix like this during the updates: https://arxiv.org/pdf/1612.06037.pdf
-        if self.is_mask:
-            if dilate_ts_n_samples is not None:
-                masked_X = self._dilate_ts_rating_samples(
-                    n_samples=dilate_ts_n_samples
-                ).values
-                mask = self.dilated_mask.values
-            else:
-                mask = self.train_mask.values
-                masked_X = self.data.values * mask
-            masked_X[np.isnan(masked_X)] = 0
-        else:
-            masked_X = self.data.values
-            mask = np.ones(self.data.shape)
-
-        # Ger data randge for norm_mse
-        data_range = self.data.max().max() - self.data.min().min()
+        # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix: https://arxiv.org/pdf/1612.06037.pdf
+        self.dilate_mask(dilate_by_nsamples)
+        # fillna(0) is equivalent to hadamard (element-wise) product with a binary mask
+        X = self.masked_data.fillna(0).to_numpy()
 
         # Run multiplicative updating
         error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
-            masked_X,
+            X,
             self.W,
             self.H,
-            data_range,
+            self.data_range,
             eps,
             tol,
             n_iterations,
@@ -223,7 +213,6 @@ class NNMF_mult(BaseNMF):
         # Save outputs to model
         self.W, self.H = W, H
         self.error_history = error_history
-        self.is_fit = True
         self._n_iter = n_iter
         self._delta = delta
         self._norm_rmse = norm_rmse
@@ -240,21 +229,16 @@ class NNMF_mult(BaseNMF):
                 print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
 
             print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
+        self._predict()
+        self.is_fit = True
 
-    def predict(self):
+    def _predict(self):
 
-        """Predict Subject's missing items using NNMF with multiplicative updating
+        """Predict subjects' missing items using NNMF with multiplicative updating"""
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
-        """
-
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
-
-        self.predictions = self.data.copy()
-        self.predictions.loc[:, :] = np.dot(self.W, self.H)
-        self.is_predict = True
+        self.predictions = pd.DataFrame(
+            self.W @ self.H, index=self.data.index, columns=self.data.columns
+        )
 
 
 class NNMF_sgd(BaseNMF):
@@ -309,6 +293,11 @@ class NNMF_sgd(BaseNMF):
         n_users, n_items = self.data.shape
         if n_factors is None:
             n_factors = n_items
+
+        if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
+            n_factors, np.floating
+        ):
+            raise TypeError("n_factors must be an integer < number of items")
 
         self.n_factors = n_factors
         self.item_fact_reg = item_fact_reg
