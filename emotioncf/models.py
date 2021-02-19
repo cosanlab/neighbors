@@ -16,8 +16,8 @@ class Mean(Base):
     The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None):
-        super().__init__(data, mask, n_mask_items)
+    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
+        super().__init__(data, mask, n_mask_items, verbose)
         self.mean = None
 
     def fit(self, dilate_by_nsamples=None):
@@ -32,7 +32,7 @@ class Mean(Base):
         # Call parent fit which acts as a guard for non-masked data
         super().fit()
 
-        self.dilate_mask(dilate_by_nsamples)
+        self.dilate_mask(n_samples=dilate_by_nsamples)
         self.mean = self.masked_data.mean(skipna=True, axis=0)
         self._predict()
         self.is_fit = True
@@ -56,8 +56,8 @@ class KNN(Base):
     The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method.
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None):
-        super().__init__(data, mask, n_mask_items)
+    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
+        super().__init__(data, mask, n_mask_items, verbose)
         self.subject_similarity = None
         self._last_metric = None
         self._last_dilate_by_nsamples = None
@@ -81,7 +81,7 @@ class KNN(Base):
 
         # If fit is being called more than once in a row with different k, but no other arguments are changing, reuse the last computed similarity matrix to save time. Otherwise re-calculate it
         if not skip_refit:
-            self.dilate_mask(dilate_by_nsamples)
+            self.dilate_mask(n_samples=dilate_by_nsamples)
             if metric in ["pearson", "kendall", "spearman"]:
                 # Fall back to pandas
                 sim = self.masked_data.T.corr(method=metric)
@@ -148,8 +148,8 @@ class NNMF_mult(BaseNMF):
 
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
+        super().__init__(data, mask, n_mask_items, verbose)
         self.H = None  # factors x items
         self.W = None  # user x factors
         self.n_factors = None
@@ -203,7 +203,7 @@ class NNMF_mult(BaseNMF):
         self.W = avg * np.random.rand(n_users, n_factors)
 
         # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix: https://arxiv.org/pdf/1612.06037.pdf
-        self.dilate_mask(dilate_by_nsamples)
+        self.dilate_mask(n_samples=dilate_by_nsamples)
         # fillna(0) is equivalent to hadamard (element-wise) product with a binary mask
         X = self.masked_data.fillna(0).to_numpy()
 
@@ -260,8 +260,8 @@ class NNMF_sgd(BaseNMF):
 
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None):
-        super().__init__(data, mask, n_mask_items)
+    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
+        super().__init__(data, mask, n_mask_items, verbose)
         self.n_factors = None
 
     def __repr__(self):
@@ -320,7 +320,7 @@ class NNMF_sgd(BaseNMF):
         self.error_history = []
 
         # Perform dilation if requested
-        self.dilate_mask(dilate_by_nsamples)
+        self.dilate_mask(n_samples=dilate_by_nsamples)
         # Get indices of missing data to compute
         if self.is_mask_dilated:
             sample_row, sample_col = self.dilated_mask.values.nonzero()

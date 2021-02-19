@@ -39,3 +39,13 @@ def simulate_long_data(simulate_wide_data):
         sub["Subject"] = row[0]
         out = out.append(sub)
     return out
+
+
+@pytest.fixture(scope="module")
+def simulate_simple_dataframe():
+    ratings_dict = {
+        "Subject": ["A", "A", "B", "B", "C", "C", "D", "D", "E", "E"],
+        "Item": [1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
+        "Rating": [1, 2, 2, 4, 2.5, 4, 4.5, 5, 3, 1],
+    }
+    return pd.DataFrame(ratings_dict)
