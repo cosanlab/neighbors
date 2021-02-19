@@ -62,7 +62,7 @@ def sgd(
             i = sample_col[idx]
 
             prediction = global_bias + user_bias[u] + item_bias[i]
-            prediction += user_vecs[u, :].dot(item_vecs[i, :].T)
+            prediction += user_vecs[u, :] @ item_vecs[:, i]
 
             # Use changes in e to determine tolerance
             e = data[u, i] - prediction  # error
@@ -73,10 +73,10 @@ def sgd(
 
             # Update latent factors
             user_vecs[u, :] += learning_rate * (
-                e * item_vecs[i, :] - user_fact_reg * user_vecs[u, :]
+                e * item_vecs[:, i] - user_fact_reg * user_vecs[u, :]
             )
             item_vecs[i, :] += learning_rate * (
-                e * user_vecs[u, :] - item_fact_reg * item_vecs[i, :]
+                e * user_vecs[u, :] - item_fact_reg * item_vecs[:, i]
             )
 
             # Keep track of total squared error

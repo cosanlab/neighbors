@@ -611,6 +611,12 @@ class Base(object):
 
         self._dilate_ts_rating_samples(dilate_by_nsamples=dilate_by_nsamples)
 
+    def fit(self):
+        if not self.is_masked or self.masked_data.equals(self.data):
+            raise ValueError(
+                "You're trying to fit on a dense matrix, because model data has not been masked! Either call the `.create_masked_data` method prior to fitting or re-initialize the model and set the `mask` or `n_mask_items` arguments."
+            )
+
     def summary(self):
         """Summary"""
         return Results()

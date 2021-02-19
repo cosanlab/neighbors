@@ -29,6 +29,9 @@ class Mean(Base):
 
         """
 
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
+
         self.dilate_mask(dilate_by_nsamples)
         self.mean = self.masked_data.mean(skipna=True, axis=0)
         self._predict()
@@ -72,6 +75,9 @@ class KNN(Base):
         metrics = ["pearson", "spearman", "kendall", "cosine", "correlation"]
         if metric not in metrics:
             raise ValueError(f"metric must be one of {metrics}")
+
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
 
         # If fit is being called more than once in a row with different k, but no other arguments are changing, reuse the last computed similarity matrix to save time. Otherwise re-calculate it
         if not skip_refit:
@@ -175,6 +181,9 @@ class NNMF_mult(BaseNMF):
             save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
         """
 
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
+
         n_users, n_items = self.data.shape
 
         if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
@@ -251,8 +260,8 @@ class NNMF_sgd(BaseNMF):
 
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(self, data, mask=None, n_mask_items=None):
+        super().__init__(data, mask, n_mask_items)
         self.n_factors = None
 
     def __repr__(self):
@@ -269,7 +278,7 @@ class NNMF_sgd(BaseNMF):
         n_iterations=5000,
         tol=1e-6,
         verbose=False,
-        dilate_ts_n_samples=None,
+        dilate_by_nsamples=None,
     ):
         """
         Fit NNMF collaborative filtering model using stochastic-gradient-descent
@@ -289,15 +298,19 @@ class NNMF_sgd(BaseNMF):
             fast_sdg (bool; optional): Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False
         """
 
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
+
         # initialize variables
         n_users, n_items = self.data.shape
-        if n_factors is None:
-            n_factors = n_items
 
         if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
             n_factors, np.floating
         ):
             raise TypeError("n_factors must be an integer < number of items")
+
+        if n_factors is None:
+            n_factors = n_items
 
         self.n_factors = n_factors
         self.item_fact_reg = item_fact_reg
@@ -307,39 +320,29 @@ class NNMF_sgd(BaseNMF):
         self.error_history = []
 
         # Perform dilation if requested
-        if dilate_ts_n_samples is not None:
-            self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-
-        # Appropriately handle mask
-        if self.is_mask:
-            if self.is_mask_dilated:
-                data = self.masked_data[self.dilated_mask]
-                sample_row, sample_col = self.dilated_mask.values.nonzero()
-                self.global_bias = data[self.dilated_mask].mean().mean()
-            else:
-                data = self.masked_data[self.train_mask]
-                sample_row, sample_col = self.train_mask.values.nonzero()
-                self.global_bias = data[self.train_mask].mean().mean()
+        self.dilate_mask(dilate_by_nsamples)
+        # Get indices of missing data to compute
+        if self.is_mask_dilated:
+            sample_row, sample_col = self.dilated_mask.values.nonzero()
         else:
-            data = self.data.copy()
-            sample_row, sample_col = zip(*np.argwhere(~np.isnan(data.values)))
-            self.global_bias = data.values[~np.isnan(data.values)].mean()
+            sample_row, sample_col = self.mask.values.nonzero()
 
         # Convert tuples cause numba complains
         sample_row, sample_col = np.array(sample_row), np.array(sample_col)
 
-        # Initialize user and item biases and latent vectors
+        # Initialize global, user, and item biases and latent vectors
+        self.global_bias = self.masked_data.mean().mean()
         self.user_bias = np.zeros(n_users)
         self.item_bias = np.zeros(n_items)
+        # Like multiplicative updating orient these as user x factor, factor x item
         self.user_vecs = np.random.normal(
             scale=1.0 / n_factors, size=(n_users, n_factors)
         )
         self.item_vecs = np.random.normal(
-            scale=1.0 / n_factors, size=(n_items, n_factors)
+            scale=1.0 / n_factors, size=(n_factors, n_items)
         )
 
-        # Get data range for norm_rmse
-        data_range = self.data.max().max() - self.data.min().min()
+        X = self.masked_data.to_numpy()
 
         # Run SGD
         (
@@ -353,9 +356,9 @@ class NNMF_sgd(BaseNMF):
             item_bias,
             item_vecs,
         ) = sgd(
-            data.to_numpy(),
+            X,
             self.global_bias,
-            data_range,
+            self.data_range,
             tol,
             self.user_bias,
             self.user_vecs,
@@ -386,7 +389,6 @@ class NNMF_sgd(BaseNMF):
             item_vecs,
         )
 
-        self.is_fit = True
         self._n_iter = n_iter
         self._delta = delta
         self._norm_rmse = norm_rmse
@@ -403,22 +405,18 @@ class NNMF_sgd(BaseNMF):
 
             print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
 
-    def predict(self):
+        self._predict()
+        self.is_fit = True
 
-        """Predict Subject's missing items using NNMF with stochastic gradient descent
+    def _predict(self):
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
-        """
+        """Predict Subject's missing items using NNMF with stochastic gradient descent"""
 
-        self.predictions = self.data.copy()
-        for u in range(self.user_vecs.shape[0]):
-            for i in range(self.item_vecs.shape[0]):
-                self.predictions.iloc[u, i] = self._predict_single(u, i)
-        self.is_predict = True
-
-    def _predict_single(self, u, i):
-        """ Single user and item prediction."""
-        prediction = self.global_bias + self.user_bias[u] + self.item_bias[i]
-        prediction += self.user_vecs[u, :].dot(self.item_vecs[i, :].T)
-        return prediction
+        # user x factor * factor item + biases
+        predictions = self.user_vecs @ self.item_vecs
+        predictions = (
+            (predictions.T + self.user_bias).T + self.item_bias + self.global_bias
+        )
+        self.predictions = pd.DataFrame(
+            predictions, index=self.data.index, columns=self.data.columns
+        )
