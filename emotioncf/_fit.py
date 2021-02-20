@@ -75,7 +75,7 @@ def sgd(
             user_vecs[u, :] += learning_rate * (
                 e * item_vecs[:, i] - user_fact_reg * user_vecs[u, :]
             )
-            item_vecs[i, :] += learning_rate * (
+            item_vecs[:, i] += learning_rate * (
                 e * user_vecs[u, :] - item_fact_reg * item_vecs[:, i]
             )
 

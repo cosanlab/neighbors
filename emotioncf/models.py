@@ -20,7 +20,7 @@ class Mean(Base):
         super().__init__(data, mask, n_mask_items, verbose)
         self.mean = None
 
-    def fit(self, dilate_by_nsamples=None):
+    def fit(self, dilate_by_nsamples=None, **kwargs):
 
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
@@ -62,7 +62,14 @@ class KNN(Base):
         self._last_metric = None
         self._last_dilate_by_nsamples = None
 
-    def fit(self, k=None, metric="pearson", dilate_by_nsamples=None, skip_refit=False):
+    def fit(
+        self,
+        k=None,
+        metric="pearson",
+        dilate_by_nsamples=None,
+        skip_refit=False,
+        **kwargs,
+    ):
 
         """Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.
 
@@ -160,11 +167,12 @@ class NNMF_mult(BaseNMF):
     def fit(
         self,
         n_factors=None,
-        n_iterations=5000,
+        n_iterations=1000,
         tol=1e-6,
         eps=1e-6,
         verbose=False,
         dilate_by_nsamples=None,
+        **kwargs,
     ):
 
         """Fit NNMF collaborative filtering model to train data using multiplicative updating.
@@ -275,10 +283,11 @@ class NNMF_sgd(BaseNMF):
         item_bias_reg=0.0,
         user_bias_reg=0.0,
         learning_rate=0.001,
-        n_iterations=5000,
+        n_iterations=1000,
         tol=1e-6,
         verbose=False,
         dilate_by_nsamples=None,
+        **kwargs,
     ):
         """
         Fit NNMF collaborative filtering model using stochastic-gradient-descent

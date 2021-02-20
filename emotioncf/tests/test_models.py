@@ -181,14 +181,14 @@ def test_cf_nnmf_mult(
     print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
 
     # Initial fitting on all data
-    cf.fit(
-        n_iterations=n_iterations,
-        tol=tol,
-        verbose=True,
-    )
-    cf.plot_learning()
-    plt.close()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
+    # cf.fit(
+    #     n_iterations=n_iterations,
+    #     tol=tol,
+    #     verbose=True,
+    # )
+    # cf.plot_learning()
+    # plt.close()
+    # _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
 
     # Now split
     cf.create_masked_data(n_mask_items=n_mask_items)
@@ -225,14 +225,14 @@ def test_cf_nnmf_sgd(
     print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
 
     # Initial fitting on all data
-    cf.fit(
-        n_iterations=n_iterations,
-        tol=tol,
-        verbose=True,
-    )
-    cf.plot_learning()
-    plt.close()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
+    # cf.fit(
+    #     n_iterations=n_iterations,
+    #     tol=tol,
+    #     verbose=True,
+    # )
+    # cf.plot_learning()
+    # plt.close()
+    # _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
 
     # Now split
     cf.create_masked_data(n_mask_items=n_mask_items)
