@@ -84,32 +84,6 @@ class Base(object):
             out += f", dilated_by_nsamples={self.dilated_by_nsamples}"
         return out
 
-    def get_data(self, dataset="all"):
-        """
-        Helper function to quickly retrieve a model's data while respecting any masking or dilation that has been performed.
-
-        Args:
-            dataset (str, optional): what data to retreive, must be one of 'all' (ignore mask), 'train' (possible dilated training data), 'test' (testing data). Defaults to "all".
-
-        Returns:
-            pd.DataFrame: requested data
-        """
-
-        if dataset in ["train", "test"] and not self.is_mask:
-            raise ValueError(
-                "data has not been masked to produce training and testing splits. Call .split_train_test() first"
-            )
-        if dataset == "all":
-            return self.data
-        if self.is_mask_dilated:
-            train_mask = self.dilated_mask
-        else:
-            train_mask = self.train_mask
-        if dataset == "train":
-            return self.data[train_mask]
-        if dataset == "test":
-            return self.data[~train_mask]
-
     def score(self, metric="rmse", by_subject=False, dataset="missing"):
         """Get the performance of a fitted model by comparing observed and predicted data.
 
