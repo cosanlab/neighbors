@@ -44,6 +44,7 @@ class Base(object):
         self.dilated_by_nsamples = None
         self.n_mask_items = n_mask_items
         self.data_range = self.data.max().max() - self.data.min().min()
+        self.is_dense = True
 
         # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():
@@ -52,6 +53,7 @@ class Base(object):
             self.mask = ~data.isnull()
             self.masked_data = self.data[self.mask]
             self.is_masked = True
+            self.is_dense = False
 
         # Otherwise apply any user provided mask or tell them data was pre-masked
         if mask is not None:
@@ -113,7 +115,7 @@ class Base(object):
 
         Args:
             metric (str; optional): what metric to compute, one of 'rmse', 'mse', 'mae' or 'correlation'; Default 'rmse'.
-            dataset (str; optional): how to compute scoring, either using 'all' or 'missing' data; Default 'missing'.
+            dataset (str; optional): how to compute scoring, either using 'observed', 'missing' or 'full'. Default 'missing'.
 
         Returns:
             float: score
@@ -532,13 +534,13 @@ class Base(object):
             )
         elif dataset == "missing":
             # This happens if the input data already has NaNs that were not the result of a masking operation by a model on dense data
-            if self.masked_data.equals(self.data):
-                return (None, self.predictions[self.masked_data.isnull()])
-            else:
+            if self.is_dense:
                 return (
                     self.data[self.masked_data.isnull()],
                     self.predictions[self.masked_data.isnull()],
                 )
+            else:
+                return (None, self.predictions[self.masked_data.isnull()])
 
     def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
 
@@ -617,9 +619,27 @@ class Base(object):
                 "You're trying to fit on a dense matrix, because model data has not been masked! Either call the `.create_masked_data` method prior to fitting or re-initialize the model and set the `mask` or `n_mask_items` arguments."
             )
 
-    def summary(self):
+    def summary(self, verbose=True):
         """Summary"""
-        return Results()
+        if not self.is_fit:
+            raise ValueError("Model has not been fit!")
+        results = {
+            "algorithm": self.__class__.__name__,
+            "predictions": self.to_long_df(),
+            "n_items": self.data.shape[1],
+            "n_users": self.data.shape[0],
+        }
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            for metric in ["rmse", "mse", "mae", "correlation"]:
+                out = {}
+                for dataset in ["full", "missing", "observed"]:
+                    out[dataset] = self.score(metric=metric, dataset=dataset)
+                results[metric] = out
+        if verbose and w:
+            print(w[-1].message)
+
+        return Results(**results)
 
 
 class BaseNMF(Base):
