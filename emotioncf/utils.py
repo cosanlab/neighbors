@@ -115,9 +115,9 @@ def nanpdist(arr, metric="euclidean", return_square=True):
     return out
 
 
-def create_train_test_mask(data, n_train_items=0.1):
+def create_train_test_mask(data, n_mask_items=0.1):
     """
-    Given a pandas dataframe create a boolean mask such that n_train_items columns are `True` and the rest are `False`. Critically, each row is masked independently. This function does not alter the input dataframe.
+    Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.
 
     Args:
         data (pd.DataFrame): input dataframe
@@ -133,19 +133,19 @@ def create_train_test_mask(data, n_train_items=0.1):
     if data.isnull().any().any():
         raise ValueError("data already contains NaNs and further masking is ambiguous!")
 
-    if isinstance(n_train_items, (float, np.floating)) and 1 >= n_train_items > 0:
-        n_train_items = int(np.round(data.shape[1] * n_train_items))
+    if isinstance(n_mask_items, (float, np.floating)) and 1 >= n_mask_items > 0:
+        n_false_items = int(np.round(data.shape[1] * n_mask_items))
 
-    elif isinstance(n_train_items, (int, np.integer)):
-        n_train_items = n_train_items
+    elif isinstance(n_mask_items, (int, np.integer)):
+        n_false_items = n_mask_items
 
     else:
         raise TypeError(
-            f"n_train_items must be an integer or a float between 0-1, not {type(n_train_items)} with value {n_train_items}"
+            f"n_train_items must be an integer or a float between 0-1, not {type(n_mask_items)} with value {n_mask_items}"
         )
 
-    n_test_items = data.shape[1] - n_train_items
-    mask = np.array([True] * n_train_items + [False] * n_test_items)
+    n_true_items = data.shape[1] - n_false_items
+    mask = np.array([True] * n_true_items + [False] * n_false_items)
     mask = np.vstack(
         [
             np.random.choice(mask, replace=False, size=mask.shape)
@@ -172,3 +172,19 @@ def load_movielens():  # pragma: no cover
         return df
     except Exception as e:
         print(str(e))
+
+
+def estimate_performance(
+    model, n_iter=10, n_jobs=1, mask=None, n_mask_items=None, verbose=False, **kwargs
+) -> pd.DataFrame:
+    if mask is None and n_mask_items is None:
+        raise ValueError("must provide a mask or n_mask_items to run estimation")
+    if kwargs:
+        pass
+        # Expect a kwargs dict like:
+        # {
+        # "k": [None, 1, 10, 50],
+        # "dilate_by_nsamples": [None, 2, 10]
+        # }
+        # Parse it into a cartersian param grid and run with joblib
+        # if n_mask_items is a list, add it the parameter grid

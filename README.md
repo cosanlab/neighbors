@@ -26,7 +26,9 @@ To develop this package or its documentation locally you will need to install a 
 
 ### Testing
 
-To run tests just call `pytest` from the root of this repository. New tests can be added in `emotioncf/tests/`.
+`pytest -rs emotioncf/tests/test_everything.py -n auto`
+
+New tests can be added in `emotioncf/tests/`.
 
 ### Formatting
 

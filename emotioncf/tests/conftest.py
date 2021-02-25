@@ -68,7 +68,7 @@ def Model(request):
 def mask(request, simulate_wide_data):
     """Masked or non masked input data"""
     if request.param == "masked":
-        return create_train_test_mask(simulate_wide_data, n_train_items=0.5)
+        return create_train_test_mask(simulate_wide_data, n_mask_items=0.5)
     else:
         return request.param
 

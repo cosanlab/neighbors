@@ -7,7 +7,6 @@ from scipy.stats import pearsonr
 from copy import deepcopy
 import matplotlib.pyplot as plt
 from .utils import create_train_test_mask
-from .results import Results
 import warnings
 
 __all__ = ["Base", "BaseNMF"]
@@ -25,7 +24,7 @@ class Base(object):
         Args:
             data (pd.DataFrame): users x items dataframe
             mask (pd.DataFrame, optional): A boolean dataframe used to split the data into training and testing. Defaults to None.
-            n_mask_items (int/float, optional): number of items to treat as observed while the rest are treated as missing. Defaults to None.
+            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
             verbose (bool; optional): print any initialization warnings; Default True
 
         Raises:
@@ -45,6 +44,7 @@ class Base(object):
         self.n_mask_items = n_mask_items
         self.data_range = self.data.max().max() - self.data.min().min()
         self.is_dense = True
+        self.results = None
 
         # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():
@@ -84,7 +84,7 @@ class Base(object):
             out += f", dilated_by_nsamples={self.dilated_by_nsamples}"
         return out
 
-    def score(self, metric="rmse", by_subject=False, dataset="missing"):
+    def score(self, metric="rmse", by_subject=False, dataset="missing", verbose=True):
         """Get the performance of a fitted model by comparing observed and predicted data.
 
         Args:
@@ -107,8 +107,9 @@ class Base(object):
         # This will be a dense or sparse matrix the same shape as the input data
         actual, pred = self._retrieve_predictions(dataset)
 
+        # TODO: implement by subject scoring
         if by_subject:
-            pass
+            raise NotImplementedError()
         else:
             if actual is not None:
 
@@ -124,9 +125,11 @@ class Base(object):
                     nans = np.logical_or(np.isnan(actual), np.isnan(pred))
                     return pearsonr(actual[~nans], pred[~nans])[0]
             else:
-                warnings.warn(
-                    "Cannot score predictions on missing data because true values were never observed!"
-                )
+                if verbose:
+                    warnings.warn(
+                        "Cannot score predictions on missing data because true values were never observed!"
+                    )
+                return None
 
     def get_sub_corr(self, dataset="test"):
         """Calculate observed/predicted correlation for each subject in matrix
@@ -593,27 +596,55 @@ class Base(object):
                 "You're trying to fit on a dense matrix, because model data has not been masked! Either call the `.create_masked_data` method prior to fitting or re-initialize the model and set the `mask` or `n_mask_items` arguments."
             )
 
-    def summary(self, verbose=True):
+    def summary(self, verbose=True, long_df=False, return_cached=True):
         """Summary"""
         if not self.is_fit:
             raise ValueError("Model has not been fit!")
-        results = {
-            "algorithm": self.__class__.__name__,
-            "predictions": self.to_long_df(),
-            "n_items": self.data.shape[1],
-            "n_users": self.data.shape[0],
-        }
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            for metric in ["rmse", "mse", "mae", "correlation"]:
-                out = {}
-                for dataset in ["full", "missing", "observed"]:
-                    out[dataset] = self.score(metric=metric, dataset=dataset)
-                results[metric] = out
-        if verbose and w:
-            print(w[-1].message)
+        if return_cached and self.results is not None:
+            if verbose:
+                print(
+                    "Returning cached scores...set cache=False to force recomputation"
+                )
+            results = self.results
+        else:
+            results = {
+                "algorithm": self.__class__.__name__,
+                # "predictions": self.to_long_df(),
+                "n_items": self.data.shape[1],
+                "n_users": self.data.shape[0],
+            }
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                for metric in ["rmse", "mse", "mae", "correlation"]:
+                    out = {}
+                    for dataset in ["full", "missing", "observed"]:
+                        out[dataset] = self.score(
+                            metric=metric, dataset=dataset, verbose=verbose
+                        )
+                    results[metric] = out
+            results = pd.DataFrame(results)
+            self.results = results
+            if verbose and w:
+                print(w[-1].message)
+        if long_df:
+            out = results[["algorithm", "rmse", "mse", "mae", "correlation"]]
+            out = (
+                out.reset_index()
+                .melt(
+                    id_vars=["index", "algorithm"],
+                    var_name="metric",
+                    value_name="score",
+                )
+                .rename(columns={"index": "dataset"})
+                .sort_values(by=["dataset", "metric"])
+                .reset_index(drop=True)
+            )
+        else:
+            out = results
 
-        return Results(**results)
+        return out
+
+        # return Results(**results)
 
 
 class BaseNMF(Base):
