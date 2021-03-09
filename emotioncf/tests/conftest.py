@@ -90,7 +90,7 @@ def init(Model, mask, n_mask_items, simulate_wide_data):
                 mask=mask,
                 n_mask_items=n_mask_items,
             )
-        pytest.skip("Skip ambigious init - OK")
+        pytest.skip("Ambigious init fails properly - OK")
     else:
         # Otherwise put together each init param combination
         return Model(
@@ -105,7 +105,7 @@ def init(Model, mask, n_mask_items, simulate_wide_data):
 def model(Model, simulate_wide_data, n_mask_items):
     """Initialized model with masking already performed"""
     if n_mask_items is None:
-        pytest.skip("Skip for dense data - OK")
+        pytest.skip("Skip testing model with dense data and no mask - OK")
     return Model(simulate_wide_data, n_mask_items=n_mask_items)
 
 

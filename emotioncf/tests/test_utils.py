@@ -45,13 +45,15 @@ def test_nanpdist(simulate_wide_data):
 
 
 def test_create_train_test_mask(simulate_wide_data):
-    mask = create_train_test_mask(simulate_wide_data, n_train_items=0.1)
+    mask = create_train_test_mask(simulate_wide_data, n_mask_items=0.1)
+    expected_items = int(simulate_wide_data.shape[1] * (1 - 0.10))
     assert mask.shape == simulate_wide_data.shape
-    assert all(mask.sum(1) == 10)
+    assert all(mask.sum(1) == expected_items)
 
-    mask = create_train_test_mask(simulate_wide_data, n_train_items=19)
+    mask = create_train_test_mask(simulate_wide_data, n_mask_items=19)
     assert mask.shape == simulate_wide_data.shape
-    assert all(mask.sum(1) == 19)
+    expected_items = int(simulate_wide_data.shape[1] - 19)
+    assert all(mask.sum(1) == expected_items)
 
     masked_data = simulate_wide_data[mask]
     assert isinstance(masked_data, pd.DataFrame)

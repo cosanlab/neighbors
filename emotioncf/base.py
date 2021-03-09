@@ -8,6 +8,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from .utils import create_train_test_mask
 import warnings
+import seaborn as sns
 
 __all__ = ["Base", "BaseNMF"]
 
@@ -23,7 +24,7 @@ class Base(object):
 
         Args:
             data (pd.DataFrame): users x items dataframe
-            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into training and testing. Defaults to None.
+            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
             n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
             verbose (bool; optional): print any initialization warnings; Default True
 
@@ -45,6 +46,9 @@ class Base(object):
         self.data_range = self.data.max().max() - self.data.min().min()
         self.is_dense = True
         self.results = None
+        self.subject_results = None
+        self.n_users = data.shape[0]
+        self.n_items = data.shape[1]
 
         # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():
@@ -61,6 +65,8 @@ class Base(object):
                 raise ValueError(
                     "mask was provided, but data already contains missing values that were used for masking. This is an ambiguous operation. If a mask is provided data should not contain missing values!"
                 )
+            if mask.shape != data.shape:
+                raise ValueError("mask must be the same shape as data")
             self.mask = mask
             self.masked_data = self.data[self.mask]
             self.is_masked = True
@@ -79,13 +85,14 @@ class Base(object):
             )
 
     def __repr__(self):
-        out = f"{self.__class__.__module__}.{self.__class__.__name__}(data={self.data.shape}, is_fit={self.is_fit}, is_masked={self.is_masked}, is_mask_dilated={self.is_mask_dilated})"
+        out = f"{self.__class__.__module__}.{self.__class__.__name__}(n_users={self.n_users}, n_items={self.n_items}, is_fit={self.is_fit}, is_masked={self.is_masked}, is_mask_dilated={self.is_mask_dilated}"
         if self.is_mask_dilated:
             out += f", dilated_by_nsamples={self.dilated_by_nsamples}"
+        out += ")"
         return out
 
     def score(self, metric="rmse", by_subject=False, dataset="missing", verbose=True):
-        """Get the performance of a fitted model by comparing observed and predicted data.
+        """Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the `.summary()` method instead, which scores all metrics.
 
         Args:
             metric (str; optional): what metric to compute, one of 'rmse', 'mse', 'mae' or 'correlation'; Default 'rmse'.
@@ -107,180 +114,47 @@ class Base(object):
         # This will be a dense or sparse matrix the same shape as the input data
         actual, pred = self._retrieve_predictions(dataset)
 
-        # TODO: implement by subject scoring
+        if actual is None:
+            if verbose:
+                warnings.warn(
+                    "Cannot score predictions on missing data because true values were never observed!"
+                )
+            return None
+
         if by_subject:
-            raise NotImplementedError()
-        else:
-            if actual is not None:
-
-                actual, pred = actual.to_numpy().flatten(), pred.to_numpy().flatten()
-
+            scores = []
+            for userid in range(actual.shape[0]):
+                user_actual = actual.iloc[userid, :].values
+                user_pred = pred.iloc[userid, :].values
                 if metric == "rmse":
-                    return np.sqrt(np.nanmean((pred - actual) ** 2))
+                    score = np.sqrt(np.nanmean((user_pred - user_actual) ** 2))
                 elif metric == "mse":
-                    return np.nanmean((pred - actual) ** 2)
+                    score = np.nanmean((user_pred - user_actual) ** 2)
                 elif metric == "mae":
-                    return np.nanmean(np.abs(pred - actual))
+                    score = np.nanmean(np.abs(user_pred - user_actual))
                 elif metric == "correlation":
-                    nans = np.logical_or(np.isnan(actual), np.isnan(pred))
+                    nans = np.logical_or(np.isnan(user_actual), np.isnan(user_pred))
+                    if len(user_actual[~nans]) < 2 or len(user_pred[~nans]) < 2:
+                        score = np.nan
+                    else:
+                        score = pearsonr(user_actual[~nans], user_pred[~nans])[0]
+                scores.append(score)
+            return pd.Series(scores, index=actual.index, name=f"{metric}_{dataset}")
+        else:
+            actual, pred = actual.to_numpy().flatten(), pred.to_numpy().flatten()
+
+            if metric == "rmse":
+                return np.sqrt(np.nanmean((pred - actual) ** 2))
+            elif metric == "mse":
+                return np.nanmean((pred - actual) ** 2)
+            elif metric == "mae":
+                return np.nanmean(np.abs(pred - actual))
+            elif metric == "correlation":
+                nans = np.logical_or(np.isnan(actual), np.isnan(pred))
+                if len(actual[~nans]) < 2 or len(pred[~nans]) < 2:
+                    return np.nan
+                else:
                     return pearsonr(actual[~nans], pred[~nans])[0]
-            else:
-                if verbose:
-                    warnings.warn(
-                        "Cannot score predictions on missing data because true values were never observed!"
-                    )
-                return None
-
-    def get_sub_corr(self, dataset="test"):
-        """Calculate observed/predicted correlation for each subject in matrix
-
-        Args:
-            dataset (str): Get correlation on 'all' data, the 'train' data, or the 'test' data
-
-        Returns:
-            r (float): Correlation
-
-        """
-
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
-        if not self.is_predict:
-            raise ValueError("You must predict() model first before using this method.")
-
-        r = []
-        # Note: the following mask prevents NaN values from being passed to `pearsonr()`.
-        # However, it does not guaratee that no correlation values will be NaN, e.g. if only one
-        # rating for a given subject is non-null in both test and train groups for a given
-        # dataset, or variance is otherwise zero.
-        if dataset == "all":
-            noNanMask = (~np.isnan(self.data)) & (~np.isnan(self.predictions))
-            for i in self.data.index:
-                r.append(
-                    pearsonr(
-                        self.data.loc[i, :][noNanMask.loc[i, :]],
-                        self.predictions.loc[i, :][noNanMask.loc[i, :]],
-                    )[0]
-                )
-        elif self.is_mask:
-            if dataset == "train":
-                noNanMask = (~np.isnan(self.masked_data)) & (
-                    ~np.isnan(self.predictions)
-                )
-                if self.is_mask_dilated:
-                    for i in self.masked_data.index:
-                        r.append(
-                            pearsonr(
-                                self.masked_data.loc[i, self.dilated_mask.loc[i, :]][
-                                    noNanMask.loc[i, :]
-                                ],
-                                self.predictions.loc[i, self.dilated_mask.loc[i, :]][
-                                    noNanMask.loc[i, :]
-                                ],
-                            )[0]
-                        )
-                else:
-                    for i in self.masked_data.index:
-                        r.append(
-                            pearsonr(
-                                self.masked_data.loc[i, self.train_mask.loc[i, :]][
-                                    noNanMask.loc[i, :]
-                                ],
-                                self.predictions.loc[i, self.train_mask.loc[i, :]][
-                                    noNanMask.loc[i, :]
-                                ],
-                            )[0]
-                        )
-            else:  # test
-                noNanMask = (~np.isnan(self.data)) & (~np.isnan(self.predictions))
-                for i in self.masked_data.index:
-                    r.append(
-                        pearsonr(
-                            self.data.loc[i, ~self.train_mask.loc[i, :]][
-                                noNanMask.loc[i, :]
-                            ],
-                            self.predictions.loc[i, ~self.train_mask.loc[i, :]][
-                                noNanMask.loc[i, :]
-                            ],
-                        )[0]
-                    )
-        else:
-            raise ValueError("Must run split_train_test() before using this option.")
-        return np.array(r)
-
-    def get_sub_mse(self, dataset="test"):
-        """Calculate observed/predicted mse for each subject in matrix
-
-        Args:
-            dataset (str): Get mse on 'all' data, the 'train' data, or the 'test' data
-
-        Returns:
-            mse (float): mean squared error
-
-        """
-
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
-        if not self.is_predict:
-            raise ValueError("You must predict() model first before using this method.")
-
-        mse = []
-        if dataset == "all":
-            for i in self.data.index:
-                actual = self.data.loc[i, :]
-                pred = self.predictions.loc[i, :]
-                mse.append(
-                    np.nanmean(
-                        (
-                            pred[(~np.isnan(actual)) & (~np.isnan(pred))]
-                            - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
-                        )
-                        ** 2
-                    )
-                )
-        elif self.is_mask:
-            if dataset == "train":
-                if self.is_mask_dilated:
-                    for i in self.masked_data.index:
-                        actual = self.masked_data.loc[i, self.dilated_mask.loc[i, :]]
-                        pred = self.predictions.loc[i, self.dilated_mask.loc[i, :]]
-                        mse.append(
-                            np.nanmean(
-                                (
-                                    pred[(~np.isnan(actual)) & (~np.isnan(pred))]
-                                    - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
-                                )
-                                ** 2
-                            )
-                        )
-                else:
-                    for i in self.data.index:
-                        actual = self.masked_data.loc[i, self.train_mask.loc[i, :]]
-                        pred = self.predictions.loc[i, self.train_mask.loc[i, :]]
-                        mse.append(
-                            np.nanmean(
-                                (
-                                    pred[(~np.isnan(actual)) & (~np.isnan(pred))]
-                                    - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
-                                )
-                                ** 2
-                            )
-                        )
-            else:
-                for i in self.data.index:
-                    actual = self.data.loc[i, ~self.train_mask.loc[i, :]]
-                    pred = self.predictions.loc[i, ~self.train_mask.loc[i, :]]
-                    mse.append(
-                        np.nanmean(
-                            (
-                                pred[(~np.isnan(actual)) & (~np.isnan(pred))]
-                                - actual[(~np.isnan(actual)) & (~np.isnan(pred))]
-                            )
-                            ** 2
-                        )
-                    )
-        else:
-            raise ValueError("Must run split_train_test() before using this option.")
-        return np.array(mse)
 
     def create_masked_data(self, n_mask_items=0.1):
         """
@@ -305,11 +179,13 @@ class Base(object):
         self.is_masked = True
         self.n_mask_items = n_mask_items
 
-    def plot_predictions(self, dataset="train", verbose=True, heatmapkwargs={}):
-        """Create plot of actual and predicted data
+    def plot_predictions(
+        self, dataset="missing", verbose=True, figsize=(15, 8), heatmapkwargs={}
+    ):
+        """Create plot of actual vs predicted values.
 
         Args:
-            dataset (str): plot 'all' data, the 'train' data, or the 'test' data
+            dataset (str; optional): one of 'full', 'observed', or 'missing'. Default 'missing'.
             verbose (bool; optional): print the averaged subject correlation while plotting; Default True
 
         Returns:
@@ -317,64 +193,66 @@ class Base(object):
 
         """
 
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-
         if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
+            raise ValueError("Model has not been fit")
 
-        if not self.is_predict:
-            raise ValueError("You must predict() model first before using this method.")
+        vmax = max(self.masked_data.max().max(), self.predictions.max().max())
+        vmin = min(self.masked_data.min().min(), self.predictions.min().min())
 
-        if self.is_mask:
-            data = self.masked_data.copy()
+        actual, pred = self._retrieve_predictions(dataset)
+
+        if actual is None:
+            ncols = 2
+            if verbose:
+                warnings.warn(
+                    "Cannot score predictions on missing data because true values were never observed!"
+                )
         else:
-            data = self.data.copy()
+            ncols = 3
 
         heatmapkwargs.setdefault("square", False)
         heatmapkwargs.setdefault("xticklabels", False)
         heatmapkwargs.setdefault("yticklabels", False)
-        vmax = (
-            data.max().max()
-            if data.max().max() > self.predictions.max().max()
-            else self.predictions.max().max()
-        )
-        vmin = (
-            data.min().min()
-            if data.min().min() < self.predictions.min().min()
-            else self.predictions.min().min()
-        )
-
         heatmapkwargs.setdefault("vmax", vmax)
         heatmapkwargs.setdefault("vmin", vmin)
 
-        f, ax = plt.subplots(nrows=1, ncols=3, figsize=(15, 8))
-        sns.heatmap(data, ax=ax[0], **heatmapkwargs)
+        f, ax = plt.subplots(nrows=1, ncols=ncols, figsize=figsize)
+
+        # The original data matrix (potentially masked)
+        sns.heatmap(self.masked_data, ax=ax[0], **heatmapkwargs)
         ax[0].set_title("Actual User/Item Ratings")
         ax[0].set_xlabel("Items", fontsize=18)
         ax[0].set_ylabel("Users", fontsize=18)
+
+        # The predicted data matrix
         sns.heatmap(self.predictions, ax=ax[1], **heatmapkwargs)
         ax[1].set_title("Predicted User/Item Ratings")
         ax[1].set_xlabel("Items", fontsize=18)
         ax[1].set_ylabel("Users", fontsize=18)
         f.tight_layout()
 
-        actual, pred = self._retrieve_predictions(dataset)
+        # Scatter plot if we can calculate it
+        if actual is not None:
+            nans = np.logical_or(np.isnan(actual), np.isnan(pred))
+            ax[2].scatter(
+                actual[~nans],
+                pred[~nans],
+            )
+            ax[2].set_xlabel("Actual Ratings")
+            ax[2].set_ylabel("Predicted Ratings")
+            ax[2].set_title("Predicted Ratings")
 
-        ax[2].scatter(
-            actual[(~np.isnan(actual)) & (~np.isnan(pred))],
-            pred[(~np.isnan(actual)) & (~np.isnan(pred))],
-        )
-        ax[2].set_xlabel("Actual Ratings")
-        ax[2].set_ylabel("Predicted Ratings")
-        ax[2].set_title("Predicted Ratings")
+            r = self.score(
+                dataset=dataset, by_subject=True, metric="correlation"
+            ).mean()
 
-        r = self.get_sub_corr(dataset=dataset).mean()
-        if verbose:
-            print("Average Subject Correlation: %s" % r)
+            if verbose:
+                print("Average Subject Correlation: %s" % r)
+            return f, r
 
-        return f, r
+        return f
 
+    # TODO: fix with the new API design
     def downsample(self, sampling_freq=None, target=None, target_type="samples"):
 
         """Downsample rating matrix to a new target frequency or number of samples using averaging.
@@ -519,7 +397,8 @@ class Base(object):
             else:
                 return (None, self.predictions[self.masked_data.isnull()])
 
-    def _conv_ts_mean_overlap(self, sub_rating, n_samples=5):
+    @staticmethod
+    def _conv_ts_mean_overlap(sub_rating, n_samples=5):
 
         """Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
 
@@ -596,55 +475,98 @@ class Base(object):
                 "You're trying to fit on a dense matrix, because model data has not been masked! Either call the `.create_masked_data` method prior to fitting or re-initialize the model and set the `mask` or `n_mask_items` arguments."
             )
 
-    def summary(self, verbose=True, long_df=False, return_cached=True):
-        """Summary"""
+    def summary(self, verbose=True, return_cached=True):
+        """
+        Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.
+
+        Args:
+            verbose (bool, optional): Print warning messages during scoring. Defaults to True.
+            return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to True.
+
+        Returns:
+            pd.DataFrame: long-form dataframe of model performance
+        """
+
         if not self.is_fit:
             raise ValueError("Model has not been fit!")
+
+        # Don't recompute results if we already have them
         if return_cached and self.results is not None:
             if verbose:
                 print(
                     "Returning cached scores...set cache=False to force recomputation"
                 )
-            results = self.results
-        else:
-            results = {
-                "algorithm": self.__class__.__name__,
-                # "predictions": self.to_long_df(),
-                "n_items": self.data.shape[1],
-                "n_users": self.data.shape[0],
-            }
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("always")
-                for metric in ["rmse", "mse", "mae", "correlation"]:
-                    out = {}
-                    for dataset in ["full", "missing", "observed"]:
-                        out[dataset] = self.score(
-                            metric=metric, dataset=dataset, verbose=verbose
+            return self.results
+        # Compute results for all metrics, all datasets, separately for group and by subject
+        group_results = {
+            "algorithm": self.__class__.__name__,
+        }
+        subject_results = []
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            for metric in ["rmse", "mse", "mae", "correlation"]:
+                this_group_result = {}
+                this_subject_result = []
+                for dataset in ["full", "missing", "observed"]:
+                    this_group_result[dataset] = self.score(
+                        metric=metric, dataset=dataset, verbose=verbose
+                    )
+                    this_subject_result.append(
+                        self.score(
+                            metric=metric,
+                            dataset=dataset,
+                            by_subject=True,
+                            verbose=verbose,
                         )
-                    results[metric] = out
-            results = pd.DataFrame(results)
-            self.results = results
-            if verbose and w:
-                print(w[-1].message)
-        if long_df:
-            out = results[["algorithm", "rmse", "mse", "mae", "correlation"]]
-            out = (
-                out.reset_index()
-                .melt(
-                    id_vars=["index", "algorithm"],
-                    var_name="metric",
-                    value_name="score",
+                    )
+                # Dict of group results for this metric
+                group_results[metric] = this_group_result
+                # Dataframe of subject results for this metric
+                this_subject_result = pd.concat(this_subject_result, axis=1)
+                subject_results.append(this_subject_result)
+                group_results[f"{metric}_subject"] = dict(
+                    zip(
+                        ["full", "missing", "observed"],
+                        this_subject_result.mean().values,
+                    )
                 )
-                .rename(columns={"index": "dataset"})
-                .sort_values(by=["dataset", "metric"])
-                .reset_index(drop=True)
+        # Save final results to longform df
+        self.subject_results = pd.concat(subject_results, axis=1)
+        group_results = pd.DataFrame(group_results)
+        group_results = (
+            group_results.reset_index()
+            .melt(
+                id_vars=["index", "algorithm"],
+                var_name="metric",
+                value_name="score",
             )
-        else:
-            out = results
+            .rename(columns={"index": "dataset"})
+            .sort_values(by=["dataset", "metric"])
+            .reset_index(drop=True)
+            .assign(
+                group=lambda df: df.metric.apply(
+                    lambda x: "subject" if "subject" in x else "all"
+                ),
+                metric=lambda df: df.metric.replace(
+                    {
+                        "correlation_subject": "correlation",
+                        "mse_subject": "mse",
+                        "rmse_subject": "rmse",
+                        "mae_subject": "mae",
+                    }
+                ),
+            )
+            .sort_values(by=["dataset", "metric", "group"])
+            .reset_index(drop=True)[
+                ["algorithm", "dataset", "group", "metric", "score"]
+            ]
+        )
+        self.results = group_results
+        if verbose and w:
+            print(w[-1].message)
 
-        return out
-
-        # return Results(**results)
+        return self.results
 
 
 class BaseNMF(Base):
