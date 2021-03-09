@@ -174,6 +174,7 @@ def load_movielens():  # pragma: no cover
         print(str(e))
 
 
+# TODO: finish me
 def estimate_performance(
     model, n_iter=10, n_jobs=1, mask=None, n_mask_items=None, verbose=False, **kwargs
 ) -> pd.DataFrame:
@@ -188,3 +189,45 @@ def estimate_performance(
         # }
         # Parse it into a cartersian param grid and run with joblib
         # if n_mask_items is a list, add it the parameter grid
+
+
+def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="samples"):
+    """
+    Down sample a dataframe
+
+    Args:
+        data (pd.DataFrame): input data
+        n_samples (int): number of samples.
+        sampling_freq (int/float, optional): sampling frequency of data in hz. Defaults to None.
+        target_type (str, optional): how to downsample; must be one of "samples", "seconds" or "hz". Defaults to "samples".
+
+    Returns:
+        pd.DataFrame: downsampled input data
+    """
+
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError("data must be a pandas dataframe")
+    if not isinstance(n_samples, int):
+        raise TypeError("n_samples must be an integer")
+    if target_type not in ["samples", "seconds", "hz"]:
+        raise ValueError("target_type must be 'samples', 'seconds', or 'hz'")
+
+    if target_type in ["seconds", "hz"] and (
+        n_samples is None or sampling_freq is None
+    ):
+        raise ValueError(
+            f"if target_type = {target_type}, both sampling_freq and target must be provided"
+        )
+
+    if target_type == "seconds":
+        n_samples = n_samples * sampling_freq
+    elif target_type == "hz":
+        n_samples = sampling_freq / n_samples
+    else:
+        n_samples = n_samples
+
+    data = data.T
+    idx = np.sort(np.repeat(np.arange(1, data.shape[0] / n_samples, 1), n_samples))
+    if data.shape[0] > len(idx):
+        idx = np.concatenate([idx, np.repeat(idx[-1] + 1, data.shape[0] - len(idx))])
+    return data.groupby(idx).mean().T

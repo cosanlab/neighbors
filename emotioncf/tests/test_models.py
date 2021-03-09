@@ -8,7 +8,7 @@ For running tests in parallel `pip install pytest-xdist` and for nicer testing o
 Then you can run pytest locally using `pytest -rs -n auto`, to see skip messages at the end of the test session and visually confirm that only intended skipped tests are being skipped. To aid in this, all pytest.skip() messages end with 'OK' for intentionally skipped tests.
 """
 
-from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd
+from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd, Base
 import pytest
 import pandas as pd
 import numpy as np
@@ -54,36 +54,50 @@ def verify_plotting(model):
         plt.close("all")
 
 
-# TODO: fix with new api design
 def test_downsample(simulate_wide_data):
-    pass
-    # cf = Mean(simulate_wide_data)
-    # assert cf.data.shape == simulate_wide_data.shape
-    # cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    # assert cf.data.shape == (50, 50)
-    # cf = Mean(simulate_wide_data)
-    # cf.downsample(sampling_freq=10, target=5, target_type="hz")
-    # assert cf.data.shape == (50, 50)
-    # cf = Mean(simulate_wide_data)
-    # cf.downsample(sampling_freq=10, target=2, target_type="seconds")
-    # assert cf.data.shape == (50, 5)
-    # cf = Mean(simulate_wide_data)
-    # cf.split_train_test(n_train_items=20)
-    # cf.fit()
-    # cf.predict()
-    # cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    # assert cf.data.shape == (50, 50)
-    # assert cf.train_mask.shape == (50, 50)
-    # assert cf.predictions.shape == (50, 50)
+    n_users, n_items = simulate_wide_data.shape
+    cf = Base(simulate_wide_data)
+    assert cf.data.shape == (n_users, n_items)
 
-    # cf = Mean(simulate_wide_data)
-    # cf.split_train_test(n_train_items=20)
-    # cf.fit(dilate_ts_n_samples=2)
-    # cf.predict()
-    # cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    # assert cf.dilated_mask.shape == (50, 50)
-    # assert cf.train_mask.shape == (50, 50)
-    # assert cf.predictions.shape == (50, 50)
+    # Test sampling_freq has no effect if target_type = 'samples'
+    sampling_freq, target = 10, 2
+    expected_items = int(n_items * (1 / target))
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="samples")
+    assert cf.data.shape == (n_users, expected_items)
+
+    # Test each target_type
+    sampling_freq, target = 10, 2
+    cf = Base(simulate_wide_data)
+    expected_items = int(n_items * (1 / (target * sampling_freq)))
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="seconds")
+    assert cf.data.shape == (n_users, expected_items)
+
+    sampling_freq, target = 10, 5
+    cf = Base(simulate_wide_data)
+    expected_items = int(n_items * (1 / (sampling_freq / target)))
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
+    assert cf.data.shape == (n_users, expected_items)
+
+    # Make sure downsampling affects fitted model artifacts
+    cf = Mean(simulate_wide_data)
+    cf.create_masked_data(n_mask_items=0.5)
+    cf.fit()
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
+    assert cf.data.shape == (n_users, expected_items)
+    assert cf.mask.shape == (n_users, expected_items)
+    assert cf.masked_data.shape == (n_users, expected_items)
+    assert cf.predictions.shape == (n_users, expected_items)
+
+    # Make sure downsampling affects fitted model artifactsa including dilation
+    cf = Mean(simulate_wide_data)
+    cf.create_masked_data(n_mask_items=0.5)
+    cf.fit(dilate_by_nsamples=5)
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
+    assert cf.data.shape == (n_users, expected_items)
+    assert cf.mask.shape == (n_users, expected_items)
+    assert cf.dilated_mask.shape == (n_users, expected_items)
+    assert cf.masked_data.shape == (n_users, expected_items)
+    assert cf.predictions.shape == (n_users, expected_items)
 
 
 def test_init_and_dilate(init, mask, n_mask_items):

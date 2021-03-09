@@ -6,7 +6,7 @@ import numpy as np
 from scipy.stats import pearsonr
 from copy import deepcopy
 import matplotlib.pyplot as plt
-from .utils import create_train_test_mask
+from .utils import create_train_test_mask, downsample_dataframe
 import warnings
 import seaborn as sns
 
@@ -252,84 +252,65 @@ class Base(object):
 
         return f
 
-    # TODO: fix with the new API design
-    def downsample(self, sampling_freq=None, target=None, target_type="samples"):
+    def downsample(self, n_samples, sampling_freq=None, target_type="samples"):
 
-        """Downsample rating matrix to a new target frequency or number of samples using averaging.
+        """
+        Downsample a model's rating matrix to a new target frequency or number of samples using averaging. Also downsamples a model's mask and dilated mask if they exist as well as a model's predictions if it's already been fit.
+
+        If target_type = 'samples' and sampling_freq is None, the new user x item matrix will have shape users x items * (1 / n_samples).
+
+        If target_type = 'seconds', the new user x item matrix will have shape users x items * (1 / n_samples * sampling_freq).
+
+        If target_type = 'hz', the new user x item matrix will have shape users x items * (1 / sampling_freq / n_samples).
 
         Args:
-            sampling_freq (int/float):  Sampling frequency of data
-            target (int/float): downsampling target
-            target_type (str): type of target can be [samples,seconds,hz]
+            n_samples (int): number of samples
+            sampling_freq (int/float):  Sampling frequency of data; Default None
+            target_type (str, optional): how to downsample; must be one of "samples", "seconds" or "hz". Defaults to "samples".
 
         """
 
-        if sampling_freq is None:
-            raise ValueError("Please specify the sampling frequency of the data.")
-        if target is None:
-            raise ValueError("Please specify the downsampling target.")
-        if target_type is None:
-            raise ValueError(
-                "Please specify the type of target to downsample to [samples,seconds,hz]."
-            )
-
-        def ds(data, sampling_freq=sampling_freq, target=None, target_type="samples"):
-            if target_type == "samples":
-                n_samples = target
-            elif target_type == "seconds":
-                n_samples = target * sampling_freq
-            elif target_type == "hz":
-                n_samples = sampling_freq / target
-            else:
-                raise ValueError(
-                    'Make sure target_type is "samples", "seconds", or "hz".'
-                )
-
-            data = data.T
-            idx = np.sort(
-                np.repeat(np.arange(1, data.shape[0] / n_samples, 1), n_samples)
-            )
-            if data.shape[0] > len(idx):
-                idx = np.concatenate(
-                    [idx, np.repeat(idx[-1] + 1, data.shape[0] - len(idx))]
-                )
-            return data.groupby(idx).mean().T
-
-        self.data = ds(
+        self.data = downsample_dataframe(
             self.data,
             sampling_freq=sampling_freq,
-            target=target,
+            n_samples=n_samples,
             target_type=target_type,
         )
 
-        if self.is_mask:
-            self.train_mask = ds(
-                self.train_mask,
+        if self.is_masked:
+            # Also downsample mask
+            self.mask = downsample_dataframe(
+                self.mask,
                 sampling_freq=sampling_freq,
-                target=target,
+                n_samples=n_samples,
                 target_type=target_type,
             )
-            self.train_mask.loc[:, :] = self.train_mask > 0
-            self.masked_data = ds(
+            # Ensure mask stays boolean
+            self.mask.loc[:, :] = self.mask > 0
+
+            # Masked data
+            self.masked_data = downsample_dataframe(
                 self.masked_data,
                 sampling_freq=sampling_freq,
-                target=target,
+                n_samples=n_samples,
                 target_type=target_type,
             )
+            # Dilated mask
             if self.is_mask_dilated:
-                self.dilated_mask = ds(
+                self.dilated_mask = downsample_dataframe(
                     self.dilated_mask,
                     sampling_freq=sampling_freq,
-                    target=target,
+                    n_samples=n_samples,
                     target_type=target_type,
                 )
+                # Ensure mask stays boolean
                 self.dilated_mask.loc[:, :] = self.dilated_mask > 0
 
-        if self.is_predict:
-            self.predictions = ds(
+        if self.is_fit:
+            self.predictions = downsample_dataframe(
                 self.predictions,
                 sampling_freq=sampling_freq,
-                target=target,
+                n_samples=n_samples,
                 target_type=target_type,
             )
 
@@ -434,13 +415,15 @@ class Base(object):
         if not self.is_masked and n_samples is not None:
             raise ValueError("Make sure model instance has been masked.")
 
+        if isinstance(n_samples, np.floating) or (
+            n_samples is not None and n_samples >= self.data.shape[1]
+        ):
+            raise TypeError("nsamples should be an integer < the number of items")
+
         # Always reset to the undilated mask first
         self.masked_data = self.data[self.mask] if self.mask is not None else self.data
 
         if n_samples is not None:
-            if isinstance(n_samples, np.floating) or (n_samples >= self.data.shape[1]):
-                raise TypeError("nsamples should be an integer < the number of items")
-
             # Update masked data with dilation
             self.masked_data = self.masked_data.apply(
                 lambda x: self._conv_ts_mean_overlap(x, n_samples=n_samples),
@@ -468,11 +451,15 @@ class Base(object):
 
         self._dilate_ts_rating_samples(n_samples=n_samples)
 
-    def fit(self):
+    def fit(self, **kwargs):
         """Replaced by sub-classes. This call just ensures that a model's data is sparse prior to fitting"""
         if not self.is_masked:
             raise ValueError(
                 "You're trying to fit on a dense matrix, because model data has not been masked! Either call the `.create_masked_data` method prior to fitting or re-initialize the model and set the `mask` or `n_mask_items` arguments."
+            )
+        if kwargs.get("dilate_by_nsamples", None) and self.is_mask_dilated:
+            warnings.warn(
+                ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
             )
 
     def summary(self, verbose=True, return_cached=True):
