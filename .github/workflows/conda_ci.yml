@@ -44,18 +44,18 @@ jobs:
             python-version: 3.9
             ok-fail: true
     steps:
-      # 1. Step up miniconda
+      # Step up miniconda
       - name: Download and setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
           python-version: ${{ matrix.python-version }}
 
-      # 2. Check out latest code on github
+      # Check out latest code on github
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # 3. Install common sci-py packages via conda as well as testing packages and requirements
+      # Install common sci-py packages via conda as well as testing packages and requirements
       - name: Install Dependencies
         run: |
           conda activate test
@@ -64,14 +64,18 @@ jobs:
           conda install -y -c conda-forge pytest pytest-xdist pytest-sugar coveralls
           pip install . -r requirements.txt
 
-      # 4. Actually run the tests with coverage
+      # Check code formatting
+      - name: Check code formatting
+        uses: psf/black@stable
+
+      # Actually run the tests with coverage
       - name: Run Tests
         run: |
           conda activate test
           conda env list
           coverage run --source=emotioncf -m pytest -rs -n auto
 
-      # 5. Send coverage to coveralls.io but waiting on parallelization to finish
+      # Send coverage to coveralls.io but waiting on parallelization to finish
       # Not using the official github action in the marketplace to upload because it requires a .lcov file, which pytest doesn't generate. It's just easier to use the coveralls python library which does the same thing, but works with pytest.
       - name: Upload Coverage
         # The coveralls python package has some 422 server issues with uploads from github-actions so try both service providers, for more see:
