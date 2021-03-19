@@ -482,6 +482,7 @@
       <p>The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.</p>
 <p>Training is performed via stochastic-gradient-descent and continues until convergence or the maximum number of iterations has been reached. Unlike <code>NNMF_mult</code> errors during training are used to update latent factors <em>separately</em> for each user/item combination. Additionally this implementation is more flexible as it supports hyperparameters for various kinds of regularization at the cost of increased computation time.</p>
 <p>The number of factors, convergence, and maximum iterations can be controlled with the <code>n_factors</code>, <code>tol</code>, and <code>max_iterations</code> arguments to the <code>.fit</code> method. By default the number of factors = the number items.</p>
+<p><em>Note</em>: <code>random_state</code> does not control the sgd fit, only the initialization of the factor matrices</p>
 
 
 
@@ -666,10 +667,10 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_users</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_items</span><span class="p">)</span>
     <span class="c1"># Like multiplicative updating orient these as user x factor, factor x item</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
         <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_factors</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
         <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_factors</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="n">n_items</span><span class="p">)</span>
     <span class="p">)</span>
 

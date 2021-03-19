@@ -736,7 +736,9 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="s2">&quot;n_items should a float between 0-1 or an integer &lt; the number of items&quot;</span>
         <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">create_train_test_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">create_train_test_mask</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
+    <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">n_mask_items</span> <span class="o">=</span> <span class="n">n_mask_items</span>

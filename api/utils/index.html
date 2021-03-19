@@ -307,6 +307,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#emotioncf.utils.check_random_state" class="md-nav__link">
+    check_random_state()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#emotioncf.utils.create_sub_by_item_matrix" class="md-nav__link">
     create_sub_by_item_matrix()
   </a>
@@ -323,6 +330,13 @@
         <li class="md-nav__item">
   <a href="#emotioncf.utils.downsample_dataframe" class="md-nav__link">
     downsample_dataframe()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.utils.estimate_performance" class="md-nav__link">
+    estimate_performance()
   </a>
   
 </li>
@@ -488,6 +502,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#emotioncf.utils.check_random_state" class="md-nav__link">
+    check_random_state()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#emotioncf.utils.create_sub_by_item_matrix" class="md-nav__link">
     create_sub_by_item_matrix()
   </a>
@@ -504,6 +525,13 @@
         <li class="md-nav__item">
   <a href="#emotioncf.utils.downsample_dataframe" class="md-nav__link">
     downsample_dataframe()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#emotioncf.utils.estimate_performance" class="md-nav__link">
+    estimate_performance()
   </a>
   
 </li>
@@ -571,6 +599,70 @@
 
 
 
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="emotioncf.utils.check_random_state" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Turn seed into a np.random.RandomState instance, lifted directly from sklearn to avoid a heavy dependency for one function.</p>
+<p>Olivier Grisel, Andreas Mueller, Lars, Alexandre Gramfort, Gilles Louppe, Peter Prettenhofer, … Eustache. (2021, January 19). scikit-learn/scikit-learn: scikit-learn 0.24.1 (Version 0.24.1). Zenodo. http://doi.org/10.5281/zenodo.4450597</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>seed</code></td>
+        <td><code>None, int, RandomState</code></td>
+        <td><p>If seed is None, return the RandomState singleton used by np.random. If seed is an int, return a new RandomState instance seeded with seed. If seed is already a RandomState instance, return it.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Turn seed into a np.random.RandomState instance, lifted directly from sklearn to avoid a heavy dependency for one function.</span>
+
+<span class="sd">    Olivier Grisel, Andreas Mueller, Lars, Alexandre Gramfort, Gilles Louppe, Peter Prettenhofer, … Eustache. (2021, January 19). scikit-learn/scikit-learn: scikit-learn 0.24.1 (Version 0.24.1). Zenodo. http://doi.org/10.5281/zenodo.4450597</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seed (None, int, RandomState): If seed is None, return the RandomState singleton used by np.random. If seed is an int, return a new RandomState instance seeded with seed. If seed is already a RandomState instance, return it.</span>
+<span class="sd">        Otherwise raise ValueError.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">seed</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">mtrand</span><span class="o">.</span><span class="n">_rand</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">seed</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> cannot be used to seed a numpy.random.RandomState&quot;</span> <span class="s2">&quot; instance&quot;</span> <span class="o">%</span> <span class="n">seed</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -691,7 +783,7 @@
 
 
 <h3 id="emotioncf.utils.create_train_test_mask" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -757,7 +849,7 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>emotioncf/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.</span>
 
@@ -786,11 +878,12 @@
             <span class="sa">f</span><span class="s2">&quot;n_train_items must be an integer or a float between 0-1, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">n_mask_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">n_mask_items</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
+    <span class="n">random</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
     <span class="n">n_true_items</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">n_false_items</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_true_items</span> <span class="o">+</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_false_items</span><span class="p">)</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
         <span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="p">]</span>
     <span class="p">)</span>
@@ -917,6 +1010,142 @@
 
   </div>
 
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="emotioncf.utils.estimate_performance" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dense dataset as each iteration will generate a new random mask</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>algorithm</code></td>
+        <td><code>emotioncf.model</code></td>
+        <td><p>an uninitialized model, e.g. <code>Mean</code></p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>data</code></td>
+        <td><code>DataFrame</code></td>
+        <td><p>a users x item dataframe</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>n_iter</code></td>
+        <td><code>int</code></td>
+        <td><p>number of repetitions. Defaults to 10.</p></td>
+        <td><code>10</code></td>
+      </tr>
+      <tr>
+        <td><code>return_agg</code></td>
+        <td><code>bool</code></td>
+        <td><p>[description]. return mean and std over repetitions rather than the reptitions themselves Defaults to True.</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>agg_stats</code></td>
+        <td><code>tuple</code></td>
+        <td><p>string names of statistics to compute over repetitions. Must be accepted by <code>pd.DataFrame.agg</code>; Default ('mean', 'std')</p></td>
+        <td><code>[&#39;mean&#39;, &#39;std&#39;]</code></td>
+      </tr>
+      <tr>
+        <td><code>model_kwargs</code></td>
+        <td><code>dict</code></td>
+        <td><p>[description]. A dictionary of arguments passed when the model is first initialized, e.g. <code>Mean(**model_kwargs)</code>. Defaults to {}.</p></td>
+        <td><code>{}</code></td>
+      </tr>
+      <tr>
+        <td><code>fit_kwargs</code></td>
+        <td><code>dict</code></td>
+        <td><p>Same as the <code>model_kwargs</code> but passed to <code>.fit()</code>. Defaults to {}.</p></td>
+        <td><code>{}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DataFrame</code></td>
+      <td><p>pd.DataFrame: aggregated or non-aggregated summary statistics</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">estimate_performance</span><span class="p">(</span>
+    <span class="n">algorithm</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">return_agg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">agg_stats</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">],</span>
+    <span class="n">model_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">fit_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dense dataset as each iteration will generate a new random mask</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`</span>
+<span class="sd">        data (pd.DataFrame): a users x item dataframe</span>
+<span class="sd">        n_iter (int, optional): number of repetitions. Defaults to 10.</span>
+<span class="sd">        return_agg (bool, optional): [description]. return mean and std over repetitions rather than the reptitions themselves Defaults to True.</span>
+<span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default (&#39;mean&#39;, &#39;std&#39;)</span>
+<span class="sd">        model_kwargs (dict, optional): [description]. A dictionary of arguments passed when the model is first initialized, e.g. `Mean(**model_kwargs)`. Defaults to {}.</span>
+<span class="sd">        fit_kwargs (dict, optional): Same as the `model_kwargs` but passed to `.fit()`. Defaults to {}.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: aggregated or non-aggregated summary statistics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="o">**</span><span class="n">model_kwargs</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_agg</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">all_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_stats</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">all_results</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
