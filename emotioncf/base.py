@@ -6,7 +6,7 @@ import numpy as np
 from scipy.stats import pearsonr
 from copy import deepcopy
 import matplotlib.pyplot as plt
-from .utils import create_train_test_mask, downsample_dataframe
+from .utils import create_train_test_mask, downsample_dataframe, check_random_state
 import warnings
 import seaborn as sns
 
@@ -18,7 +18,9 @@ class Base(object):
     All other models and base classes inherit from this class.
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
         """
         Initialize a base collaborative filtering model
 
@@ -26,6 +28,7 @@ class Base(object):
             data (pd.DataFrame): users x items dataframe
             mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
             n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
+            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05)
             verbose (bool; optional): print any initialization warnings; Default True
 
         Raises:
@@ -49,6 +52,7 @@ class Base(object):
         self.subject_results = None
         self.n_users = data.shape[0]
         self.n_items = data.shape[1]
+        self.random_state = check_random_state(random_state)
 
         # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
         if data.isnull().any().any():
@@ -174,7 +178,9 @@ class Base(object):
             raise TypeError(
                 "n_items should a float between 0-1 or an integer < the number of items"
             )
-        self.mask = create_train_test_mask(self.data, n_mask_items)
+        self.mask = create_train_test_mask(
+            self.data, n_mask_items, random_state=self.random_state
+        )
         self.masked_data = self.data[self.mask]
         self.is_masked = True
         self.n_mask_items = n_mask_items
@@ -561,8 +567,10 @@ class BaseNMF(Base):
     Base class for NMF algorithms.
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
-        super().__init__(data, mask, n_mask_items, verbose)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
         self.error_history = []
 
     def plot_learning(self, save=False):

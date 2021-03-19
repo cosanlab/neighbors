@@ -9,6 +9,7 @@ from scipy.spatial.distance import pdist, squareform
 from zipfile import ZipFile
 from io import BytesIO
 from urllib.request import urlopen
+import numbers
 
 __all__ = [
     "create_sub_by_item_matrix",
@@ -16,7 +17,30 @@ __all__ = [
     "get_sparsity",
     "nanpdist",
     "create_train_test_mask",
+    "estimate_performance",
 ]
+
+
+def check_random_state(seed):
+    """
+    Turn seed into a np.random.RandomState instance, lifted directly from sklearn to avoid a heavy dependency for one function.
+
+    Olivier Grisel, Andreas Mueller, Lars, Alexandre Gramfort, Gilles Louppe, Peter Prettenhofer, … Eustache. (2021, January 19). scikit-learn/scikit-learn: scikit-learn 0.24.1 (Version 0.24.1). Zenodo. http://doi.org/10.5281/zenodo.4450597
+
+    Args:
+        seed (None, int, RandomState): If seed is None, return the RandomState singleton used by np.random. If seed is an int, return a new RandomState instance seeded with seed. If seed is already a RandomState instance, return it.
+        Otherwise raise ValueError.
+    """
+
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    if isinstance(seed, numbers.Integral):
+        return np.random.RandomState(seed)
+    if isinstance(seed, np.random.RandomState):
+        return seed
+    raise ValueError(
+        "%r cannot be used to seed a numpy.random.RandomState" " instance" % seed
+    )
 
 
 def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"):
@@ -115,7 +139,7 @@ def nanpdist(arr, metric="euclidean", return_square=True):
     return out
 
 
-def create_train_test_mask(data, n_mask_items=0.1):
+def create_train_test_mask(data, n_mask_items=0.1, random_state=None):
     """
     Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.
 
@@ -144,11 +168,12 @@ def create_train_test_mask(data, n_mask_items=0.1):
             f"n_train_items must be an integer or a float between 0-1, not {type(n_mask_items)} with value {n_mask_items}"
         )
 
+    random = check_random_state(random_state)
     n_true_items = data.shape[1] - n_false_items
     mask = np.array([True] * n_true_items + [False] * n_false_items)
     mask = np.vstack(
         [
-            np.random.choice(mask, replace=False, size=mask.shape)
+            random.choice(mask, replace=False, size=mask.shape)
             for _ in range(data.shape[0])
         ]
     )
@@ -174,21 +199,49 @@ def load_movielens():  # pragma: no cover
         print(str(e))
 
 
-# TODO: finish me
 def estimate_performance(
-    model, n_iter=10, n_jobs=1, mask=None, n_mask_items=None, verbose=False, **kwargs
+    algorithm,
+    data: pd.DataFrame,
+    n_iter: int = 10,
+    return_agg: bool = True,
+    agg_stats: tuple = ["mean", "std"],
+    model_kwargs: dict = {},
+    fit_kwargs: dict = {},
+    random_state=None,
 ) -> pd.DataFrame:
-    if mask is None and n_mask_items is None:
-        raise ValueError("must provide a mask or n_mask_items to run estimation")
-    if kwargs:
-        pass
-        # Expect a kwargs dict like:
-        # {
-        # "k": [None, 1, 10, 50],
-        # "dilate_by_nsamples": [None, 2, 10]
-        # }
-        # Parse it into a cartersian param grid and run with joblib
-        # if n_mask_items is a list, add it the parameter grid
+    """
+    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dense dataset as each iteration will generate a new random mask
+
+    Args:
+        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
+        data (pd.DataFrame): a users x item dataframe
+        n_iter (int, optional): number of repetitions. Defaults to 10.
+        return_agg (bool, optional): [description]. return mean and std over repetitions rather than the reptitions themselves Defaults to True.
+        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
+        model_kwargs (dict, optional): [description]. A dictionary of arguments passed when the model is first initialized, e.g. `Mean(**model_kwargs)`. Defaults to {}.
+        fit_kwargs (dict, optional): Same as the `model_kwargs` but passed to `.fit()`. Defaults to {}.
+
+    Returns:
+        pd.DataFrame: aggregated or non-aggregated summary statistics
+    """
+
+    all_results = []
+    for i in range(n_iter):
+        model = algorithm(data=data, random_state=random_state, **model_kwargs)
+        model.fit(**fit_kwargs)
+        results = model.summary()
+        results["iter"] = i
+        all_results.append(results)
+    all_results = pd.concat(all_results)
+    if return_agg:
+        out = (
+            all_results.groupby(["algorithm", "dataset", "group", "metric"])
+            .score.agg(agg_stats)
+            .reset_index()
+        )
+        return out
+    else:
+        return all_results
 
 
 def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="samples"):

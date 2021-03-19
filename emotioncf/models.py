@@ -16,8 +16,10 @@ class Mean(Base):
     The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
-        super().__init__(data, mask, n_mask_items, verbose)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
         self.mean = None
 
     def fit(self, dilate_by_nsamples=None, **kwargs):
@@ -56,8 +58,10 @@ class KNN(Base):
     The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method.
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
-        super().__init__(data, mask, n_mask_items, verbose)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
         self.subject_similarity = None
         self._last_metric = None
         self._last_dilate_by_nsamples = None
@@ -153,10 +157,13 @@ class NNMF_mult(BaseNMF):
 
     The implementation here follows closely that of Lee & Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf
 
+    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
-        super().__init__(data, mask, n_mask_items, verbose)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
         self.H = None  # factors x items
         self.W = None  # user x factors
         self.n_factors = None
@@ -207,8 +214,8 @@ class NNMF_mult(BaseNMF):
         # Initialize W and H at non-negative scaled random values
         # We use random initialization scaled by the data, like sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
         avg = np.sqrt(np.nanmean(self.data) / n_factors)
-        self.H = avg * np.random.rand(n_factors, n_items)
-        self.W = avg * np.random.rand(n_users, n_factors)
+        self.H = avg * self.random_state.rand(n_factors, n_items)
+        self.W = avg * self.random_state.rand(n_users, n_factors)
 
         # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix: https://arxiv.org/pdf/1612.06037.pdf
         self.dilate_mask(n_samples=dilate_by_nsamples)
@@ -266,10 +273,14 @@ class NNMF_sgd(BaseNMF):
 
     The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
 
+    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices
+
     """
 
-    def __init__(self, data, mask=None, n_mask_items=None, verbose=True):
-        super().__init__(data, mask, n_mask_items, verbose)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
         self.n_factors = None
 
     def __repr__(self):
@@ -344,10 +355,10 @@ class NNMF_sgd(BaseNMF):
         self.user_bias = np.zeros(n_users)
         self.item_bias = np.zeros(n_items)
         # Like multiplicative updating orient these as user x factor, factor x item
-        self.user_vecs = np.random.normal(
+        self.user_vecs = self.random_state.normal(
             scale=1.0 / n_factors, size=(n_users, n_factors)
         )
-        self.item_vecs = np.random.normal(
+        self.item_vecs = self.random_state.normal(
             scale=1.0 / n_factors, size=(n_factors, n_items)
         )
 

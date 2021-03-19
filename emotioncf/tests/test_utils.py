@@ -4,7 +4,32 @@ Test utility functions
 
 import numpy as np
 import pandas as pd
-from emotioncf import create_sub_by_item_matrix, nanpdist, create_train_test_mask
+from emotioncf import (
+    create_sub_by_item_matrix,
+    nanpdist,
+    create_train_test_mask,
+    estimate_performance,
+    Mean,
+)
+
+
+def test_estimate_performance(simulate_wide_data):
+    out = estimate_performance(
+        Mean, simulate_wide_data, model_kwargs={"n_mask_items": 0.2}
+    )
+    assert isinstance(out, pd.DataFrame)
+    assert out.shape == (4 * 3 * 2, 6)
+    out = estimate_performance(
+        Mean,
+        simulate_wide_data,
+        model_kwargs={"n_mask_items": 0.2},
+        agg_stats=["mean", "std", "var"],
+    )
+    assert out.shape == (4 * 3 * 2, 7)
+    out = estimate_performance(
+        Mean, simulate_wide_data, model_kwargs={"n_mask_items": 0.2}, return_agg=False
+    )
+    assert out.shape == (4 * 3 * 2 * 10, 6)
 
 
 def test_create_sub_by_item_matrix(simulate_long_data):

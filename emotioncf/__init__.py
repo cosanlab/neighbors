@@ -8,4 +8,5 @@ from .utils import (
     nanpdist,
     create_train_test_mask,
     load_movielens,
+    estimate_performance,
 )
