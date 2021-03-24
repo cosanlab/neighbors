@@ -9,6 +9,8 @@ from emotioncf import (
     nanpdist,
     create_train_test_mask,
     estimate_performance,
+    flatten_dataframe,
+    unflatten_dataframe,
     Mean,
 )
 
@@ -85,3 +87,28 @@ def test_create_train_test_mask(simulate_wide_data):
     assert masked_data.shape == simulate_wide_data.shape
     assert ~simulate_wide_data.isnull().any().any()
     assert masked_data.isnull().any().any()
+
+
+def test_flatten_dataframe(simulate_wide_data):
+    out = flatten_dataframe(simulate_wide_data)
+    assert isinstance(out, np.ndarray)
+    assert len(out) == simulate_wide_data.shape[0] * simulate_wide_data.shape[1]
+    assert all([len(elem) == 3 for elem in out])
+
+
+def test_unflatten_dataframe(simulate_wide_data):
+    out = flatten_dataframe(simulate_wide_data)
+    new = unflatten_dataframe(
+        out, index=simulate_wide_data.index, columns=simulate_wide_data.columns
+    )
+    assert new.equals(simulate_wide_data)
+    new = unflatten_dataframe(out)
+    assert new.equals(simulate_wide_data)
+    new = unflatten_dataframe(
+        out, num_rows=simulate_wide_data.shape[0], num_cols=simulate_wide_data.shape[1]
+    )
+
+
+# TODO: write me
+def test_split_train_test(simulate_wide_data):
+    pass

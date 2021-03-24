@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from io import BytesIO
 from urllib.request import urlopen
 import numbers
+from itertools import product, chain
 
 __all__ = [
     "create_sub_by_item_matrix",
@@ -18,6 +19,10 @@ __all__ = [
     "nanpdist",
     "create_train_test_mask",
     "estimate_performance",
+    "flatten_dataframe",
+    "unflatten_dataframe",
+    "split_train_test",
+    "check_random_state",
 ]
 
 
@@ -244,6 +249,52 @@ def estimate_performance(
         return all_results
 
 
+def flatten_dataframe(data: pd.DataFrame) -> list:
+    """
+    Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value
+
+    Args:
+        data (pd.DataFrame): input dataframe
+
+    Returns:
+        np.ndarray: arrayo of row, column, value triplets
+    """
+
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError("input must be a pandas dataframe")
+
+    out = zip(
+        product(range(data.shape[0]), range(data.shape[1])), data.to_numpy().ravel()
+    )
+    return np.array([(elem[0][0], elem[0][1], elem[1]) for elem in out])
+
+
+def unflatten_dataframe(
+    data: np.ndarray, columns=None, index=None, num_rows=None, num_cols=None
+) -> pd.DataFrame:
+    """
+    Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe
+
+    Args:
+        data (list, np.ndarray): list of (row_idx, col_idx, val) tuples or numpy array of [row_idx, col_idx, val] lists.
+        columns (list, optional): column names of new dataframe. Defaults to None.
+        index (list, optional): row names of new dataframe. Defaults to None.
+
+    Returns:
+        pd.DataFrame: original unflattened dataframe
+    """
+
+    if not isinstance(data, np.ndarray):
+        raise TypeError("input should be a numpy array")
+    num_rows = int(data[:, 0].max()) + 1 if num_rows is None else num_rows
+    num_cols = int(data[:, 1].max()) + 1 if num_cols is None else num_cols
+    out = np.empty((num_rows, num_cols))
+    out[:] = np.nan
+    for elem in data:
+        out[int(elem[0]), int(elem[1])] = elem[2]
+    return pd.DataFrame(out, index=index, columns=columns)
+
+
 def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="samples"):
     """
     Down sample a dataframe
@@ -284,3 +335,55 @@ def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="sampl
     if data.shape[0] > len(idx):
         idx = np.concatenate([idx, np.repeat(idx[-1] + 1, data.shape[0] - len(idx))])
     return data.groupby(idx).mean().T
+
+
+# TODO finish me
+def estimate_outofsample_performance(
+    algorithm,
+    data: pd.DataFrame,
+    n_folds: int = 5,
+    return_agg: bool = True,
+    agg_stats: tuple = ["mean", "std"],
+    model_kwargs: dict = {},
+    fit_kwargs: dict = {},
+    random_state=None,
+) -> pd.DataFrame:
+
+    for train, test in split_train_test(data, n_folds):
+        pass
+
+
+def split_train_test(
+    data: pd.DataFrame, n_folds: int = 5, shuffle=True, random_state=None
+):
+    """
+    Custom train/test split generator. Given a user x item dataframe of dense or sparse data, generates n_folds worth of train/test split dataframes that have the same shape as data, but with non-overlapping values. This ensures that no user-item combination appears in both train and test splits. Useful for estimating out-of-sample performance.
+
+    Args:
+        data (pd.DataFrame): user x item dataframe
+        n_folds (int, optional): number of train/test splits to generate. Defaults to 5.
+        shuffle (bool, optional): randomize what user-item combinations appear in each split. If shuffle is True, folds will split in order of item user-item appearance; Default True
+        random_state (int, None, numpy.random.mtrand.RandomState): random state for reproducibility; Default None
+
+    Yields:
+        (tuple): train, test dataframes for each fold with same shape as data
+    """
+
+    random_state = check_random_state(random_state)
+    num_rows, num_cols = data.shape
+    flat = flatten_dataframe(data)
+    if shuffle:
+        random_state.shuffle(flat)
+    start, stop = 0, 0
+    for fold in range(n_folds):
+        start = stop
+        stop += len(flat) // n_folds
+        if fold < len(flat) % n_folds:
+            stop += 1
+
+        train = np.array([elem for elem in chain(flat[:start], flat[stop:])])
+        test = np.array([elem for elem in flat[start:stop]])
+
+        yield unflatten_dataframe(
+            train, num_rows=num_rows, num_cols=num_cols
+        ), unflatten_dataframe(test, num_rows=num_rows, num_cols=num_cols)
