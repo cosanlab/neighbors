@@ -2,6 +2,7 @@
 Test utility functions
 """
 
+from emotioncf.utils import split_train_test
 import numpy as np
 import pandas as pd
 from emotioncf import (
@@ -109,6 +110,16 @@ def test_unflatten_dataframe(simulate_wide_data):
     )
 
 
-# TODO: write me
 def test_split_train_test(simulate_wide_data):
-    pass
+    for train, test in split_train_test(simulate_wide_data, n_folds=5):
+        assert train.shape == simulate_wide_data.shape
+        assert test.shape == simulate_wide_data.shape
+        assert train.add(test, fill_value=0).equals(simulate_wide_data)
+    mask = create_train_test_mask(simulate_wide_data, n_mask_items=0.1)
+    masked_data = simulate_wide_data[mask]
+    for train, test in split_train_test(masked_data, n_folds=5):
+        assert train.shape == mask.shape
+        assert test.shape == mask.shape
+        assert train.isnull().sum().sum() > masked_data.isnull().sum().sum()
+        assert test.isnull().sum().sum() > masked_data.isnull().sum().sum()
+        assert train.add(test, fill_value=0).equals(masked_data)
