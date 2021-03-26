@@ -1099,7 +1099,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 <h4 id="emotioncf.base.Base.score" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">by_subject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">by_subject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1131,6 +1131,12 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <td><p>how to compute scoring, either using 'observed', 'missing' or 'full'. Default 'missing'.</p></td>
         <td><code>&#39;missing&#39;</code></td>
       </tr>
+      <tr>
+        <td><code>actual</code></td>
+        <td><code>pd.DataFrame, None; optional</code></td>
+        <td><p>a dataframe to score against; Default is None which uses the data provided when the model was initialized</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -1150,12 +1156,20 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 </table>
         <details class="quote">
           <summary>Source code in <code>emotioncf/base.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span> <span class="n">by_subject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
+    <span class="n">by_subject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the `.summary()` method instead, which scores all metrics.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric (str; optional): what metric to compute, one of &#39;rmse&#39;, &#39;mse&#39;, &#39;mae&#39; or &#39;correlation&#39;; Default &#39;rmse&#39;.</span>
 <span class="sd">        dataset (str; optional): how to compute scoring, either using &#39;observed&#39;, &#39;missing&#39; or &#39;full&#39;. Default &#39;missing&#39;.</span>
+<span class="sd">        actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        float: score</span>
@@ -1171,7 +1185,15 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="p">)</span>
     <span class="c1"># Get dataframes of observed and predicted values</span>
     <span class="c1"># This will be a dense or sparse matrix the same shape as the input data</span>
-    <span class="n">actual</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_predictions</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">model_actual</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_predictions</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">model_actual</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">actual</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;actual values dataframe supplied but shape does not match original data&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -1227,7 +1249,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 <h4 id="emotioncf.base.Base.summary" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1259,6 +1281,12 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <td><p>Save time by returning already computed scores if they exist. Defaults to True.</p></td>
         <td><code>True</code></td>
       </tr>
+      <tr>
+        <td><code>actual</code></td>
+        <td><code>pd.DataFrame, None; optional</code></td>
+        <td><p>a dataframe to score against; Default is None which uses the data provided when the model was initialized</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -1278,13 +1306,14 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 </table>
         <details class="quote">
           <summary>Source code in <code>emotioncf/base.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        verbose (bool, optional): Print warning messages during scoring. Defaults to True.</span>
 <span class="sd">        return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to True.</span>
+<span class="sd">        actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: long-form dataframe of model performance</span>
@@ -1313,7 +1342,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
             <span class="n">this_subject_result</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">]:</span>
                 <span class="n">this_group_result</span><span class="p">[</span><span class="n">dataset</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
-                    <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+                    <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="n">actual</span>
                 <span class="p">)</span>
                 <span class="n">this_subject_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
@@ -1321,6 +1350,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
                         <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
                         <span class="n">by_subject</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                        <span class="n">actual</span><span class="o">=</span><span class="n">actual</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="c1"># Dict of group results for this metric</span>
