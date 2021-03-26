@@ -79,7 +79,7 @@ class Base(object):
         if self.n_mask_items is not None:
             if self.is_masked:
                 raise ValueError(
-                    "n_train_items was provided, but data already contains missing values that were used for masking. This is an ambiguous operation. If a n_train_items is provided data should not contain missing values!"
+                    "n_mask_items was provided, but data already contains missing values that were used for masking. This is an ambiguous operation. If a n_mask_items is provided data should not contain missing values!"
                 )
             self.create_masked_data(n_mask_items=self.n_mask_items)
 
@@ -95,12 +95,20 @@ class Base(object):
         out += ")"
         return out
 
-    def score(self, metric="rmse", by_subject=False, dataset="missing", verbose=True):
+    def score(
+        self,
+        metric="rmse",
+        by_subject=False,
+        dataset="missing",
+        verbose=True,
+        actual=None,
+    ):
         """Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the `.summary()` method instead, which scores all metrics.
 
         Args:
             metric (str; optional): what metric to compute, one of 'rmse', 'mse', 'mae' or 'correlation'; Default 'rmse'.
             dataset (str; optional): how to compute scoring, either using 'observed', 'missing' or 'full'. Default 'missing'.
+            actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
 
         Returns:
             float: score
@@ -116,7 +124,15 @@ class Base(object):
             )
         # Get dataframes of observed and predicted values
         # This will be a dense or sparse matrix the same shape as the input data
-        actual, pred = self._retrieve_predictions(dataset)
+        model_actual, pred = self._retrieve_predictions(dataset)
+
+        if actual is None:
+            actual = model_actual
+        else:
+            if actual.shape != self.data.shape:
+                raise ValueError(
+                    "actual values dataframe supplied but shape does not match original data"
+                )
 
         if actual is None:
             if verbose:
@@ -468,13 +484,14 @@ class Base(object):
                 ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
             )
 
-    def summary(self, verbose=True, return_cached=True):
+    def summary(self, verbose=True, return_cached=True, actual=None):
         """
         Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.
 
         Args:
             verbose (bool, optional): Print warning messages during scoring. Defaults to True.
             return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to True.
+            actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
 
         Returns:
             pd.DataFrame: long-form dataframe of model performance
@@ -503,7 +520,7 @@ class Base(object):
                 this_subject_result = []
                 for dataset in ["full", "missing", "observed"]:
                     this_group_result[dataset] = self.score(
-                        metric=metric, dataset=dataset, verbose=verbose
+                        metric=metric, dataset=dataset, verbose=verbose, actual=actual
                     )
                     this_subject_result.append(
                         self.score(
@@ -511,6 +528,7 @@ class Base(object):
                             dataset=dataset,
                             by_subject=True,
                             verbose=verbose,
+                            actual=actual,
                         )
                     )
                 # Dict of group results for this metric

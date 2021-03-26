@@ -10,6 +10,7 @@ from emotioncf import (
     nanpdist,
     create_train_test_mask,
     estimate_performance,
+    approximate_generalization,
     flatten_dataframe,
     unflatten_dataframe,
     Mean,
@@ -33,6 +34,20 @@ def test_estimate_performance(simulate_wide_data):
         Mean, simulate_wide_data, model_kwargs={"n_mask_items": 0.2}, return_agg=False
     )
     assert out.shape == (4 * 3 * 2 * 10, 6)
+
+
+def test_approximate_generalization(simulate_wide_data):
+    out = approximate_generalization(Mean, simulate_wide_data)
+    assert isinstance(out, pd.DataFrame)
+    assert out.shape == (4 * 3 * 2 * 2, 7)
+    out = approximate_generalization(
+        Mean,
+        simulate_wide_data,
+        agg_stats=["mean", "std", "var"],
+    )
+    assert out.shape == (4 * 3 * 2 * 2, 8)
+    out = approximate_generalization(Mean, simulate_wide_data, return_agg=False)
+    assert out.shape == (4 * 3 * 2 * 10, 7)
 
 
 def test_create_sub_by_item_matrix(simulate_long_data):
@@ -111,15 +126,30 @@ def test_unflatten_dataframe(simulate_wide_data):
 
 
 def test_split_train_test(simulate_wide_data):
+    # Dense data
     for train, test in split_train_test(simulate_wide_data, n_folds=5):
         assert train.shape == simulate_wide_data.shape
         assert test.shape == simulate_wide_data.shape
+        # 1/5 of dense data should be sparse for training, i.e. 4/5 data folds
+        assert train.notnull().sum().sum() == int(4 / 5 * simulate_wide_data.size)
+        # 4/5 of dense data should be sparse for testing, i.e. 1/5 data folds
+        assert test.notnull().sum().sum() == int(1 / 5 * simulate_wide_data.size)
         assert train.add(test, fill_value=0).equals(simulate_wide_data)
+
+    # Sparse data
     mask = create_train_test_mask(simulate_wide_data, n_mask_items=0.1)
     masked_data = simulate_wide_data[mask]
+    masked_not_null = masked_data.notnull().sum().sum()
+
     for train, test in split_train_test(masked_data, n_folds=5):
         assert train.shape == mask.shape
         assert test.shape == mask.shape
+        # Train and test should be more sparse than original
         assert train.isnull().sum().sum() > masked_data.isnull().sum().sum()
         assert test.isnull().sum().sum() > masked_data.isnull().sum().sum()
         assert train.add(test, fill_value=0).equals(masked_data)
+        train_not_null = train.notnull().sum().sum()
+        test_not_null = test.notnull().sum().sum()
+        # And adhere close the expected train/test split
+        assert np.allclose(train_not_null / masked_not_null, 0.8, atol=0.12)
+        assert np.allclose(test_not_null / masked_not_null, 0.2, atol=0.12)

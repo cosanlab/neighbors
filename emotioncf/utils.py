@@ -19,6 +19,7 @@ __all__ = [
     "nanpdist",
     "create_train_test_mask",
     "estimate_performance",
+    "approximate_generalization",
     "flatten_dataframe",
     "unflatten_dataframe",
     "split_train_test",
@@ -96,8 +97,13 @@ def get_size_in_mb(arr):
 
 def get_sparsity(arr):
     """Calculates sparsity of ndarray (0 - 1)"""
-    if isinstance(arr, (np.ndarray)):
+    if isinstance(arr, np.ndarray):
         return 1 - (np.count_nonzero(arr) / arr.size)
+    elif isinstance(arr, pd.DataFrame):
+        if arr.isnull().any().any():
+            return get_sparsity(arr.fillna(0).to_numpy())
+        else:
+            return get_sparsity(arr.to_numpy())
     else:
         raise TypeError("input must be a numpy array")
 
@@ -215,7 +221,7 @@ def estimate_performance(
     random_state=None,
 ) -> pd.DataFrame:
     """
-    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dense dataset as each iteration will generate a new random mask
+    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dataset as each iteration will generate a new random mask.
 
     Args:
         algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
@@ -237,7 +243,7 @@ def estimate_performance(
         results = model.summary()
         results["iter"] = i
         all_results.append(results)
-    all_results = pd.concat(all_results)
+    all_results = pd.concat(all_results, ignore_index=True)
     if return_agg:
         out = (
             all_results.groupby(["algorithm", "dataset", "group", "metric"])
@@ -337,8 +343,8 @@ def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="sampl
     return data.groupby(idx).mean().T
 
 
-# TODO finish me
-def estimate_outofsample_performance(
+# TODO: adjust the output to drop missing/observed, etc that are NaNs for training/testing splits
+def approximate_generalization(
     algorithm,
     data: pd.DataFrame,
     n_folds: int = 5,
@@ -348,16 +354,53 @@ def estimate_outofsample_performance(
     fit_kwargs: dict = {},
     random_state=None,
 ) -> pd.DataFrame:
+    """
+    Similar to estimate_performance but uses leave-one-fold-out cross-validation in addition random masking. **Note**: this is done by further masking the input data, thereby *increasing sparsity*. Specifically, data is always "split" into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds request controls the additional sparsity of each train and test split, e.g. n_folds = 5 mean train = 4/5 (~80% of *observed values*); test = 1/5 (~20% of *observed values*). Models are estimated against the training set and then used to predict values in the test set without additional training.
 
+    Args:
+        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
+        data (pd.DataFrame): a users x item dataframe
+        n_iter (int, optional): number of repetitions. Defaults to 10.
+        return_agg (bool, optional): [description]. return mean and std over repetitions rather than the reptitions themselves Defaults to True.
+        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
+        model_kwargs (dict, optional): [description]. A dictionary of arguments passed when the model is first initialized, e.g. `Mean(**model_kwargs)`. Defaults to {}.
+        fit_kwargs (dict, optional): Same as the `model_kwargs` but passed to `.fit()`. Defaults to {}.
+
+    Returns:
+        pd.DataFrame: aggregated or non-aggregated summary statistics
+    """
+
+    all_results = []
+    fold = 1
     for train, test in split_train_test(data, n_folds):
-        pass
+        model = algorithm(data=train, random_state=random_state, **model_kwargs)
+        model.fit(**fit_kwargs)
+        train_results = model.summary()
+        train_results["fold"] = fold
+        train_results["cv"] = "train"
+        test_results = model.summary(actual=test, return_cached=False)
+        test_results["fold"] = fold
+        test_results["cv"] = "test"
+        all_results.append(train_results)
+        all_results.append(test_results)
+        fold += 1
+    all_results = pd.concat(all_results, ignore_index=True)
+    if return_agg:
+        out = (
+            all_results.groupby(["cv", "algorithm", "dataset", "group", "metric"])
+            .score.agg(agg_stats)
+            .reset_index()
+        )
+        return out
+    else:
+        return all_results
 
 
 def split_train_test(
     data: pd.DataFrame, n_folds: int = 5, shuffle=True, random_state=None
 ):
     """
-    Custom train/test split generator. Given a user x item dataframe of dense or sparse data, generates n_folds worth of train/test split dataframes that have the same shape as data, but with non-overlapping values. This ensures that no user-item combination appears in both train and test splits. Useful for estimating out-of-sample performance.
+    Custom train/test split generator for leave-one-fold out cross-validation. Given a user x item dataframe of dense or sparse data, generates n_folds worth of train/test split dataframes that have the same shape as data, but with non-overlapping values. This ensures that no user-item combination appears in both train and test splits. Useful for estimating out-of-sample performance. n_folds controls the train/test split ratio, e.g. n_folds = 5 means train = 4/5 (~80%); test = 1/5 (~20%)
 
     Args:
         data (pd.DataFrame): user x item dataframe

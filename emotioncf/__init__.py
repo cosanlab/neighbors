@@ -9,6 +9,7 @@ from .utils import (
     create_train_test_mask,
     load_movielens,
     estimate_performance,
+    approximate_generalization,
     flatten_dataframe,
     unflatten_dataframe,
     split_train_test,
