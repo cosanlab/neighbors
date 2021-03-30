@@ -37,17 +37,29 @@ def test_estimate_performance(simulate_wide_data):
 
 
 def test_approximate_generalization(simulate_wide_data):
+    # Basic 5 fold CV
     out = approximate_generalization(Mean, simulate_wide_data)
+    train_corr = out.query(
+        "cv == 'train' and metric == 'correlation' and group == 'all'"
+    )["mean"].to_numpy()[0]
+    test_corr = out.query(
+        "cv == 'test' and metric == 'correlation' and group == 'all'"
+    )["mean"].to_numpy()[0]
     assert isinstance(out, pd.DataFrame)
-    assert out.shape == (4 * 3 * 2 * 2, 7)
+    assert out.shape == (4 * 2 * 2, 6)
+    assert train_corr > test_corr
+
+    # Same but more metrics
     out = approximate_generalization(
         Mean,
         simulate_wide_data,
         agg_stats=["mean", "std", "var"],
     )
-    assert out.shape == (4 * 3 * 2 * 2, 8)
-    out = approximate_generalization(Mean, simulate_wide_data, return_agg=False)
-    assert out.shape == (4 * 3 * 2 * 10, 7)
+    assert out.shape == (4 * 2 * 2, 7)
+
+    # Same but don't aggregate results across folds
+    out_nonagg = approximate_generalization(Mean, simulate_wide_data, return_agg=False)
+    assert out_nonagg.shape == (4 * 2 * 10, 6)
 
 
 def test_create_sub_by_item_matrix(simulate_long_data):

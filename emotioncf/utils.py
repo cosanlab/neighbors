@@ -240,7 +240,7 @@ def estimate_performance(
     for i in range(n_iter):
         model = algorithm(data=data, random_state=random_state, **model_kwargs)
         model.fit(**fit_kwargs)
-        results = model.summary()
+        results = model.summary(return_cached=False)
         results["iter"] = i
         all_results.append(results)
     all_results = pd.concat(all_results, ignore_index=True)
@@ -355,7 +355,7 @@ def approximate_generalization(
     random_state=None,
 ) -> pd.DataFrame:
     """
-    Similar to estimate_performance but uses leave-one-fold-out cross-validation in addition random masking. **Note**: this is done by further masking the input data, thereby *increasing sparsity*. Specifically, data is always "split" into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds request controls the additional sparsity of each train and test split, e.g. n_folds = 5 mean train = 4/5 (~80% of *observed values*); test = 1/5 (~20% of *observed values*). Models are estimated against the training set and then used to predict values in the test set without additional training.
+    Similar to estimate_performance but uses leave-one-fold-out cross-validation in addition random masking. **Note**: this is done by further masking the input data, thereby *increasing sparsity*. Specifically, data is always "split" into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds requested controls the additional sparsity of each train and test split, e.g. n_folds = 5 means train = 4/5 (~80% of *observed values*); test = 1/5 (~20% of *observed values*). Models are estimated against the training set and then used to predict values in the test set without additional training.
 
     Args:
         algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
@@ -375,19 +375,19 @@ def approximate_generalization(
     for train, test in split_train_test(data, n_folds):
         model = algorithm(data=train, random_state=random_state, **model_kwargs)
         model.fit(**fit_kwargs)
-        train_results = model.summary()
+        train_results = model.summary(dataset="full")
         train_results["fold"] = fold
         train_results["cv"] = "train"
-        test_results = model.summary(actual=test, return_cached=False)
+        test_results = model.summary(actual=test, dataset="full", return_cached=False)
         test_results["fold"] = fold
         test_results["cv"] = "test"
         all_results.append(train_results)
         all_results.append(test_results)
         fold += 1
-    all_results = pd.concat(all_results, ignore_index=True)
+    all_results = pd.concat(all_results, ignore_index=True).drop(columns=["dataset"])
     if return_agg:
         out = (
-            all_results.groupby(["cv", "algorithm", "dataset", "group", "metric"])
+            all_results.groupby(["cv", "algorithm", "group", "metric"])
             .score.agg(agg_stats)
             .reset_index()
         )

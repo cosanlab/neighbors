@@ -54,12 +54,11 @@ class Base(object):
         self.n_items = data.shape[1]
         self.random_state = check_random_state(random_state)
 
-        # Check for null values in input data and if they exist treat the data as already masked; check with Luke about this...
+        # Check for null values in input data and if they exist treat the data as already masked
         if data.isnull().any().any():
             if verbose:
                 print("data contains NaNs...treating as pre-masked")
             self.mask = ~data.isnull()
-            self.masked_data = self.data[self.mask]
             self.is_masked = True
             self.is_dense = False
 
@@ -380,7 +379,7 @@ class Base(object):
         """
 
         if dataset not in ["full", "observed", "missing"]:
-            raise ValueError("dataset must be one of ['full','missing']")
+            raise ValueError("dataset must be one of ['full', 'observed', 'missing']")
 
         if dataset == "full":
             return (self.data, self.predictions)
@@ -484,7 +483,7 @@ class Base(object):
                 ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
             )
 
-    def summary(self, verbose=True, return_cached=True, actual=None):
+    def summary(self, verbose=True, return_cached=True, actual=None, dataset=None):
         """
         Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.
 
@@ -492,6 +491,7 @@ class Base(object):
             verbose (bool, optional): Print warning messages during scoring. Defaults to True.
             return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to True.
             actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
+            dataset (str/list/None): dataset to score. Must be some combination of 'full', 'observed', and 'missing' or None to score all; Default None
 
         Returns:
             pd.DataFrame: long-form dataframe of model performance
@@ -499,6 +499,11 @@ class Base(object):
 
         if not self.is_fit:
             raise ValueError("Model has not been fit!")
+
+        if dataset is None:
+            dataset = ["full", "missing", "observed"]
+        elif isinstance(dataset, str):
+            dataset = [dataset]
 
         # Don't recompute results if we already have them
         if return_cached and self.results is not None:
@@ -518,14 +523,14 @@ class Base(object):
             for metric in ["rmse", "mse", "mae", "correlation"]:
                 this_group_result = {}
                 this_subject_result = []
-                for dataset in ["full", "missing", "observed"]:
-                    this_group_result[dataset] = self.score(
-                        metric=metric, dataset=dataset, verbose=verbose, actual=actual
+                for dat in dataset:
+                    this_group_result[dat] = self.score(
+                        metric=metric, dataset=dat, verbose=verbose, actual=actual
                     )
                     this_subject_result.append(
                         self.score(
                             metric=metric,
-                            dataset=dataset,
+                            dataset=dat,
                             by_subject=True,
                             verbose=verbose,
                             actual=actual,
