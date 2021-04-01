@@ -18,7 +18,7 @@
     
     
       
-        <title>Development - EmotionCF</title>
+        <title>Contributing to Development - EmotionCF</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#development" class="md-skip">
+        <a href="#contributing-to-development" class="md-skip">
           Skip to content
         </a>
       
@@ -95,7 +95,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Development
+              Contributing to Development
             
           </span>
         </div>
@@ -216,8 +216,23 @@
   
   
     <li class="md-nav__item">
-      <a href="../overview/" class="md-nav__link">
+      <a href="../examples/overview" class="md-nav__link">
         Quick Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeseries/" class="md-nav__link">
+        Working with Time-Series
       </a>
     </li>
   
@@ -240,12 +255,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Development
+          Contributing to Development
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Development
+        Contributing to Development
       </a>
       
         
@@ -335,14 +350,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
       
-      <label class="md-nav__link" for="__nav_4">
+      <label class="md-nav__link" for="__nav_5">
         API Reference
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
+        <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -364,34 +379,34 @@
   
   
   
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
-      
-      <label class="md-nav__link" for="__nav_4_2">
-        emotioncf.cf
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="emotioncf.cf" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
-          <span class="md-nav__icon md-icon"></span>
-          emotioncf.cf
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+    <li class="md-nav__item">
+      <a href="../api/base/" class="md-nav__link">
+        emotioncf.base
+      </a>
+    </li>
+  
+
           
             
   
   
   
-    <li class="md-nav__item">
-      <a href="../api/base/" class="md-nav__link">
-        Base
-      </a>
-    </li>
-  
-
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      <label class="md-nav__link" for="__nav_5_3">
+        emotioncf.models
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="emotioncf.models" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          emotioncf.models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
             
   
@@ -549,13 +564,13 @@
                   </a>
                 
                 
-                <h1 id="development">Development</h1>
+                <h1 id="contributing-to-development">Contributing to development</h1>
 <p>Each new push or pull-request to the code base for this toolbox will automatically be run through testing and documentation building via github actions.</p>
 <p>To develop this package or its documentation locally you will need to install a few extra dependencies.</p>
 <h2 id="installation">Installation</h2>
 <p><code>pip install -r requirements-dev.txt</code></p>
 <h2 id="testing">Testing</h2>
-<p>To run tests just call <code>pytest</code> from the root of this repository. New tests can be added in <code>emotioncf/tests/</code>.</p>
+<p>To run tests just call <code>pytest</code> from the root of this repository. New tests can be added in <code>emotioncf/tests/</code>. To speed up tests you can optionally <code>pip install pytest-xdist</code> to parallelize testing and use it with: <code>pytest -rs -n auto</code>.</p>
 <h2 id="formatting">Formatting</h2>
 <p>Please format your code using black. If you've installed the development dependencies, then you can configure <code>git</code> to tell if you any new changes are not formatted by setting up a <strong>pre-commit hook:</strong>  </p>
 <ul>
@@ -572,7 +587,7 @@ black --check .
 <h2 id="editing-continuous-integration">Editing continuous integration</h2>
 <p>To change how the automatic workflow builds are specified, make the relevant edits in <code>.github/workflows/conda_ci.yml</code>.</p>
 <h2 id="documentation">Documentation</h2>
-<p>Documentation is built with <a href="https://www.mkdocs.org/">mkdocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs material theme</a> and <a href="https://pawamoy.github.io/mkdocstrings/">mkdocstrings</a> extension. </p>
+<p>Documentation is built with <a href="https://www.mkdocs.org/">mkdocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs material theme</a>, <a href="https://pawamoy.github.io/mkdocstrings/">mkdocstrings</a>, and <a href="https://github.com/danielfrg/mkdocs-jupyter">mkdocs-jupyter</a> plugins. </p>
 <h3 id="live-server">Live server</h3>
 <p>After installation above, simply run <code>mkdocs serve</code> this the project root to start a hot-reloading server of the documentation at <code>http://localhost:8000</code>.  </p>
 <p>To alter the layout of the docs site adjust settings in <code>mkdocs.yml</code>. To add or edit pages simply create markdown files within the <code>docs/</code> folder.</p>
@@ -596,7 +611,7 @@ black --check .
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../overview/" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="../timeseries/" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -605,7 +620,7 @@ black --check .
               <span class="md-footer__direction">
                 Previous
               </span>
-              Quick Overview
+              Working with Time-Series
             </div>
           </div>
         </a>

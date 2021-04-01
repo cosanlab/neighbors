@@ -216,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overview/" class="md-nav__link">
+      <a href="../../examples/overview" class="md-nav__link">
         Quick Overview
       </a>
     </li>
@@ -231,8 +231,23 @@
   
   
     <li class="md-nav__item">
+      <a href="../../timeseries/" class="md-nav__link">
+        Working with Time-Series
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../development/" class="md-nav__link">
-        Development
+        Contributing to Development
       </a>
     </li>
   
@@ -251,14 +266,14 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
-      <label class="md-nav__link" for="__nav_4">
+      <label class="md-nav__link" for="__nav_5">
         API Reference
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
+        <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -370,13 +385,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.load_movielens" class="md-nav__link">
-    load_movielens()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#emotioncf.utils.nanpdist" class="md-nav__link">
     nanpdist()
   </a>
@@ -409,34 +417,34 @@
   
   
   
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
-      
-      <label class="md-nav__link" for="__nav_4_2">
-        emotioncf.cf
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="emotioncf.cf" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
-          <span class="md-nav__icon md-icon"></span>
-          emotioncf.cf
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+    <li class="md-nav__item">
+      <a href="../base/" class="md-nav__link">
+        emotioncf.base
+      </a>
+    </li>
+  
+
           
             
   
   
   
-    <li class="md-nav__item">
-      <a href="../base/" class="md-nav__link">
-        Base
-      </a>
-    </li>
-  
-
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      <label class="md-nav__link" for="__nav_5_3">
+        emotioncf.models
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="emotioncf.models" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          emotioncf.models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
             
   
@@ -593,13 +601,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.load_movielens" class="md-nav__link">
-    load_movielens()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#emotioncf.utils.nanpdist" class="md-nav__link">
     nanpdist()
   </a>
@@ -662,15 +663,15 @@
 
 
 
-<h3 id="emotioncf.utils.approximate_generalization" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">approximate_generalization</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h4 id="emotioncf.utils.approximate_generalization" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">approximate_generalization</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
-      <p>Similar to estimate_performance but uses leave-one-fold-out cross-validation in addition random masking. <strong>Note</strong>: this is done by further masking the input data, thereby <em>increasing sparsity</em>. Specifically, data is always "split" into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds requested controls the additional sparsity of each train and test split, e.g. n_folds = 5 means train = 4/5 (~80% of <em>observed values</em>); test = 1/5 (~20% of <em>observed values</em>). Models are estimated against the training set and then used to predict values in the test set without additional training.</p>
+      <p>Similar to <code>estimate_performance</code> but uses leave-one-fold-out cross-validation via additional random masking. <strong>Note</strong>: this is <em>increases sparsity</em> of a dataset. Specifically, data is always "split" into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds requested controls the additional sparsity of each train and test split, e.g. n_folds = 5 means train = 4/5 (~80% of <em>observed values</em>); test = 1/5 (~20% of <em>observed values</em>). Models are estimated against the training set and then used to predict values in the test set without additional training.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -725,6 +726,18 @@
         <td><p>Same as the <code>model_kwargs</code> but passed to <code>.fit()</code>. Defaults to {}.</p></td>
         <td><code>{}</code></td>
       </tr>
+      <tr>
+        <td><code>random_state</code></td>
+        <td><code>None, int, RandomState</code></td>
+        <td><p>a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05)</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>verbose</code></td>
+        <td><code>bool; optional</code></td>
+        <td><p>print warning messages from a model; Default False</p></td>
+        <td><code>False</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -753,9 +766,10 @@
     <span class="n">model_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">fit_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Similar to estimate_performance but uses leave-one-fold-out cross-validation in addition random masking. **Note**: this is done by further masking the input data, thereby *increasing sparsity*. Specifically, data is always &quot;split&quot; into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds requested controls the additional sparsity of each train and test split, e.g. n_folds = 5 means train = 4/5 (~80% of *observed values*); test = 1/5 (~20% of *observed values*). Models are estimated against the training set and then used to predict values in the test set without additional training.</span>
+<span class="sd">    Similar to `estimate_performance` but uses leave-one-fold-out cross-validation via additional random masking. **Note**: this is *increases sparsity* of a dataset. Specifically, data is always &quot;split&quot; into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds requested controls the additional sparsity of each train and test split, e.g. n_folds = 5 means train = 4/5 (~80% of *observed values*); test = 1/5 (~20% of *observed values*). Models are estimated against the training set and then used to predict values in the test set without additional training.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`</span>
@@ -765,6 +779,8 @@
 <span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default (&#39;mean&#39;, &#39;std&#39;)</span>
 <span class="sd">        model_kwargs (dict, optional): [description]. A dictionary of arguments passed when the model is first initialized, e.g. `Mean(**model_kwargs)`. Defaults to {}.</span>
 <span class="sd">        fit_kwargs (dict, optional): Same as the `model_kwargs` but passed to `.fit()`. Defaults to {}.</span>
+<span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05)</span>
+<span class="sd">        verbose (bool; optional): print warning messages from a model; Default False</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: aggregated or non-aggregated summary statistics</span>
@@ -773,23 +789,36 @@
     <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">fold</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">):</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="o">**</span><span class="n">model_kwargs</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">model_kwargs</span>
+        <span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
         <span class="n">train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
-        <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold</span>
+        <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold</span>
         <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
         <span class="n">test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">actual</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold</span>
+        <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold</span>
         <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
         <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_results</span><span class="p">)</span>
         <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_results</span><span class="p">)</span>
         <span class="n">fold</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">all_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">])</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cv&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset&quot;</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;cv_fold&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="n">all_results</span><span class="p">[</span><span class="n">col_order</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">return_agg</span><span class="p">:</span>
+        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">agg_stats</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">all_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;cv&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+            <span class="n">all_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
             <span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_stats</span><span class="p">)</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">col_order</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span>
     <span class="k">else</span><span class="p">:</span>
@@ -806,11 +835,11 @@
 
 
 
-<h3 id="emotioncf.utils.check_random_state" class="doc doc-heading">
+<h4 id="emotioncf.utils.check_random_state" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -870,11 +899,11 @@
 
 
 
-<h3 id="emotioncf.utils.create_sub_by_item_matrix" class="doc doc-heading">
+<h4 id="emotioncf.utils.create_sub_by_item_matrix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_sub_by_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -982,11 +1011,11 @@
 
 
 
-<h3 id="emotioncf.utils.create_train_test_mask" class="doc doc-heading">
+<h4 id="emotioncf.utils.create_train_test_mask" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_train_test_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1100,11 +1129,11 @@
 
 
 
-<h3 id="emotioncf.utils.downsample_dataframe" class="doc doc-heading">
+<h4 id="emotioncf.utils.downsample_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1216,15 +1245,15 @@
 
 
 
-<h3 id="emotioncf.utils.estimate_performance" class="doc doc-heading">
+<h4 id="emotioncf.utils.estimate_performance" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
-      <p>Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dataset as each iteration will generate a new random mask.</p>
+      <p>Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a <em>dense</em> dataset as each iteration will generate a new random mask.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1309,7 +1338,7 @@
     <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a dataset as each iteration will generate a new random mask.</span>
+<span class="sd">    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a _dense_ dataset as each iteration will generate a new random mask.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`</span>
@@ -1329,14 +1358,23 @@
         <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="o">**</span><span class="n">model_kwargs</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-    <span class="n">all_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;iter&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="n">all_results</span><span class="p">[</span><span class="n">col_order</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">return_agg</span><span class="p">:</span>
+        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">agg_stats</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">all_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
             <span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_stats</span><span class="p">)</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">col_order</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1353,11 +1391,11 @@
 
 
 
-<h3 id="emotioncf.utils.flatten_dataframe" class="doc doc-heading">
+<h4 id="emotioncf.utils.flatten_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1429,11 +1467,11 @@
 
 
 
-<h3 id="emotioncf.utils.get_size_in_mb" class="doc doc-heading">
+<h4 id="emotioncf.utils.get_size_in_mb" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1459,11 +1497,11 @@
 
 
 
-<h3 id="emotioncf.utils.get_sparsity" class="doc doc-heading">
+<h4 id="emotioncf.utils.get_sparsity" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1494,52 +1532,11 @@
 
 
 
-<h3 id="emotioncf.utils.load_movielens" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_movielens</span><span class="p">()</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Download and create a dataframe from the 100k movielens dataset</p>
-
-        <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">load_movielens</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
-    <span class="sd">&quot;&quot;&quot;Download and create a dataframe from the 100k movielens dataset&quot;&quot;&quot;</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://files.grouplens.org/datasets/movielens/ml-100k.zip&quot;</span>
-    <span class="c1"># With python context managers we don&#39;t need to save any temporary files</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Getting movielens...&quot;</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span> <span class="k">as</span> <span class="n">myzip</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;ml-100k/u.data&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myfile</span><span class="p">:</span>
-                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-                        <span class="n">myfile</span><span class="p">,</span>
-                        <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Timestamp&quot;</span><span class="p">],</span>
-                    <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h3 id="emotioncf.utils.nanpdist" class="doc doc-heading">
+<h4 id="emotioncf.utils.nanpdist" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1644,11 +1641,11 @@
 
 
 
-<h3 id="emotioncf.utils.split_train_test" class="doc doc-heading">
+<h4 id="emotioncf.utils.split_train_test" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1743,11 +1740,11 @@
 
 
 
-<h3 id="emotioncf.utils.unflatten_dataframe" class="doc doc-heading">
+<h4 id="emotioncf.utils.unflatten_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -1868,7 +1865,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Development
+              Contributing to Development
             </div>
           </div>
         </a>
@@ -1880,7 +1877,7 @@
               <span class="md-footer__direction">
                 Next
               </span>
-              Base
+              emotioncf.base
             </div>
           </div>
           <div class="md-footer__button md-icon">

@@ -11,21 +11,21 @@
       
       
       
-        <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/mean/">
+        <link rel="canonical" href="https://cosanlab.github.io/emotionCF/timeseries/">
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.0">
     
     
       
-        <title>Mean - EmotionCF</title>
+        <title>Working with Time-Series - EmotionCF</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.33e2939f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.33e2939f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
         
       
     
@@ -40,7 +40,7 @@
     
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
     
       
@@ -57,7 +57,7 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
-    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#emotioncfmodelsmean" class="md-skip">
+        <a href="#working-with-time-series-data" class="md-skip">
           Skip to content
         </a>
       
@@ -76,7 +76,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="EmotionCF" class="md-header__button md-logo" aria-label="EmotionCF" data-md-component="logo">
+    <a href=".." title="EmotionCF" class="md-header__button md-logo" aria-label="EmotionCF" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -95,7 +95,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Mean
+              Working with Time-Series
             
           </span>
         </div>
@@ -169,7 +169,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="EmotionCF" class="md-nav__button md-logo" aria-label="EmotionCF" data-md-component="logo">
+    <a href=".." title="EmotionCF" class="md-nav__button md-logo" aria-label="EmotionCF" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -201,7 +201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         Home
       </a>
     </li>
@@ -216,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/overview" class="md-nav__link">
+      <a href="../examples/overview" class="md-nav__link">
         Quick Overview
       </a>
     </li>
@@ -229,11 +229,20 @@
 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../timeseries/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Working with Time-Series
       </a>
+      
     </li>
   
 
@@ -246,7 +255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../development/" class="md-nav__link">
+      <a href="../development/" class="md-nav__link">
         Contributing to Development
       </a>
     </li>
@@ -259,14 +268,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
       
       <label class="md-nav__link" for="__nav_5">
         API Reference
@@ -284,7 +291,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../utils/" class="md-nav__link">
+      <a href="../api/utils/" class="md-nav__link">
         emotioncf.utils
       </a>
     </li>
@@ -296,7 +303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../base/" class="md-nav__link">
+      <a href="../api/base/" class="md-nav__link">
         emotioncf.base
       </a>
     </li>
@@ -306,14 +313,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
       
       <label class="md-nav__link" for="__nav_5_3">
         emotioncf.models
@@ -329,56 +334,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Mean
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../api/mean/" class="md-nav__link">
         Mean
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#emotioncf.models.Mean" class="md-nav__link">
-    emotioncf.models.Mean
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#emotioncf.models.Mean.fit" class="md-nav__link">
-    fit()
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -388,7 +348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../knn/" class="md-nav__link">
+      <a href="../api/knn/" class="md-nav__link">
         KNN
       </a>
     </li>
@@ -400,7 +360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nmf_m/" class="md-nav__link">
+      <a href="../api/nmf_m/" class="md-nav__link">
         NNMF_mult
       </a>
     </li>
@@ -412,7 +372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../nmf_s/" class="md-nav__link">
+      <a href="../api/nmf_s/" class="md-nav__link">
         NNMF_sgd
       </a>
     </li>
@@ -449,28 +409,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#emotioncf.models.Mean" class="md-nav__link">
-    emotioncf.models.Mean
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#emotioncf.models.Mean.fit" class="md-nav__link">
-    fit()
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -481,100 +419,27 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/cosanlab/emotionCF/edit/master/docs/api/mean.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/cosanlab/emotionCF/edit/master/docs/timeseries.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="emotioncfmodelsmean">emotioncf.models.Mean</h1>
-
-
-  <div class="doc doc-object doc-class">
-
-<a id="emotioncf.models.Mean"></a>
-    <div class="doc doc-contents first">
-
-      <p>The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.</p>
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="emotioncf.models.Mean.fit" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
-
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Fit collaborative model to train data.  Calculate similarity between subjects across items</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>dilate_ts_n_samples</code></td>
-        <td><code>int</code></td>
-        <td><p>will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>emotioncf/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Fit collaborative model to train data.  Calculate similarity between subjects across items</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">dilate_mask</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">dilate_by_nsamples</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
+                <h1 id="working-with-time-series-data">Working with Time-Series Data</h1>
+<p>A unique feature of this toolbox, is that it has also been designed to work with time-series data.</p>
+<p>For example, model instances can be downsampled across items, where items refers to time samples. You must specify the <code>sampling_freq</code> of the data, and the <code>target</code>, where target must have a <code>target_type</code> of <code>['hz','samples','seconds']</code>.  Downsampling is performed by averaging over bin windows.  In this example we downsample a dataset from 10Hz to 5Hz.</p>
+<div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">sampling_freq</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;hz&#39;</span><span class="p">)</span>
 </code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
+<p>It is also possible to leverage presumed autocorrelation when training models by using the <code>dilate_by_nsamples=n_samples</code> keyword.  This flag will convolve a boxcar kernel of width <code>n_samples</code> with each user's rating from <code>model.train_mask</code>.  The dilation will be centered on each sample.  The intuition here is that if a subject rates an item at a given time point, say '50', they likely will have rated time points immediately preceding and following similarly (e.g., <code>[50,50,50]</code>).  This is due to autocorrelation in the data.  More presumed autocorrelation will likely benefit from a higher number of samples being selected.  This will allow time series that are sparsely sampled to be estimated more accurately.</p>
+<div class="highlight"><pre><span></span><code><span class="n">cf</span> <span class="o">=</span> <span class="n">NNMF_sgd</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+     <span class="n">user_fact_reg</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+     <span class="n">item_fact_reg</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> 
+     <span class="n">user_bias_reg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+     <span class="n">item_bias_reg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+     <span class="n">learning_rate</span><span class="o">=.</span><span class="mi">001</span><span class="p">,</span>
+     <span class="n">dilate_ts_n_samples</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">cf</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</code></pre></div>
                 
               
               
@@ -593,7 +458,7 @@
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../base/" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href=".." class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -602,19 +467,19 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              emotioncf.base
+              Home
             </div>
           </div>
         </a>
       
       
-        <a href="../knn/" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="../development/" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              KNN
+              Contributing to Development
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -643,10 +508,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d892486b.min.js"></script>
+      <script src="../assets/javascripts/bundle.d892486b.min.js"></script>
       
     
   </body>

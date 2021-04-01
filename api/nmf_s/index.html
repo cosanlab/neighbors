@@ -216,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../overview/" class="md-nav__link">
+      <a href="../../examples/overview" class="md-nav__link">
         Quick Overview
       </a>
     </li>
@@ -231,8 +231,23 @@
   
   
     <li class="md-nav__item">
+      <a href="../../timeseries/" class="md-nav__link">
+        Working with Time-Series
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../development/" class="md-nav__link">
-        Development
+        Contributing to Development
       </a>
     </li>
   
@@ -251,14 +266,14 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
-      <label class="md-nav__link" for="__nav_4">
+      <label class="md-nav__link" for="__nav_5">
         API Reference
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
+        <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           API Reference
         </label>
@@ -279,6 +294,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="../base/" class="md-nav__link">
+        emotioncf.base
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -286,30 +313,18 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
       
-      <label class="md-nav__link" for="__nav_4_2">
-        emotioncf.cf
+      <label class="md-nav__link" for="__nav_5_3">
+        emotioncf.models
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="emotioncf.cf" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
+      <nav class="md-nav" aria-label="emotioncf.models" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
           <span class="md-nav__icon md-icon"></span>
-          emotioncf.cf
+          emotioncf.models
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../base/" class="md-nav__link">
-        Base
-      </a>
-    </li>
-  
-
           
             
   
@@ -501,11 +516,11 @@
 
 
 
-<h3 id="emotioncf.models.NNMF_sgd.fit" class="doc doc-heading">
+<h4 id="emotioncf.models.NNMF_sgd.fit" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">item_fact_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">user_fact_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">item_bias_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">user_bias_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
-</h3>
+</h4>
 
     <div class="doc doc-contents ">
 
@@ -577,22 +592,10 @@
         <td><code>False</code></td>
       </tr>
       <tr>
-        <td><code>dilate_ts_n_samples</code></td>
+        <td><code>dilate_by_nsamples</code></td>
         <td><code>int</code></td>
         <td><p>How many items to dilate by prior to training. Defaults to None.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>save_learning</code></td>
-        <td><code>bool</code></td>
-        <td><p>Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>fast_sdg</code></td>
-        <td><code>bool; optional</code></td>
-        <td><p>Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -625,9 +628,7 @@
 <span class="sd">        n_iterations (int, optional): total number of training iterations if convergence is not achieved. Defaults to 5000.</span>
 <span class="sd">        tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training &lt; tol. Defaults to 0.001.</span>
 <span class="sd">        verbose (bool, optional): print information about training. Defaults to False.</span>
-<span class="sd">        dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
-<span class="sd">        save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.</span>
-<span class="sd">        fast_sdg (bool; optional): Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False</span>
+<span class="sd">        dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
