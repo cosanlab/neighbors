@@ -26,7 +26,7 @@ To develop this package or its documentation locally you will need to install a 
 
 ### Testing
 
-`pytest -rs emotioncf/tests/test_everything.py -n auto`
+`pytest -rs -n auto`
 
 New tests can be added in `emotioncf/tests/`.
 
@@ -47,7 +47,7 @@ Now anytime you try to commit new changes, git will automatically run black befo
 
 ### Documentation
 
-Documentation is built with [mkdocs](https://www.mkdocs.org/) using the [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/) and [mkdocstrings](https://pawamoy.github.io/mkdocstrings/) extension. 
+Documentation is built with [mkdocs](https://www.mkdocs.org/) using the [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/), [mkdocstrings](https://pawamoy.github.io/mkdocstrings/) extension, and [mkdocs-jupyter](https://github.com/danielfrg/mkdocs-jupyter) plugins.  
 
 
 #### Live server

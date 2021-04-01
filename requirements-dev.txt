@@ -3,3 +3,4 @@ black
 mkdocs
 mkdocs-material
 mkdocstrings
+mkdocs-jupyter

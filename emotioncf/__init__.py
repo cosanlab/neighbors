@@ -15,3 +15,4 @@ from .utils import (
     split_train_test,
     check_random_state,
 )
+from .version import __version__

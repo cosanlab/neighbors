@@ -1,6 +1,3 @@
-"""
-Base algorithm classes. All other algorithms inherit from these classes which means they have access to all their methods and attributes. You won't typically utilize these classes directly unless you're creating a custom estimator.
-"""
 import pandas as pd
 import numpy as np
 from scipy.stats import pearsonr
@@ -15,7 +12,7 @@ __all__ = ["Base", "BaseNMF"]
 
 class Base(object):
     """
-    All other models and base classes inherit from this class.
+    This is the base class for all model types.
     """
 
     def __init__(
@@ -140,47 +137,50 @@ class Base(object):
                 )
             return None
 
-        if by_subject:
-            scores = []
-            for userid in range(actual.shape[0]):
-                user_actual = actual.iloc[userid, :].values
-                user_pred = pred.iloc[userid, :].values
-                if metric == "rmse":
-                    score = np.sqrt(np.nanmean((user_pred - user_actual) ** 2))
-                elif metric == "mse":
-                    score = np.nanmean((user_pred - user_actual) ** 2)
-                elif metric == "mae":
-                    score = np.nanmean(np.abs(user_pred - user_actual))
-                elif metric == "correlation":
-                    nans = np.logical_or(np.isnan(user_actual), np.isnan(user_pred))
-                    if len(user_actual[~nans]) < 2 or len(user_pred[~nans]) < 2:
-                        score = np.nan
-                    else:
-                        score = pearsonr(user_actual[~nans], user_pred[~nans])[0]
-                scores.append(score)
-            return pd.Series(scores, index=actual.index, name=f"{metric}_{dataset}")
-        else:
-            actual, pred = actual.to_numpy().flatten(), pred.to_numpy().flatten()
+        with warnings.catch_warnings():
+            # Catch 'Mean of empty slice' warnings from np.nanmean
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            if by_subject:
+                scores = []
+                for userid in range(actual.shape[0]):
+                    user_actual = actual.iloc[userid, :].values
+                    user_pred = pred.iloc[userid, :].values
+                    if metric == "rmse":
+                        score = np.sqrt(np.nanmean((user_pred - user_actual) ** 2))
+                    elif metric == "mse":
+                        score = np.nanmean((user_pred - user_actual) ** 2)
+                    elif metric == "mae":
+                        score = np.nanmean(np.abs(user_pred - user_actual))
+                    elif metric == "correlation":
+                        nans = np.logical_or(np.isnan(user_actual), np.isnan(user_pred))
+                        if len(user_actual[~nans]) < 2 or len(user_pred[~nans]) < 2:
+                            score = np.nan
+                        else:
+                            score = pearsonr(user_actual[~nans], user_pred[~nans])[0]
+                    scores.append(score)
+                return pd.Series(scores, index=actual.index, name=f"{metric}_{dataset}")
+            else:
+                actual, pred = actual.to_numpy().flatten(), pred.to_numpy().flatten()
 
-            if metric == "rmse":
-                return np.sqrt(np.nanmean((pred - actual) ** 2))
-            elif metric == "mse":
-                return np.nanmean((pred - actual) ** 2)
-            elif metric == "mae":
-                return np.nanmean(np.abs(pred - actual))
-            elif metric == "correlation":
-                nans = np.logical_or(np.isnan(actual), np.isnan(pred))
-                if len(actual[~nans]) < 2 or len(pred[~nans]) < 2:
-                    return np.nan
-                else:
-                    return pearsonr(actual[~nans], pred[~nans])[0]
+                if metric == "rmse":
+                    return np.sqrt(np.nanmean((pred - actual) ** 2))
+                elif metric == "mse":
+                    return np.nanmean((pred - actual) ** 2)
+                elif metric == "mae":
+                    return np.nanmean(np.abs(pred - actual))
+                elif metric == "correlation":
+                    nans = np.logical_or(np.isnan(actual), np.isnan(pred))
+                    if len(actual[~nans]) < 2 or len(pred[~nans]) < 2:
+                        return np.nan
+                    else:
+                        return pearsonr(actual[~nans], pred[~nans])[0]
 
     def create_masked_data(self, n_mask_items=0.1):
         """
         Create a mask and apply it to data using number of items or % of items
 
         Args:
-            n_itmes (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default .1 (10% of the data)
+            n_items (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default 0.1 (10% of the data)
         """
 
         if (
@@ -210,7 +210,7 @@ class Base(object):
             verbose (bool; optional): print the averaged subject correlation while plotting; Default True
 
         Returns:
-            r (float): Correlation
+            float: pearson correlation
 
         """
 
@@ -541,7 +541,7 @@ class Base(object):
                 # Dataframe of subject results for this metric
                 this_subject_result = pd.concat(this_subject_result, axis=1)
                 subject_results.append(this_subject_result)
-                group_results[f"{metric}_subject"] = dict(
+                group_results[f"{metric}_user"] = dict(
                     zip(
                         ["full", "missing", "observed"],
                         this_subject_result.mean().values,
@@ -562,18 +562,18 @@ class Base(object):
             .reset_index(drop=True)
             .assign(
                 group=lambda df: df.metric.apply(
-                    lambda x: "subject" if "subject" in x else "all"
+                    lambda x: "user" if "user" in x else "all"
                 ),
                 metric=lambda df: df.metric.replace(
                     {
-                        "correlation_subject": "correlation",
-                        "mse_subject": "mse",
-                        "rmse_subject": "rmse",
-                        "mae_subject": "mae",
+                        "correlation_user": "correlation",
+                        "mse_user": "mse",
+                        "rmse_user": "rmse",
+                        "mae_user": "mae",
                     }
                 ),
             )
-            .sort_values(by=["dataset", "metric", "group"])
+            .sort_values(by=["dataset", "group", "metric"])
             .reset_index(drop=True)[
                 ["algorithm", "dataset", "group", "metric", "score"]
             ]

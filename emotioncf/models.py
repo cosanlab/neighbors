@@ -192,8 +192,7 @@ class NNMF_mult(BaseNMF):
             tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
             eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.
             verbose (bool, optional): print information about training. Defaults to False.
-            dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
-            save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
+            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
         """
 
         # Call parent fit which acts as a guard for non-masked data
@@ -313,9 +312,7 @@ class NNMF_sgd(BaseNMF):
             n_iterations (int, optional): total number of training iterations if convergence is not achieved. Defaults to 5000.
             tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
             verbose (bool, optional): print information about training. Defaults to False.
-            dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
-            save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
-            fast_sdg (bool; optional): Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False
+            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
         """
 
         # Call parent fit which acts as a guard for non-masked data
