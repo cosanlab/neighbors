@@ -40,10 +40,10 @@ def test_approximate_generalization(simulate_wide_data):
     # Basic 5 fold CV
     out = approximate_generalization(Mean, simulate_wide_data)
     train_corr = out.query(
-        "cv == 'train' and metric == 'correlation' and group == 'all'"
+        "dataset == 'train' and metric == 'correlation' and group == 'all'"
     )["mean"].to_numpy()[0]
     test_corr = out.query(
-        "cv == 'test' and metric == 'correlation' and group == 'all'"
+        "dataset == 'test' and metric == 'correlation' and group == 'all'"
     )["mean"].to_numpy()[0]
     assert isinstance(out, pd.DataFrame)
     assert out.shape == (4 * 2 * 2, 6)

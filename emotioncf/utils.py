@@ -352,7 +352,6 @@ def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="sampl
     return data.groupby(idx).mean().T
 
 
-# TODO: adjust the output to drop missing/observed, etc that are NaNs for training/testing splits
 def approximate_generalization(
     algorithm,
     data: pd.DataFrame,
