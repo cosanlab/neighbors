@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import pearsonr
 from copy import deepcopy
 import matplotlib.pyplot as plt
-from .utils import create_train_test_mask, downsample_dataframe, check_random_state
+from .utils import create_sparse_mask, downsample_dataframe, check_random_state
 import warnings
 import seaborn as sns
 
@@ -175,7 +175,7 @@ class Base(object):
                     else:
                         return pearsonr(actual[~nans], pred[~nans])[0]
 
-    def create_masked_data(self, n_mask_items=0.1):
+    def create_masked_data(self, n_mask_items=0.2):
         """
         Create a mask and apply it to data using number of items or % of items
 
@@ -193,7 +193,7 @@ class Base(object):
             raise TypeError(
                 "n_items should a float between 0-1 or an integer < the number of items"
             )
-        self.mask = create_train_test_mask(
+        self.mask = create_sparse_mask(
             self.data, n_mask_items, random_state=self.random_state
         )
         self.masked_data = self.data[self.mask]
@@ -483,13 +483,13 @@ class Base(object):
                 ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
             )
 
-    def summary(self, verbose=True, return_cached=True, actual=None, dataset=None):
+    def summary(self, verbose=True, return_cached=False, actual=None, dataset=None):
         """
         Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.
 
         Args:
             verbose (bool, optional): Print warning messages during scoring. Defaults to True.
-            return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to True.
+            return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to False.
             actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
             dataset (str/list/None): dataset to score. Must be some combination of 'full', 'observed', and 'missing' or None to score all; Default None
 
@@ -543,7 +543,7 @@ class Base(object):
                 subject_results.append(this_subject_result)
                 group_results[f"{metric}_user"] = dict(
                     zip(
-                        ["full", "missing", "observed"],
+                        dataset,
                         this_subject_result.mean().values,
                     )
                 )

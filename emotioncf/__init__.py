@@ -6,12 +6,12 @@ from .utils import (
     get_size_in_mb,
     get_sparsity,
     nanpdist,
-    create_train_test_mask,
+    create_sparse_mask,
     estimate_performance,
-    approximate_generalization,
     flatten_dataframe,
     unflatten_dataframe,
     split_train_test,
     check_random_state,
 )
+from .data import load_movielens100k, load_toymat
 from .version import __version__

@@ -11,15 +11,15 @@ from io import BytesIO
 from urllib.request import urlopen
 import numbers
 from itertools import product, chain
+from typing import Union
 
 __all__ = [
     "create_sub_by_item_matrix",
     "get_size_in_mb",
     "get_sparsity",
     "nanpdist",
-    "create_train_test_mask",
+    "create_sparse_mask",
     "estimate_performance",
-    "approximate_generalization",
     "flatten_dataframe",
     "unflatten_dataframe",
     "split_train_test",
@@ -150,7 +150,7 @@ def nanpdist(arr, metric="euclidean", return_square=True):
     return out
 
 
-def create_train_test_mask(data, n_mask_items=0.1, random_state=None):
+def create_sparse_mask(data, n_mask_items=0.2, random_state=None):
     """
     Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.
 
@@ -189,79 +189,6 @@ def create_train_test_mask(data, n_mask_items=0.1, random_state=None):
         ]
     )
     return pd.DataFrame(mask, index=data.index, columns=data.columns)
-
-
-# def load_movielens():  # pragma: no cover
-#     """Download and create a dataframe from the 100k movielens dataset"""
-#     url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip"
-#     # With python context managers we don't need to save any temporary files
-#     print("Getting movielens...")
-#     try:
-#         with urlopen(url) as resp:
-#             with ZipFile(BytesIO(resp.read())) as myzip:
-#                 with myzip.open("ml-100k/u.data") as myfile:
-#                     df = pd.read_csv(
-#                         myfile,
-#                         delimiter="\t",
-#                         names=["Subject", "Item", "Rating", "Timestamp"],
-#                     )
-#         return df
-#     except Exception as e:
-#         print(str(e))
-
-
-def estimate_performance(
-    algorithm,
-    data: pd.DataFrame,
-    n_iter: int = 10,
-    return_agg: bool = True,
-    agg_stats: tuple = ["mean", "std"],
-    model_kwargs: dict = {},
-    fit_kwargs: dict = {},
-    random_state=None,
-) -> pd.DataFrame:
-    """
-    Repeatedly call fit on a model and a dataset. Useful for benchmarking an algorithm on a _dense_ dataset as each iteration will generate a new random mask.
-
-    Args:
-        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
-        data (pd.DataFrame): a users x item dataframe
-        n_iter (int, optional): number of repetitions. Defaults to 10.
-        return_agg (bool, optional): [description]. return mean and std over repetitions rather than the reptitions themselves Defaults to True.
-        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
-        model_kwargs (dict, optional): [description]. A dictionary of arguments passed when the model is first initialized, e.g. `Mean(**model_kwargs)`. Defaults to {}.
-        fit_kwargs (dict, optional): Same as the `model_kwargs` but passed to `.fit()`. Defaults to {}.
-
-    Returns:
-        pd.DataFrame: aggregated or non-aggregated summary statistics
-    """
-
-    all_results = []
-    for i in range(n_iter):
-        model = algorithm(data=data, random_state=random_state, **model_kwargs)
-        model.fit(**fit_kwargs)
-        results = model.summary(return_cached=False)
-        results["iter"] = i + 1
-        all_results.append(results)
-    all_results = (
-        pd.concat(all_results, ignore_index=True)
-        .sort_values(by=["group", "dataset", "metric"])
-        .reset_index(drop=True)
-    )
-    col_order = ["algorithm", "dataset", "iter", "group", "metric", "score"]
-    all_results = all_results[col_order]
-    if return_agg:
-        col_order = ["algorithm", "dataset", "group", "metric"] + agg_stats
-        out = (
-            all_results.groupby(["algorithm", "dataset", "group", "metric"])
-            .score.agg(agg_stats)
-            .reset_index()
-            .sort_values(by=["dataset", "group", "metric"])
-            .reset_index(drop=True)[col_order]
-        )
-        return out
-    else:
-        return all_results
 
 
 def flatten_dataframe(data: pd.DataFrame) -> list:
@@ -335,7 +262,7 @@ def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="sampl
         n_samples is None or sampling_freq is None
     ):
         raise ValueError(
-            f"if target_type = {target_type}, both sampling_freq and target must be provided"
+            "if target_type = {target_type}, both sampling_freq and target must be provided"
         )
 
     if target_type == "seconds":
@@ -352,76 +279,8 @@ def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="sampl
     return data.groupby(idx).mean().T
 
 
-def approximate_generalization(
-    algorithm,
-    data: pd.DataFrame,
-    n_folds: int = 5,
-    return_agg: bool = True,
-    agg_stats: tuple = ["mean", "std"],
-    model_kwargs: dict = {},
-    fit_kwargs: dict = {},
-    random_state=None,
-    verbose=False,
-) -> pd.DataFrame:
-    """
-    Similar to `estimate_performance` but uses leave-one-fold-out cross-validation via additional random masking. **Note**: this is *increases sparsity* of a dataset. Specifically, data is always "split" into training and testing folds by masking user-item combinations such that folds have non-overlapping user-item scores and missing values. The number of folds requested controls the additional sparsity of each train and test split, e.g. n_folds = 5 means train = 4/5 (~80% of *observed values*); test = 1/5 (~20% of *observed values*). Models are estimated against the training set and then used to predict values in the test set without additional training.
-
-    Args:
-        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
-        data (pd.DataFrame): a users x item dataframe
-        n_iter (int, optional): number of repetitions. Defaults to 10.
-        return_agg (bool, optional): [description]. return mean and std over repetitions rather than the reptitions themselves Defaults to True.
-        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
-        model_kwargs (dict, optional): [description]. A dictionary of arguments passed when the model is first initialized, e.g. `Mean(**model_kwargs)`. Defaults to {}.
-        fit_kwargs (dict, optional): Same as the `model_kwargs` but passed to `.fit()`. Defaults to {}.
-        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05)
-        verbose (bool; optional): print warning messages from a model; Default False
-
-    Returns:
-        pd.DataFrame: aggregated or non-aggregated summary statistics
-    """
-
-    all_results = []
-    fold = 1
-    for train, test in split_train_test(data, n_folds):
-        model = algorithm(
-            data=train, random_state=random_state, verbose=verbose, **model_kwargs
-        )
-        model.fit(**fit_kwargs)
-        train_results = model.summary(dataset="full")
-        train_results["cv_fold"] = fold
-        train_results["cv"] = "train"
-        test_results = model.summary(actual=test, dataset="full", return_cached=False)
-        test_results["cv_fold"] = fold
-        test_results["cv"] = "test"
-        all_results.append(train_results)
-        all_results.append(test_results)
-        fold += 1
-    all_results = (
-        pd.concat(all_results, ignore_index=True)
-        .drop(columns=["dataset"])
-        .rename(columns={"cv": "dataset"})
-        .sort_values(by=["group", "dataset", "metric"])
-        .reset_index(drop=True)
-    )
-    col_order = ["algorithm", "dataset", "cv_fold", "group", "metric", "score"]
-    all_results = all_results[col_order]
-    if return_agg:
-        col_order = ["algorithm", "dataset", "group", "metric"] + agg_stats
-        out = (
-            all_results.groupby(["algorithm", "dataset", "group", "metric"])
-            .score.agg(agg_stats)
-            .reset_index()
-            .sort_values(by=["dataset", "group", "metric"])
-            .reset_index(drop=True)[col_order]
-        )
-        return out
-    else:
-        return all_results
-
-
 def split_train_test(
-    data: pd.DataFrame, n_folds: int = 5, shuffle=True, random_state=None
+    data: pd.DataFrame, n_folds: int = 10, shuffle=True, random_state=None
 ):
     """
     Custom train/test split generator for leave-one-fold out cross-validation. Given a user x item dataframe of dense or sparse data, generates n_folds worth of train/test split dataframes that have the same shape as data, but with non-overlapping values. This ensures that no user-item combination appears in both train and test splits. Useful for estimating out-of-sample performance. n_folds controls the train/test split ratio, e.g. n_folds = 5 means train = 4/5 (~80%); test = 1/5 (~20%)
@@ -454,3 +313,139 @@ def split_train_test(
         yield unflatten_dataframe(
             train, num_rows=num_rows, num_cols=num_cols
         ), unflatten_dataframe(test, num_rows=num_rows, num_cols=num_cols)
+
+
+# def load_movielens():  # pragma: no cover
+#     """Download and create a dataframe from the 100k movielens dataset"""
+#     url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip"
+#     # With python context managers we don't need to save any temporary files
+#     print("Getting movielens...")
+#     try:
+#         with urlopen(url) as resp:
+#             with ZipFile(BytesIO(resp.read())) as myzip:
+#                 with myzip.open("ml-100k/u.data") as myfile:
+#                     df = pd.read_csv(
+#                         myfile,
+#                         delimiter="\t",
+#                         names=["Subject", "Item", "Rating", "Timestamp"],
+#                     )
+#         return df
+#     except Exception as e:
+#         print(str(e))
+
+
+def estimate_performance(
+    algorithm,
+    data: pd.DataFrame,
+    n_iter: int = 10,
+    n_folds: int = 10,
+    n_mask_items: Union[int, np.floating] = 0.2,
+    return_agg: bool = True,
+    return_full_performance: bool = False,
+    agg_stats: tuple = ["mean", "std"],
+    fit_kwargs: dict = {},
+    random_state=None,
+    verbose=False,
+) -> pd.DataFrame:
+    """
+    Repeatedly fit a model with data to estimate performance. If input data is dense (contains no missing values) then this function will fit the model `n_iter` times after applying a different random mask each iteration according to `n_mask_items`. This is useful for testing how an algorithm *would have performed* given data of a specified sparsity.
+
+    On the other hand, if input data is already sparse, no further masking will be performed and the data will instead be split into `n_folds` training and testing folds. Evaluation will be performed based on how well non-missing values in testing folds are recovered. **Note**: this *increases the sparsity* of the input dataset. The number of folds requested controls the additional sparsity of each train and test split. For example, with the default `n_folds=10`, each training split will contain 9/10 folds = ~90% of *observed values* (additional sparsity of 10%); each test split will contain 1/10 folds (~10% of *observed values*).
+
+    Args:
+        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
+        data (pd.DataFrame): a users x item dataframe
+        n_iter (int, optional): number of repetitions for dense data. Defaults to 10.
+        n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.
+        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values
+        return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.
+        return_full_performance (bool, optional): return the performance against both "observed" and "missing" or just "missing" values if using dense data and `n_iter`. Likewise return performance of both "train" and "test" or just "test" splits if using sparse data and `n_folds`; Default False
+        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
+        fit_kwargs (dict, optional): A dictionary of arguments passed to the `.fit()` method of the model. Defaults to {}.
+
+    Returns:
+        pd.DataFrame: aggregated or non-aggregated summary statistics
+    """
+
+    sparsity = get_sparsity(data)
+    all_results = []
+    if sparsity == 0.0:
+        if verbose:
+            print(
+                f"Data sparsity is {np.round(sparsity*100,2)}%. Using random masking..."
+            )
+
+        # DENSE DATA so re-mask each iteration
+        for i in range(n_iter):
+            model = algorithm(
+                data=data,
+                random_state=random_state,
+                n_mask_items=n_mask_items,
+                verbose=verbose,
+            )
+            model.fit(**fit_kwargs)
+            # observed + missing
+            if return_full_performance:
+                results = model.summary(
+                    return_cached=False, dataset=["missing", "observed"]
+                )
+            # only missing
+            else:
+                results = model.summary(return_cached=False, dataset="missing")
+            results["iter"] = i + 1
+            all_results.append(results)
+
+        all_results = (
+            pd.concat(all_results, ignore_index=True)
+            .sort_values(by=["group", "dataset", "metric"])
+            .reset_index(drop=True)
+        )
+        col_order = ["algorithm", "dataset", "iter", "group", "metric", "score"]
+    else:
+        if verbose:
+            print(
+                f"Data sparsity is {np.round(sparsity*100,2)}%. Using cross-validation..."
+            )
+
+        # SPARSE DATA so split observed values according to n_folds
+        fold = 1
+        for train, test in split_train_test(data, n_folds):
+            model = algorithm(data=train, random_state=random_state, verbose=verbose)
+            model.fit(**fit_kwargs)
+            # training performance
+            if return_full_performance:
+                train_results = model.summary(dataset="full")
+                train_results["cv_fold"] = fold
+                train_results["cv"] = "train"
+                all_results.append(train_results)
+            # testing performance
+            test_results = model.summary(
+                actual=test, dataset="full", return_cached=False
+            )
+            test_results["cv_fold"] = fold
+            test_results["cv"] = "test"
+            all_results.append(test_results)
+            fold += 1
+        all_results = (
+            pd.concat(all_results, ignore_index=True)
+            .drop(columns=["dataset"])
+            .rename(columns={"cv": "dataset"})
+            .sort_values(by=["group", "dataset", "metric"])
+            .reset_index(drop=True)
+        )
+        col_order = ["algorithm", "dataset", "cv_fold", "group", "metric", "score"]
+
+    # Collect results
+    all_results = all_results[col_order]
+    if return_agg:
+        col_order = ["algorithm", "dataset", "group", "metric"] + agg_stats
+        out = (
+            all_results.groupby(["algorithm", "dataset", "group", "metric"])
+            .score.agg(agg_stats)
+            .reset_index()
+            .sort_values(by=["dataset", "group", "metric"])
+            .reset_index(drop=True)[col_order]
+        )
+        return out
+    else:
+        return all_results

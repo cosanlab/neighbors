@@ -2,64 +2,62 @@
 Test utility functions
 """
 
-from emotioncf.utils import split_train_test
 import numpy as np
 import pandas as pd
 from emotioncf import (
     create_sub_by_item_matrix,
     nanpdist,
-    create_train_test_mask,
+    create_sparse_mask,
     estimate_performance,
-    approximate_generalization,
     flatten_dataframe,
     unflatten_dataframe,
+    split_train_test,
     Mean,
 )
 
 
 def test_estimate_performance(simulate_wide_data):
+    # Dense data
+    out = estimate_performance(Mean, simulate_wide_data, verbose=True)
+    assert out.shape == (4 * 2, 6)
+    # Include observed and missing scores in output
     out = estimate_performance(
-        Mean, simulate_wide_data, model_kwargs={"n_mask_items": 0.2}
+        Mean, simulate_wide_data, verbose=True, return_full_performance=True
     )
-    assert isinstance(out, pd.DataFrame)
-    assert out.shape == (4 * 3 * 2, 6)
-    out = estimate_performance(
-        Mean,
-        simulate_wide_data,
-        model_kwargs={"n_mask_items": 0.2},
-        agg_stats=["mean", "std", "var"],
-    )
-    assert out.shape == (4 * 3 * 2, 7)
-    out = estimate_performance(
-        Mean, simulate_wide_data, model_kwargs={"n_mask_items": 0.2}, return_agg=False
-    )
-    assert out.shape == (4 * 3 * 2 * 10, 6)
-
-
-def test_approximate_generalization(simulate_wide_data):
-    # Basic 5 fold CV
-    out = approximate_generalization(Mean, simulate_wide_data)
-    train_corr = out.query(
-        "dataset == 'train' and metric == 'correlation' and group == 'all'"
-    )["mean"].to_numpy()[0]
-    test_corr = out.query(
-        "dataset == 'test' and metric == 'correlation' and group == 'all'"
-    )["mean"].to_numpy()[0]
-    assert isinstance(out, pd.DataFrame)
     assert out.shape == (4 * 2 * 2, 6)
-    assert train_corr > test_corr
+    missing = out.query("dataset == 'missing' and group =='all'")["mean"]
+    observed = out.query("dataset == 'observed' and group =='all'")["mean"]
+    # Make sure all missing scores are worse than observed
+    for i, (o, m) in enumerate(zip(observed, missing)):
+        if i == 0:
+            assert o > m
+        else:
+            assert o < m
+    # Non-aggregated output
+    out = estimate_performance(Mean, simulate_wide_data, return_agg=False, verbose=True)
+    assert out.shape == (4 * 2 * 10, 6)
 
-    # Same but more metrics
-    out = approximate_generalization(
-        Mean,
-        simulate_wide_data,
-        agg_stats=["mean", "std", "var"],
+    # Sparse data
+    mask = create_sparse_mask(simulate_wide_data)
+    masked_data = simulate_wide_data[mask]
+    out = estimate_performance(Mean, masked_data, verbose=True)
+    assert out.shape == (4 * 2, 6)
+    # Include test and train scores in output
+    out = estimate_performance(
+        Mean, simulate_wide_data, verbose=True, return_full_performance=True
     )
-    assert out.shape == (4 * 2 * 2, 7)
-
-    # Same but don't aggregate results across folds
-    out_nonagg = approximate_generalization(Mean, simulate_wide_data, return_agg=False)
-    assert out_nonagg.shape == (4 * 2 * 10, 6)
+    assert out.shape == (4 * 2 * 2, 6)
+    test = out.query("dataset == 'test' and group =='all'")["mean"]
+    train = out.query("dataset == 'train' and group =='all'")["mean"]
+    # Make sure all test scores are worse than train
+    for i, (o, m) in enumerate(zip(train, test)):
+        if i == 0:
+            assert o > m
+        else:
+            assert o < m
+    # Non-aggregated output
+    out = estimate_performance(Mean, masked_data, return_agg=False, verbose=True)
+    assert out.shape == (4 * 2 * 10, 6)
 
 
 def test_create_sub_by_item_matrix(simulate_long_data):
@@ -99,13 +97,13 @@ def test_nanpdist(simulate_wide_data):
     assert np.allclose(calc_corr_mat, pd_corr_mat)
 
 
-def test_create_train_test_mask(simulate_wide_data):
-    mask = create_train_test_mask(simulate_wide_data, n_mask_items=0.1)
+def test_create_sparse_mask(simulate_wide_data):
+    mask = create_sparse_mask(simulate_wide_data, n_mask_items=0.1)
     expected_items = int(simulate_wide_data.shape[1] * (1 - 0.10))
     assert mask.shape == simulate_wide_data.shape
     assert all(mask.sum(1) == expected_items)
 
-    mask = create_train_test_mask(simulate_wide_data, n_mask_items=19)
+    mask = create_sparse_mask(simulate_wide_data, n_mask_items=19)
     assert mask.shape == simulate_wide_data.shape
     expected_items = int(simulate_wide_data.shape[1] - 19)
     assert all(mask.sum(1) == expected_items)
@@ -149,7 +147,7 @@ def test_split_train_test(simulate_wide_data):
         assert train.add(test, fill_value=0).equals(simulate_wide_data)
 
     # Sparse data
-    mask = create_train_test_mask(simulate_wide_data, n_mask_items=0.1)
+    mask = create_sparse_mask(simulate_wide_data, n_mask_items=0.1)
     masked_data = simulate_wide_data[mask]
     masked_not_null = masked_data.notnull().sum().sum()
 

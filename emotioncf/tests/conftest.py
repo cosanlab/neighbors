@@ -11,8 +11,7 @@ from emotioncf import (
     KNN,
     NNMF_sgd,
     NNMF_mult,
-    create_sub_by_item_matrix,
-    create_train_test_mask,
+    create_sparse_mask,
 )
 
 ## DATA FIXTURES
@@ -68,7 +67,7 @@ def Model(request):
 def mask(request, simulate_wide_data):
     """Masked or non masked input data"""
     if request.param == "masked":
-        return create_train_test_mask(simulate_wide_data, n_mask_items=0.5)
+        return create_sparse_mask(simulate_wide_data, n_mask_items=0.5)
     else:
         return request.param
 
