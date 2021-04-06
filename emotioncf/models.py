@@ -427,7 +427,7 @@ class NNMF_sgd(BaseNMF):
 
     def _predict(self):
 
-        """Predict Subject's missing items using NNMF with stochastic gradient descent"""
+        """Predict User's missing items using NNMF with stochastic gradient descent"""
 
         # user x factor * factor item + biases
         predictions = self.user_vecs @ self.item_vecs

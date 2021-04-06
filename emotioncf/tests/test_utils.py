@@ -5,7 +5,8 @@ Test utility functions
 import numpy as np
 import pandas as pd
 from emotioncf import (
-    create_sub_by_item_matrix,
+    create_user_item_matrix,
+    invert_user_item_matrix,
     nanpdist,
     create_sparse_mask,
     estimate_performance,
@@ -60,15 +61,20 @@ def test_estimate_performance(simulate_wide_data):
     assert out.shape == (4 * 2 * 10, 6)
 
 
-def test_create_sub_by_item_matrix(simulate_long_data):
-    rating = create_sub_by_item_matrix(simulate_long_data)
+def test_create_and_invert_user_item_matrix(simulate_long_data, simulate_wide_data):
+    rating = create_user_item_matrix(simulate_long_data)
     assert isinstance(rating, pd.DataFrame)
     assert rating.shape == (50, 100)
+    assert rating.equals(simulate_wide_data)
+
+    inverted = invert_user_item_matrix(rating)
+    assert inverted.shape == (50 * 100, 3)
+    assert inverted.equals(simulate_long_data)
 
     renamed = simulate_long_data.rename(
-        columns={"Subject": "A", "Item": "B", "Rating": "C"}
+        columns={"User": "A", "Item": "B", "Rating": "C"}
     )
-    rating = create_sub_by_item_matrix(renamed, columns=["A", "B", "C"])
+    rating = create_user_item_matrix(renamed, columns=["A", "B", "C"])
     assert isinstance(rating, pd.DataFrame)
     assert rating.shape == (50, 100)
 

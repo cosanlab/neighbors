@@ -28,28 +28,24 @@ def simulate_wide_data():
     for x in np.arange(0, rat.shape[1], 3):
         rat[int(s / 2) : s, x] = rat[int(s / 2) : s, x] + x
     rat[int(s / 2) : s] = rat[int(s / 2) : s, ::-1]
-    return pd.DataFrame(rat)
+    rat = pd.DataFrame(rat)
+    rat.index.name = "User"
+    rat.columns.name = "Item"
+    return rat
 
 
 @fixture(scope="module")
 def simulate_long_data(simulate_wide_data):
     """Melt generated user x item dataframe to a (user * item, 3) shaped dataframe"""
 
-    out = pd.DataFrame(columns=["Subject", "Item", "Rating"])
-    for _, row in simulate_wide_data.iterrows():
-        sub = pd.DataFrame(columns=out.columns)
-        sub["Rating"] = row[1]
-        sub["Item"] = simulate_wide_data.columns
-        sub["Subject"] = row[0]
-        out = out.append(sub)
-    return out
+    return simulate_wide_data.reset_index().melt(id_vars="User", value_name="Rating")
 
 
 @fixture(scope="module")
 def simulate_simple_dataframe():
     """Simple data frame with 5 users and 2 items"""
     ratings_dict = {
-        "Subject": ["A", "A", "B", "B", "C", "C", "D", "D", "E", "E"],
+        "User": ["A", "A", "B", "B", "C", "C", "D", "D", "E", "E"],
         "Item": [1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
         "Rating": [1, 2, 2, 4, 2.5, 4, 4.5, 5, 3, 1],
     }

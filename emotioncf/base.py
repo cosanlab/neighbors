@@ -268,7 +268,7 @@ class Base(object):
             ).mean()
 
             if verbose:
-                print("Average Subject Correlation: %s" % r)
+                print("Average user correlation: %s" % r)
             return f, r
 
         return f
@@ -339,12 +339,12 @@ class Base(object):
 
         """ Create a long format pandas dataframe with observed, predicted, and mask."""
 
-        observed = pd.DataFrame(columns=["Subject", "Item", "Rating", "Condition"])
+        observed = pd.DataFrame(columns=["User", "Item", "Rating", "Condition"])
         for row in self.data.iterrows():
             tmp = pd.DataFrame(columns=observed.columns)
             tmp["Rating"] = row[1]
             tmp["Item"] = self.data.columns
-            tmp["Subject"] = row[0]
+            tmp["User"] = row[0]
             tmp["Condition"] = "Observed"
             if self.is_masked:
                 if self.is_mask_dilated:
@@ -354,12 +354,12 @@ class Base(object):
             observed = observed.append(tmp)
 
         if self.is_fit:
-            predicted = pd.DataFrame(columns=["Subject", "Item", "Rating", "Condition"])
+            predicted = pd.DataFrame(columns=["User", "Item", "Rating", "Condition"])
             for row in self.predictions.iterrows():
                 tmp = pd.DataFrame(columns=predicted.columns)
                 tmp["Rating"] = row[1]
                 tmp["Item"] = self.predictions.columns
-                tmp["Subject"] = row[0]
+                tmp["User"] = row[0]
                 tmp["Condition"] = "Predicted"
                 if self.is_masked:
                     tmp["Mask"] = self.mask.loc[row[0]]

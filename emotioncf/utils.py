@@ -6,15 +6,13 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.spatial.distance import pdist, squareform
-from zipfile import ZipFile
-from io import BytesIO
-from urllib.request import urlopen
 import numbers
 from itertools import product, chain
 from typing import Union
 
 __all__ = [
-    "create_sub_by_item_matrix",
+    "create_user_item_matrix",
+    "invert_user_item_matrix",
     "get_size_in_mb",
     "get_sparsity",
     "nanpdist",
@@ -49,13 +47,31 @@ def check_random_state(seed):
     )
 
 
-def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"):
+def invert_user_item_matrix(df):
+    """
+    Reshapes a user x item matrix back into a longform dataframe with "User", "Item" and "Rating" columns. Convenience function to undo a call to `create_user_item_matrix`. Dataframe must have an index name of 'Users' and a columns name of 'Items'.
 
-    """Convert a pandas long data frame of a single rating into a subject by item matrix
+    Args:
+        df (pd.DataFrame): user x item dataframe, e.g. the output of a call to `create_user_by_item_matrix`
+
+    Returns:
+        pd.DataFrame: longform dataframe with "User", "Item", "Rating" columns
+    """
+
+    if df.index.name != "User" or df.columns.name != "Item":
+        raise TypeError(
+            "input should be a user x item matrix with appropriately named columns and rows"
+        )
+    return df.reset_index().melt(id_vars="User", value_name="Rating")
+
+
+def create_user_item_matrix(df, columns=None, force_float=True, errors="raise"):
+
+    """Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix
 
     Args:
         df (Dataframe): input dataframe
-        columns (list): list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier ("Subject"), the second a unique item identifier ("Item", "Timepoint"), and the last the rating made by the individual on that item ("Rating"). Defaults to ["Subject", "Item", "Rating"]
+        columns (list): list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier ("User"), the second a unique item identifier (e.g. "Item"), and the last the rating made by the individual on that item ("Rating"). Defaults to ["User", "Item", "Rating"]
         force_float (bool): force the resulting output to be float data types with errors being set to NaN; Default True
         errors (string): how to handle errors in pd.to_numeric; Default 'raise'
 
@@ -67,7 +83,7 @@ def create_sub_by_item_matrix(df, columns=None, force_float=True, errors="raise"
     if not isinstance(df, pd.DataFrame):
         raise ValueError("df must be pandas instance")
     if columns is None:
-        columns = ["Subject", "Item", "Rating"]
+        columns = ["User", "Item", "Rating"]
     if not all([x in df.columns for x in columns]):
         raise ValueError(
             f"df is missing some or all of the following columns: {columns}"
@@ -313,25 +329,6 @@ def split_train_test(
         yield unflatten_dataframe(
             train, num_rows=num_rows, num_cols=num_cols
         ), unflatten_dataframe(test, num_rows=num_rows, num_cols=num_cols)
-
-
-# def load_movielens():  # pragma: no cover
-#     """Download and create a dataframe from the 100k movielens dataset"""
-#     url = "http://files.grouplens.org/datasets/movielens/ml-100k.zip"
-#     # With python context managers we don't need to save any temporary files
-#     print("Getting movielens...")
-#     try:
-#         with urlopen(url) as resp:
-#             with ZipFile(BytesIO(resp.read())) as myzip:
-#                 with myzip.open("ml-100k/u.data") as myfile:
-#                     df = pd.read_csv(
-#                         myfile,
-#                         delimiter="\t",
-#                         names=["Subject", "Item", "Rating", "Timestamp"],
-#                     )
-#         return df
-#     except Exception as e:
-#         print(str(e))
 
 
 def estimate_performance(
