@@ -640,7 +640,7 @@
 
 
 <h4 id="emotioncf.base.Base.create_masked_data" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></code>
 
 
 </h4>
@@ -670,7 +670,7 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>emotioncf/base.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a mask and apply it to data using number of items or % of items</span>
 
@@ -688,7 +688,7 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="s2">&quot;n_items should a float between 0-1 or an integer &lt; the number of items&quot;</span>
         <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">create_train_test_mask</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">create_sparse_mask</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
     <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
@@ -1034,7 +1034,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average Subject Correlation: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">r</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average user correlation: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">r</span>
 
     <span class="k">return</span> <span class="n">f</span>
@@ -1204,7 +1204,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 <h4 id="emotioncf.base.Base.summary" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1233,8 +1233,8 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       <tr>
         <td><code>return_cached</code></td>
         <td><code>bool</code></td>
-        <td><p>Save time by returning already computed scores if they exist. Defaults to True.</p></td>
-        <td><code>True</code></td>
+        <td><p>Save time by returning already computed scores if they exist. Defaults to False.</p></td>
+        <td><code>False</code></td>
       </tr>
       <tr>
         <td><code>actual</code></td>
@@ -1267,13 +1267,13 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 </table>
         <details class="quote">
           <summary>Source code in <code>emotioncf/base.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        verbose (bool, optional): Print warning messages during scoring. Defaults to True.</span>
-<span class="sd">        return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to True.</span>
+<span class="sd">        return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to False.</span>
 <span class="sd">        actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized</span>
 <span class="sd">        dataset (str/list/None): dataset to score. Must be some combination of &#39;full&#39;, &#39;observed&#39;, and &#39;missing&#39; or None to score all; Default None</span>
 
@@ -1327,7 +1327,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
             <span class="n">subject_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_subject_result</span><span class="p">)</span>
             <span class="n">group_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                 <span class="nb">zip</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">],</span>
+                    <span class="n">dataset</span><span class="p">,</span>
                     <span class="n">this_subject_result</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -1395,12 +1395,12 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
     <span class="sd">&quot;&quot;&quot; Create a long format pandas dataframe with observed, predicted, and mask.&quot;&quot;&quot;</span>
 
-    <span class="n">observed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Condition&quot;</span><span class="p">])</span>
+    <span class="n">observed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Condition&quot;</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">observed</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Rating&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Condition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Observed&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask_dilated</span><span class="p">:</span>
@@ -1410,12 +1410,12 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="n">observed</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="n">predicted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Condition&quot;</span><span class="p">])</span>
+        <span class="n">predicted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Condition&quot;</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">predicted</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
             <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Rating&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">columns</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Condition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Predicted&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
                 <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
