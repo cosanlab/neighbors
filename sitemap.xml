@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://cosanlab.github.io/emotionCF/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/timeseries/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/development/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/api/utils/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/api/base/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/api/mean/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/api/knn/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/api/nmf_m/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://cosanlab.github.io/emotionCF/api/nmf_s/</loc>
-     <lastmod>2021-04-06</lastmod>
+     <lastmod>2021-04-07</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
