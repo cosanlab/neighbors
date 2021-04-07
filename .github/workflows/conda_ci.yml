@@ -61,7 +61,7 @@ jobs:
           conda activate test
           conda env list
           conda install -y numpy numba pandas scipy seaborn
-          conda install -y -c conda-forge pytest pytest-xdist pytest-sugar coveralls black
+          conda install -y -c conda-forge pytest pytest-cov pytest-xdist pytest-sugar coveralls black
           pip install . -r requirements.txt
 
       # Check code formatting
@@ -74,7 +74,7 @@ jobs:
         run: |
           conda activate test
           conda env list
-          coverage run --source=emotioncf -m pytest -rs -n auto
+          pytest --cov=emotioncf -rs -n auto
 
       # Send coverage to coveralls.io but waiting on parallelization to finish
       # Not using the official github action in the marketplace to upload because it requires a .lcov file, which pytest doesn't generate. It's just easier to use the coveralls python library which does the same thing, but works with pytest.
