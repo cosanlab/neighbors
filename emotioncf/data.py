@@ -41,4 +41,7 @@ def load_toymat(users=50, items=100, random_state=None):
     for x in np.arange(0, rat.shape[1], 3):
         rat[int(users / 2) : users, x] = rat[int(users / 2) : users, x] + x
     rat[int(users / 2) : users] = rat[int(users / 2) : users, ::-1]
+    rat = pd.DataFrame(rat)
+    rat.index.name = "Users"
+    rat.columns.name = "Items"
     return pd.DataFrame(rat)

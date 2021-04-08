@@ -6,9 +6,10 @@ import numpy as np
 import numba as nb
 
 
-@nb.njit(cache=True)
+@nb.njit(cache=True, nogil=True)
 def sgd(
     data,
+    seed,
     global_bias,
     data_range,
     tol,
@@ -28,11 +29,12 @@ def sgd(
 ):
     """SGD Update"""
 
-    error_history = []
+    error_history = np.zeros((n_iterations))
     converged = False
     last_e = 0
     norm_rmse = np.inf
     delta = np.inf
+    np.random.seed(seed)
     for this_iter in range(n_iterations):
 
         # Shuffle training indices
@@ -41,7 +43,6 @@ def sgd(
 
         if verbose and this_iter > 0 and this_iter % 10 == 0:
             disp_norm_error = np.round(100 * norm_rmse, 2)
-            disp_delta = np.round(delta, 4)
             # Numba doesn't like f-strings
             print(
                 "Iter:",
@@ -49,7 +50,7 @@ def sgd(
                 " Norm RMSE:",
                 disp_norm_error,
                 "%  Delta Convg:",
-                disp_delta,
+                delta,
                 "||",
                 tol,
             )
@@ -85,13 +86,14 @@ def sgd(
         # Normalize the current error with respect to the range of the dataset
         rmse = np.sqrt(total_error / len(training_indices))
         norm_rmse = rmse / data_range
-        error_history.append(norm_rmse)
+        error_history[this_iter] = norm_rmse
 
         # Compute the delta to see if we should stop iterating
         delta = np.abs(np.abs(norm_rmse) - np.abs(last_e))
         # If we've converged break out of iteration
         if delta < tol:
             converged = True
+            error_history = error_history[: this_iter + 1]
             break
         # Otherwise update the error
         last_e = norm_rmse
@@ -109,12 +111,12 @@ def sgd(
     )
 
 
-@nb.njit(cache=True)
+@nb.njit(cache=True, nogil=True)
 def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
     """Lee & Seung (2001) multiplicative update rule"""
 
     last_e = 0
-    error_history = []
+    error_history = np.zeros((n_iterations))
     converged = False
     norm_rmse = np.inf
     delta = np.inf
@@ -123,7 +125,6 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
 
         if verbose and this_iter > 0 and this_iter % 10 == 0:
             disp_norm_error = np.round(100 * norm_rmse, 2)
-            disp_delta = np.round(delta, 4)
             # Numba doesn't like f-strings
             print(
                 "Iter:",
@@ -131,7 +132,7 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
                 " Norm RMSE:",
                 disp_norm_error,
                 "%  Delta Convg:",
-                disp_delta,
+                delta,
                 "||",
                 tol,
             )
@@ -155,12 +156,13 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
 
         # Normalize current error with respect to max of dataset
         norm_rmse = rmse / data_range
-        error_history.append(norm_rmse)
+        error_history[this_iter] = norm_rmse
 
         # Compute delta to see if we should stop iterating
         delta = np.abs(np.abs(norm_rmse) - np.abs(last_e))
         if delta < tol:
             converged = True
+            error_history = error_history[: this_iter + 1]
             break
         # Otherwise update the error
         last_e = norm_rmse

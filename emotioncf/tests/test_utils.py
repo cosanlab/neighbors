@@ -21,9 +21,13 @@ def test_estimate_performance(simulate_wide_data):
     # Dense data
     out = estimate_performance(Mean, simulate_wide_data, verbose=True)
     assert out.shape == (4 * 2, 6)
-    # Include observed and missing scores in output
+    # Include observed and missing scores in output and parallelize
     out = estimate_performance(
-        Mean, simulate_wide_data, verbose=True, return_full_performance=True
+        Mean,
+        simulate_wide_data,
+        verbose=True,
+        return_full_performance=True,
+        parallelize=True,
     )
     assert out.shape == (4 * 2 * 2, 6)
     missing = out.query("dataset == 'missing' and group =='all'")["mean"]
@@ -43,9 +47,13 @@ def test_estimate_performance(simulate_wide_data):
     masked_data = simulate_wide_data[mask]
     out = estimate_performance(Mean, masked_data, verbose=True)
     assert out.shape == (4 * 2, 6)
-    # Include test and train scores in output
+    # Include test and train scores in output and parallelize
     out = estimate_performance(
-        Mean, simulate_wide_data, verbose=True, return_full_performance=True
+        Mean,
+        simulate_wide_data,
+        verbose=True,
+        return_full_performance=True,
+        parallelize=True,
     )
     assert out.shape == (4 * 2 * 2, 6)
     test = out.query("dataset == 'test' and group =='all'")["mean"]

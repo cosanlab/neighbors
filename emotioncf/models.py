@@ -19,7 +19,9 @@ class Mean(Base):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
-        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.mean = None
 
     def fit(self, dilate_by_nsamples=None, **kwargs):
@@ -61,7 +63,9 @@ class KNN(Base):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
-        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.subject_similarity = None
         self._last_metric = None
         self._last_dilate_by_nsamples = None
@@ -163,7 +167,9 @@ class NNMF_mult(BaseNMF):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
-        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.H = None  # factors x items
         self.W = None  # user x factors
         self.n_factors = None
@@ -249,7 +255,7 @@ class NNMF_mult(BaseNMF):
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
-                print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
+                print(f"\tFinal delta exceeds tol: {tol} <= {self._delta}")
 
             print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
         self._predict()
@@ -279,7 +285,9 @@ class NNMF_sgd(BaseNMF):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
-        super().__init__(data, mask, n_mask_items, verbose, random_state=random_state)
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.n_factors = None
 
     def __repr__(self):
@@ -351,6 +359,7 @@ class NNMF_sgd(BaseNMF):
         self.global_bias = self.masked_data.mean().mean()
         self.user_bias = np.zeros(n_users)
         self.item_bias = np.zeros(n_items)
+
         # Like multiplicative updating orient these as user x factor, factor x item
         self.user_vecs = self.random_state.normal(
             scale=1.0 / n_factors, size=(n_users, n_factors)
@@ -360,6 +369,9 @@ class NNMF_sgd(BaseNMF):
         )
 
         X = self.masked_data.to_numpy()
+
+        # Generate seed for shuffling within sgd
+        seed = self.random_state.randint(np.iinfo(np.int32).max)
 
         # Run SGD
         (
@@ -374,6 +386,7 @@ class NNMF_sgd(BaseNMF):
             item_vecs,
         ) = sgd(
             X,
+            seed,
             self.global_bias,
             self.data_range,
             tol,
@@ -418,7 +431,7 @@ class NNMF_sgd(BaseNMF):
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
-                print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
+                print(f"\tFinal delta exceeds tol: {tol} <= {self._delta}")
 
             print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
 

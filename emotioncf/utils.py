@@ -9,6 +9,8 @@ from scipy.spatial.distance import pdist, squareform
 import numbers
 from itertools import product, chain
 from typing import Union
+from concurrent.futures import ThreadPoolExecutor
+import os
 
 __all__ = [
     "create_user_item_matrix",
@@ -342,7 +344,8 @@ def estimate_performance(
     agg_stats: tuple = ["mean", "std"],
     fit_kwargs: dict = {},
     random_state=None,
-    verbose=False,
+    parallelize=False,
+    verbose=True,
 ) -> pd.DataFrame:
     """
     Repeatedly fit a model with data to estimate performance. If input data is dense (contains no missing values) then this function will fit the model `n_iter` times after applying a different random mask each iteration according to `n_mask_items`. This is useful for testing how an algorithm *would have performed* given data of a specified sparsity.
@@ -359,26 +362,43 @@ def estimate_performance(
         return_full_performance (bool, optional): return the performance against both "observed" and "missing" or just "missing" values if using dense data and `n_iter`. Likewise return performance of both "train" and "test" or just "test" splits if using sparse data and `n_folds`; Default False
         agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
         fit_kwargs (dict, optional): A dictionary of arguments passed to the `.fit()` method of the model. Defaults to {}.
+        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.
+        parallelize (bool, optional): Use multiple *threads* to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple *processes* like joblib. Some algorithms like `NNMF_sgd` can see significant speed-ups (2-3x) when `True`. Others, like `NNMF_mult` do not not gain much benefit or may even slow down. Default False.
+        verbose (bool, optional): print information messages on execution; Default True.
+
 
     Returns:
         pd.DataFrame: aggregated or non-aggregated summary statistics
     """
 
     sparsity = get_sparsity(data)
-    all_results = []
+    random_state = check_random_state(random_state)
+    # Set max threads to the new default in Python 3.8
+    max_threads = min(32, os.cpu_count() + 4)
+
     if sparsity == 0.0:
+        # DENSE DATA so re-mask each iteration
         if verbose:
             print(
                 f"Data sparsity is {np.round(sparsity*100,2)}%. Using random masking..."
             )
 
-        # DENSE DATA so re-mask each iteration
-        for i in range(n_iter):
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_iter)
+
+        def _run_dense(
+            i,
+            algorithm,
+            data,
+            random_state,
+            n_mask_items,
+            return_full_performance,
+            fit_kwargs,
+        ):
             model = algorithm(
                 data=data,
                 random_state=random_state,
                 n_mask_items=n_mask_items,
-                verbose=verbose,
+                verbose=False,
             )
             model.fit(**fit_kwargs)
             # observed + missing
@@ -390,8 +410,36 @@ def estimate_performance(
             else:
                 results = model.summary(return_cached=False, dataset="missing")
             results["iter"] = i + 1
-            all_results.append(results)
+            return results
 
+        if parallelize:
+            if verbose:
+                print("Parallelizing across threads...")
+
+            with ThreadPoolExecutor(max_threads) as threads:
+                all_results = threads.map(
+                    _run_dense,
+                    range(n_iter),
+                    [algorithm] * n_iter,
+                    [data] * n_iter,
+                    seeds,
+                    [n_mask_items] * n_iter,
+                    [return_full_performance] * n_iter,
+                    [fit_kwargs] * n_iter,
+                )
+        else:
+            all_results = map(
+                _run_dense,
+                range(n_iter),
+                [algorithm] * n_iter,
+                [data] * n_iter,
+                seeds,
+                [n_mask_items] * n_iter,
+                [return_full_performance] * n_iter,
+                [fit_kwargs] * n_iter,
+            )
+
+        all_results = list(all_results)
         all_results = (
             pd.concat(all_results, ignore_index=True)
             .sort_values(by=["group", "dataset", "metric"])
@@ -399,30 +447,70 @@ def estimate_performance(
         )
         col_order = ["algorithm", "dataset", "iter", "group", "metric", "score"]
     else:
+        # SPARSE DATA so split observed values according to n_folds
         if verbose:
             print(
                 f"Data sparsity is {np.round(sparsity*100,2)}%. Using cross-validation..."
             )
 
-        # SPARSE DATA so split observed values according to n_folds
-        fold = 1
-        for train, test in split_train_test(data, n_folds):
-            model = algorithm(data=train, random_state=random_state, verbose=verbose)
+        def _run_sparse(
+            i,
+            test,
+            train,
+            algorithm,
+            random_state,
+            return_full_performance,
+            fit_kwargs,
+        ):
+            model = algorithm(data=train, random_state=random_state, verbose=False)
             model.fit(**fit_kwargs)
-            # training performance
-            if return_full_performance:
-                train_results = model.summary(dataset="full")
-                train_results["cv_fold"] = fold
-                train_results["cv"] = "train"
-                all_results.append(train_results)
-            # testing performance
             test_results = model.summary(
                 actual=test, dataset="full", return_cached=False
             )
-            test_results["cv_fold"] = fold
+            test_results["cv_fold"] = i + 1
             test_results["cv"] = "test"
-            all_results.append(test_results)
-            fold += 1
+            if return_full_performance:
+                train_results = model.summary(dataset="full", return_cached=False)
+                train_results["cv_fold"] = i + 1
+                train_results["cv"] = "train"
+                test_results = pd.concat(
+                    [test_results, train_results], ignore_index=True
+                )
+            return test_results
+
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=n_folds)
+        splits = list(split_train_test(data, n_folds, random_state=random_state))
+        trains = [elem[0] for elem in splits]
+        tests = [elem[1] for elem in splits]
+
+        if parallelize:
+            if verbose:
+                print("Parallelizing across threads...")
+
+            with ThreadPoolExecutor(max_threads) as threads:
+                all_results = threads.map(
+                    _run_sparse,
+                    range(n_folds),
+                    trains,
+                    tests,
+                    [algorithm] * n_folds,
+                    seeds,
+                    [return_full_performance] * n_folds,
+                    [fit_kwargs] * n_folds,
+                )
+        else:
+            all_results = map(
+                _run_sparse,
+                range(n_folds),
+                trains,
+                tests,
+                [algorithm] * n_folds,
+                seeds,
+                [return_full_performance] * n_folds,
+                [fit_kwargs] * n_folds,
+            )
+
+        all_results = list(all_results)
         all_results = (
             pd.concat(all_results, ignore_index=True)
             .drop(columns=["dataset"])
