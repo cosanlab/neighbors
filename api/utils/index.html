@@ -1074,7 +1074,7 @@
 
 
 <h4 id="emotioncf.utils.estimate_performance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1149,6 +1149,24 @@
         <td><p>A dictionary of arguments passed to the <code>.fit()</code> method of the model. Defaults to {}.</p></td>
         <td><code>{}</code></td>
       </tr>
+      <tr>
+        <td><code>random_state</code></td>
+        <td><code>None, int, RandomState</code></td>
+        <td><p>a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>parallelize</code></td>
+        <td><code>bool</code></td>
+        <td><p>Use multiple <em>threads</em> to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple <em>processes</em> like joblib. Some algorithms like <code>NNMF_sgd</code> can see significant speed-ups (2-3x) when <code>True</code>. Others, like <code>NNMF_mult</code> do not not gain much benefit or may even slow down. Default False.</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>verbose</code></td>
+        <td><code>bool</code></td>
+        <td><p>print information messages on execution; Default True.</p></td>
+        <td><code>True</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -1179,7 +1197,8 @@
     <span class="n">agg_stats</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">],</span>
     <span class="n">fit_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Repeatedly fit a model with data to estimate performance. If input data is dense (contains no missing values) then this function will fit the model `n_iter` times after applying a different random mask each iteration according to `n_mask_items`. This is useful for testing how an algorithm *would have performed* given data of a specified sparsity.</span>
@@ -1196,26 +1215,43 @@
 <span class="sd">        return_full_performance (bool, optional): return the performance against both &quot;observed&quot; and &quot;missing&quot; or just &quot;missing&quot; values if using dense data and `n_iter`. Likewise return performance of both &quot;train&quot; and &quot;test&quot; or just &quot;test&quot; splits if using sparse data and `n_folds`; Default False</span>
 <span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default (&#39;mean&#39;, &#39;std&#39;)</span>
 <span class="sd">        fit_kwargs (dict, optional): A dictionary of arguments passed to the `.fit()` method of the model. Defaults to {}.</span>
+<span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.</span>
+<span class="sd">        parallelize (bool, optional): Use multiple *threads* to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple *processes* like joblib. Some algorithms like `NNMF_sgd` can see significant speed-ups (2-3x) when `True`. Others, like `NNMF_mult` do not not gain much benefit or may even slow down. Default False.</span>
+<span class="sd">        verbose (bool, optional): print information messages on execution; Default True.</span>
+
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: aggregated or non-aggregated summary statistics</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">sparsity</span> <span class="o">=</span> <span class="n">get_sparsity</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+    <span class="c1"># Set max threads to the new default in Python 3.8</span>
+    <span class="n">max_threads</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">sparsity</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="c1"># DENSE DATA so re-mask each iteration</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using random masking...&quot;</span>
             <span class="p">)</span>
 
-        <span class="c1"># DENSE DATA so re-mask each iteration</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">):</span>
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_iter</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_run_dense</span><span class="p">(</span>
+            <span class="n">i</span><span class="p">,</span>
+            <span class="n">algorithm</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="p">,</span>
+            <span class="n">n_mask_items</span><span class="p">,</span>
+            <span class="n">return_full_performance</span><span class="p">,</span>
+            <span class="n">fit_kwargs</span><span class="p">,</span>
+        <span class="p">):</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
                 <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
                 <span class="n">n_mask_items</span><span class="o">=</span><span class="n">n_mask_items</span><span class="p">,</span>
-                <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
             <span class="c1"># observed + missing</span>
@@ -1227,8 +1263,36 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">)</span>
             <span class="n">results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">results</span>
 
+        <span class="k">if</span> <span class="n">parallelize</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parallelizing across threads...&quot;</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">threads</span><span class="p">:</span>
+                <span class="n">all_results</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="n">_run_dense</span><span class="p">,</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">),</span>
+                    <span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                    <span class="n">seeds</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">n_mask_items</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_results</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
+                <span class="n">_run_dense</span><span class="p">,</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">n_iter</span><span class="p">),</span>
+                <span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                <span class="n">seeds</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">n_mask_items</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
         <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
@@ -1236,30 +1300,70 @@
         <span class="p">)</span>
         <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;iter&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># SPARSE DATA so split observed values according to n_folds</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using cross-validation...&quot;</span>
             <span class="p">)</span>
 
-        <span class="c1"># SPARSE DATA so split observed values according to n_folds</span>
-        <span class="n">fold</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">_run_sparse</span><span class="p">(</span>
+            <span class="n">i</span><span class="p">,</span>
+            <span class="n">test</span><span class="p">,</span>
+            <span class="n">train</span><span class="p">,</span>
+            <span class="n">algorithm</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="p">,</span>
+            <span class="n">return_full_performance</span><span class="p">,</span>
+            <span class="n">fit_kwargs</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
-            <span class="c1"># training performance</span>
-            <span class="k">if</span> <span class="n">return_full_performance</span><span class="p">:</span>
-                <span class="n">train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
-                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold</span>
-                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
-                <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_results</span><span class="p">)</span>
-            <span class="c1"># testing performance</span>
             <span class="n">test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span>
                 <span class="n">actual</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span>
             <span class="p">)</span>
-            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold</span>
+            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-            <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_results</span><span class="p">)</span>
-            <span class="n">fold</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">return_full_performance</span><span class="p">:</span>
+                <span class="n">train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+                <span class="n">test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">test_results</span><span class="p">,</span> <span class="n">train_results</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">test_results</span>
+
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_folds</span><span class="p">)</span>
+        <span class="n">splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">))</span>
+        <span class="n">trains</span> <span class="o">=</span> <span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">]</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">parallelize</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parallelizing across threads...&quot;</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">threads</span><span class="p">:</span>
+                <span class="n">all_results</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="n">_run_sparse</span><span class="p">,</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">n_folds</span><span class="p">),</span>
+                    <span class="n">trains</span><span class="p">,</span>
+                    <span class="n">tests</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                    <span class="n">seeds</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_results</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
+                <span class="n">_run_sparse</span><span class="p">,</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">n_folds</span><span class="p">),</span>
+                <span class="n">trains</span><span class="p">,</span>
+                <span class="n">tests</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                <span class="n">seeds</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
         <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">])</span>
