@@ -14823,14 +14823,14 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[124]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">emotioncf</span> <span class="kn">import</span> <span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">estimate_performance</span><span class="p">,</span> <span class="n">approximate_generalization</span>
+<span class="kn">from</span> <span class="nn">emotioncf</span> <span class="kn">import</span> <span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">create_user_item_matrix</span><span class="p">,</span> <span class="n">estimate_performance</span>
 </pre></div>
 
         </div>
@@ -14842,14 +14842,14 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[145]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">ratings_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;Subject&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;User&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">,</span>
         <span class="s2">&quot;D&quot;</span><span class="p">,</span><span class="s2">&quot;D&quot;</span><span class="p">,</span><span class="s2">&quot;D&quot;</span><span class="p">,</span><span class="s2">&quot;D&quot;</span><span class="p">,</span><span class="s2">&quot;D&quot;</span><span class="p">,</span><span class="s2">&quot;E&quot;</span><span class="p">,</span><span class="s2">&quot;E&quot;</span><span class="p">,</span><span class="s2">&quot;E&quot;</span><span class="p">,</span><span class="s2">&quot;E&quot;</span><span class="p">,</span><span class="s2">&quot;E&quot;</span><span class="p">,</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="s2">&quot;F&quot;</span>
     <span class="p">],</span>
@@ -14857,7 +14857,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
     <span class="s2">&quot;Rating&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ratings_dict</span><span class="p">)</span>
-<span class="n">mat</span> <span class="o">=</span> <span class="n">create_sub_by_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">mat</span> <span class="o">=</span> <span class="n">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 
         </div>
@@ -14880,7 +14880,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[146]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -14902,7 +14902,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[146]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
 
 
 
@@ -14932,7 +14932,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
       <th>5</th>
     </tr>
     <tr>
-      <th>Subject</th>
+      <th>User</th>
       <th></th>
       <th></th>
       <th></th>
@@ -15009,7 +15009,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[147]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15032,7 +15032,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[148]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15054,7 +15054,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[148]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 
 
 
@@ -15084,7 +15084,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
       <th>5</th>
     </tr>
     <tr>
-      <th>Subject</th>
+      <th>User</th>
       <th></th>
       <th></th>
       <th></th>
@@ -15155,7 +15155,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[149]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15183,7 +15183,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[150]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15205,7 +15205,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[150]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
 
 
 
@@ -15235,7 +15235,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
       <th>5</th>
     </tr>
     <tr>
-      <th>Subject</th>
+      <th>User</th>
       <th></th>
       <th></th>
       <th></th>
@@ -15246,51 +15246,51 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
   <tbody>
     <tr>
       <th>A</th>
-      <td>44.999151</td>
-      <td>47.953675</td>
-      <td>58.691145</td>
-      <td>67.968257</td>
-      <td>67.969929</td>
+      <td>44.999094</td>
+      <td>47.953255</td>
+      <td>58.715807</td>
+      <td>67.967979</td>
+      <td>67.969581</td>
     </tr>
     <tr>
       <th>B</th>
-      <td>10.000185</td>
-      <td>46.303640</td>
-      <td>21.999898</td>
-      <td>36.999965</td>
-      <td>88.000474</td>
+      <td>10.000184</td>
+      <td>46.391831</td>
+      <td>21.999897</td>
+      <td>36.999911</td>
+      <td>88.000482</td>
     </tr>
     <tr>
       <th>C</th>
-      <td>66.349398</td>
-      <td>88.990034</td>
-      <td>88.999753</td>
-      <td>12.993177</td>
-      <td>58.992470</td>
+      <td>66.095467</td>
+      <td>88.990049</td>
+      <td>88.999733</td>
+      <td>12.993243</td>
+      <td>58.992294</td>
     </tr>
     <tr>
       <th>D</th>
-      <td>66.000434</td>
-      <td>50.697684</td>
-      <td>87.999868</td>
-      <td>46.999740</td>
-      <td>89.001361</td>
+      <td>66.000442</td>
+      <td>50.713037</td>
+      <td>87.999866</td>
+      <td>46.999762</td>
+      <td>89.001373</td>
     </tr>
     <tr>
       <th>E</th>
-      <td>81.999818</td>
-      <td>37.996828</td>
-      <td>58.978183</td>
-      <td>77.997957</td>
-      <td>72.997430</td>
+      <td>81.999808</td>
+      <td>37.996712</td>
+      <td>58.838022</td>
+      <td>77.997880</td>
+      <td>72.997403</td>
     </tr>
     <tr>
       <th>F</th>
-      <td>9.999371</td>
-      <td>21.006285</td>
-      <td>81.000367</td>
-      <td>70.005018</td>
-      <td>91.235274</td>
+      <td>9.999364</td>
+      <td>21.006463</td>
+      <td>81.000379</td>
+      <td>70.004925</td>
+      <td>91.216547</td>
     </tr>
   </tbody>
 </table>
@@ -15313,7 +15313,7 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[151]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15341,9 +15341,9 @@ h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>RMSE observed: 0.01346242071583265
-RMSE missing: 21.64361991977338
-RMSE all: 9.679328573601552
+<pre>RMSE observed: 0.013588923675373888
+RMSE missing: 21.590258711595013
+RMSE all: 9.655464876110223
 </pre>
 </div>
 </div>
@@ -15369,7 +15369,7 @@ RMSE all: 9.679328573601552
 <p>At the same time we can calculate these performance metrics by <em>grouping</em> the data in two different ways:</p>
 <ol>
 <li><em>user</em> model fit: this is the performance calculated <em>separately</em> per user and then averaged. This approach is more common for calculating metrics in psychological and social science research. </li>
-<li><em>overall</em> model fit: this is the performance ignoring the fact that scores from the same user might be more similar. This is more commonly used in machine-learning or industry settings.</li>
+<li><em>all</em> model fit: this is the performance ignoring the fact that scores from the same user might be more similar. This is more commonly used in machine-learning or industry settings.</li>
 </ol>
 <p>Rather writing custom code to repeatedly call <code>.score()</code> for each metric and group, we provide a convenient <code>.summary()</code> method which will calculate all of these!</p>
 
@@ -15377,7 +15377,7 @@ RMSE all: 9.679328573601552
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[152]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15399,7 +15399,7 @@ RMSE all: 9.679328573601552
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[152]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 
 
 
@@ -15436,7 +15436,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>all</td>
       <td>correlation</td>
-      <td>0.928144</td>
+      <td>0.928491</td>
     </tr>
     <tr>
       <th>1</th>
@@ -15444,7 +15444,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>all</td>
       <td>mae</td>
-      <td>3.457459</td>
+      <td>3.457431</td>
     </tr>
     <tr>
       <th>2</th>
@@ -15452,7 +15452,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>all</td>
       <td>mse</td>
-      <td>93.689402</td>
+      <td>93.228002</td>
     </tr>
     <tr>
       <th>3</th>
@@ -15460,7 +15460,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>all</td>
       <td>rmse</td>
-      <td>9.679329</td>
+      <td>9.655465</td>
     </tr>
     <tr>
       <th>4</th>
@@ -15468,7 +15468,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>user</td>
       <td>correlation</td>
-      <td>0.942099</td>
+      <td>0.942516</td>
     </tr>
     <tr>
       <th>5</th>
@@ -15476,7 +15476,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>user</td>
       <td>mae</td>
-      <td>3.457459</td>
+      <td>3.457431</td>
     </tr>
     <tr>
       <th>6</th>
@@ -15484,7 +15484,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>user</td>
       <td>mse</td>
-      <td>93.689402</td>
+      <td>93.228002</td>
     </tr>
     <tr>
       <th>7</th>
@@ -15492,7 +15492,7 @@ RMSE all: 9.679328573601552
       <td>full</td>
       <td>user</td>
       <td>rmse</td>
-      <td>7.719451</td>
+      <td>7.719268</td>
     </tr>
     <tr>
       <th>8</th>
@@ -15500,7 +15500,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>all</td>
       <td>correlation</td>
-      <td>0.308510</td>
+      <td>0.311275</td>
     </tr>
     <tr>
       <th>9</th>
@@ -15508,7 +15508,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>all</td>
       <td>mae</td>
-      <td>17.261160</td>
+      <td>17.260750</td>
     </tr>
     <tr>
       <th>10</th>
@@ -15516,7 +15516,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>all</td>
       <td>mse</td>
-      <td>468.446283</td>
+      <td>466.139271</td>
     </tr>
     <tr>
       <th>11</th>
@@ -15524,7 +15524,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>all</td>
       <td>rmse</td>
-      <td>21.643620</td>
+      <td>21.590259</td>
     </tr>
     <tr>
       <th>12</th>
@@ -15540,7 +15540,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>user</td>
       <td>mae</td>
-      <td>17.261160</td>
+      <td>17.260750</td>
     </tr>
     <tr>
       <th>14</th>
@@ -15548,7 +15548,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>user</td>
       <td>mse</td>
-      <td>468.446283</td>
+      <td>466.139271</td>
     </tr>
     <tr>
       <th>15</th>
@@ -15556,7 +15556,7 @@ RMSE all: 9.679328573601552
       <td>missing</td>
       <td>user</td>
       <td>rmse</td>
-      <td>17.261160</td>
+      <td>17.260750</td>
     </tr>
     <tr>
       <th>16</th>
@@ -15572,7 +15572,7 @@ RMSE all: 9.679328573601552
       <td>observed</td>
       <td>all</td>
       <td>mae</td>
-      <td>0.006533</td>
+      <td>0.006601</td>
     </tr>
     <tr>
       <th>18</th>
@@ -15580,7 +15580,7 @@ RMSE all: 9.679328573601552
       <td>observed</td>
       <td>all</td>
       <td>mse</td>
-      <td>0.000181</td>
+      <td>0.000185</td>
     </tr>
     <tr>
       <th>19</th>
@@ -15588,7 +15588,7 @@ RMSE all: 9.679328573601552
       <td>observed</td>
       <td>all</td>
       <td>rmse</td>
-      <td>0.013462</td>
+      <td>0.013589</td>
     </tr>
     <tr>
       <th>20</th>
@@ -15604,7 +15604,7 @@ RMSE all: 9.679328573601552
       <td>observed</td>
       <td>user</td>
       <td>mae</td>
-      <td>0.006533</td>
+      <td>0.006601</td>
     </tr>
     <tr>
       <th>22</th>
@@ -15612,7 +15612,7 @@ RMSE all: 9.679328573601552
       <td>observed</td>
       <td>user</td>
       <td>mse</td>
-      <td>0.000181</td>
+      <td>0.000185</td>
     </tr>
     <tr>
       <th>23</th>
@@ -15620,7 +15620,7 @@ RMSE all: 9.679328573601552
       <td>observed</td>
       <td>user</td>
       <td>rmse</td>
-      <td>0.007714</td>
+      <td>0.007789</td>
     </tr>
   </tbody>
 </table>
@@ -15645,16 +15645,16 @@ RMSE all: 9.679328573601552
 <p>For convenience we offer an <code>esimate_performance</code> function that does just that! Let's run it for 10 iterations with the same level of masking (75%)</p>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[153]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
     <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">all_results</span> <span class="o">=</span> <span class="n">estimate_performance</span><span class="p">(</span>
-    <span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_mask_items&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}</span>
+    <span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=.</span><span class="mi">75</span>
 <span class="p">)</span>
 </pre></div>
 
@@ -15662,6 +15662,27 @@ RMSE all: 9.679328573601552
     </div>
 
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Data sparsity is 0.0%. Using random masking...
+</pre>
+</div>
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -15673,7 +15694,7 @@ RMSE all: 9.679328573601552
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[154]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -15695,7 +15716,7 @@ RMSE all: 9.679328573601552
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[154]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
 
 
 
@@ -15730,218 +15751,306 @@ RMSE all: 9.679328573601552
     <tr>
       <th>0</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>all</td>
       <td>correlation</td>
-      <td>0.273217</td>
-      <td>0.084262</td>
+      <td>0.020123</td>
+      <td>0.222994</td>
     </tr>
     <tr>
       <th>1</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>all</td>
       <td>mae</td>
-      <td>20.185084</td>
-      <td>1.769544</td>
+      <td>25.765061</td>
+      <td>3.621663</td>
     </tr>
     <tr>
       <th>2</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>all</td>
       <td>mse</td>
-      <td>791.135264</td>
-      <td>164.597010</td>
+      <td>901.831463</td>
+      <td>200.084612</td>
     </tr>
     <tr>
       <th>3</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>all</td>
       <td>rmse</td>
-      <td>28.005223</td>
-      <td>2.757363</td>
+      <td>29.865007</td>
+      <td>3.318769</td>
     </tr>
     <tr>
       <th>4</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>user</td>
       <td>correlation</td>
-      <td>0.246005</td>
-      <td>0.163178</td>
+      <td>0.090882</td>
+      <td>0.156474</td>
     </tr>
     <tr>
       <th>5</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>user</td>
       <td>mae</td>
-      <td>20.185084</td>
-      <td>1.769544</td>
+      <td>25.765061</td>
+      <td>3.621663</td>
     </tr>
     <tr>
       <th>6</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>user</td>
       <td>mse</td>
-      <td>791.135264</td>
-      <td>164.597010</td>
+      <td>901.831463</td>
+      <td>200.084612</td>
     </tr>
     <tr>
       <th>7</th>
       <td>NNMF_sgd</td>
-      <td>full</td>
+      <td>missing</td>
       <td>user</td>
       <td>rmse</td>
-      <td>26.824523</td>
-      <td>2.808243</td>
+      <td>28.831973</td>
+      <td>3.523668</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>By default <code>estimate_performance</code> only returns performance <code>missing</code> data. To see performance on all subsets use <code>return_full_performance = True</code>. You can also use <code>return_agg=False</code> if you want to see performance for each iteration separately.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">estimate_performance</span><span class="p">(</span>
+    <span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Data sparsity is 0.0%. Using random masking...
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>algorithm</th>
+      <th>dataset</th>
+      <th>group</th>
+      <th>metric</th>
+      <th>mean</th>
+      <th>std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>all</td>
+      <td>correlation</td>
+      <td>0.016681</td>
+      <td>0.182794</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>all</td>
+      <td>mae</td>
+      <td>24.209396</td>
+      <td>2.128677</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>all</td>
+      <td>mse</td>
+      <td>815.364682</td>
+      <td>107.265136</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>all</td>
+      <td>rmse</td>
+      <td>28.500079</td>
+      <td>1.858964</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>user</td>
+      <td>correlation</td>
+      <td>0.164990</td>
+      <td>0.244858</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>user</td>
+      <td>mae</td>
+      <td>24.209396</td>
+      <td>2.128677</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>user</td>
+      <td>mse</td>
+      <td>815.364682</td>
+      <td>107.265136</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>NNMF_sgd</td>
+      <td>missing</td>
+      <td>user</td>
+      <td>rmse</td>
+      <td>27.129655</td>
+      <td>2.036189</td>
     </tr>
     <tr>
       <th>8</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>all</td>
       <td>correlation</td>
-      <td>-0.057269</td>
-      <td>0.249291</td>
+      <td>0.999998</td>
+      <td>0.000004</td>
     </tr>
     <tr>
       <th>9</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>all</td>
       <td>mae</td>
-      <td>25.227155</td>
-      <td>2.208383</td>
+      <td>0.007674</td>
+      <td>0.009798</td>
     </tr>
     <tr>
       <th>10</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>all</td>
       <td>mse</td>
-      <td>988.918194</td>
-      <td>205.744636</td>
+      <td>0.000781</td>
+      <td>0.001468</td>
     </tr>
     <tr>
       <th>11</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>all</td>
       <td>rmse</td>
-      <td>31.310779</td>
-      <td>3.082804</td>
+      <td>0.017186</td>
+      <td>0.023223</td>
     </tr>
     <tr>
       <th>12</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>user</td>
       <td>correlation</td>
-      <td>-0.016192</td>
-      <td>0.226723</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>13</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>user</td>
       <td>mae</td>
-      <td>25.227155</td>
-      <td>2.208383</td>
+      <td>0.007674</td>
+      <td>0.009798</td>
     </tr>
     <tr>
       <th>14</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
+      <td>observed</td>
       <td>user</td>
       <td>mse</td>
-      <td>988.918194</td>
-      <td>205.744636</td>
+      <td>0.000781</td>
+      <td>0.001468</td>
     </tr>
     <tr>
       <th>15</th>
       <td>NNMF_sgd</td>
-      <td>missing</td>
-      <td>user</td>
-      <td>rmse</td>
-      <td>29.990713</td>
-      <td>3.139689</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>all</td>
-      <td>correlation</td>
-      <td>0.999985</td>
-      <td>0.000041</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>all</td>
-      <td>mae</td>
-      <td>0.016797</td>
-      <td>0.020104</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>all</td>
-      <td>mse</td>
-      <td>0.003544</td>
-      <td>0.007251</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>all</td>
-      <td>rmse</td>
-      <td>0.039425</td>
-      <td>0.047013</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>user</td>
-      <td>correlation</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>user</td>
-      <td>mae</td>
-      <td>0.016797</td>
-      <td>0.020104</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>NNMF_sgd</td>
-      <td>observed</td>
-      <td>user</td>
-      <td>mse</td>
-      <td>0.003544</td>
-      <td>0.007251</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>NNMF_sgd</td>
       <td>observed</td>
       <td>user</td>
       <td>rmse</td>
-      <td>0.016797</td>
-      <td>0.020104</td>
+      <td>0.007674</td>
+      <td>0.009798</td>
     </tr>
   </tbody>
 </table>
@@ -15968,7 +16077,7 @@ RMSE all: 9.679328573601552
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[155]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -16010,13 +16119,13 @@ RMSE all: 9.679328573601552
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Now we can proceed to fitting just like before, but there's a catch:</p>
-<p>this time we won't be able to obtain a score for the <em>missing</em> data because we never observed it in teh first place!</p>
+<p>this time we won't be able to obtain a score for the <em>missing</em> data because we never observed it in the first place!</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[156]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -16044,8 +16153,8 @@ RMSE all: 9.679328573601552
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>RMSE observed: 0.01167553207781378
-RMSE all: 0.01167553207781378
+<pre>RMSE observed: 0.010886168660715421
+RMSE all: 0.010886168660715421
 </pre>
 </div>
 </div>
@@ -16057,7 +16166,7 @@ RMSE all: 0.01167553207781378
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[157]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -16095,7 +16204,7 @@ RMSE all: 0.01167553207781378
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>/Users/Esh/Documents/pypackages/emotioncf/emotioncf/base.py:138: UserWarning: Cannot score predictions on missing data because true values were never observed!
+<pre>/Users/Esh/Documents/pypackages/emotioncf/emotioncf/base.py:135: UserWarning: Cannot score predictions on missing data because true values were never observed!
   warnings.warn(
 </pre>
 </div>
@@ -16125,7 +16234,7 @@ RMSE all: 0.01167553207781378
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To make this kind of estimation simple we offer another convenience function: <code>approximate_generalization</code>.</p>
+<p>Conveniently, <code>estimate_performance</code> is smart enough to realize your input dataset is sparse and will automatically switch to cross-validation. You can control the number of folds using the <code>n_folds</code> argument. All other arguments that only apply to dense data (e.g. <code>n_mask_item</code>) will be ignored.</p>
 <p><strong>Note</strong>: keep in mind that using this approach will <em>increase</em> the sparsity of an already sparse dataset!</p>
 <p>You can control the extent to which this happens using the <code>n_folds</code> parameter. More folds, means that the model is trained on <em>more</em> data thereby decreasing the additional sparsity.</p>
 
@@ -16136,21 +16245,165 @@ RMSE all: 0.01167553207781378
 <p>Here we run this using 10 folds which means that ~90% of the <em>observed</em> values will be used for training the model and ~10% of the <em>observed</em> values will be used for testing performance.</p>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[158]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
-    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">cv_results</span> <span class="o">=</span> <span class="n">approximate_generalization</span><span class="p">(</span><span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">real_sparse_mat</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">real_sparse_mat</span>
 </pre></div>
 
         </div>
     </div>
 
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Item</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+    </tr>
+    <tr>
+      <th>User</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>A</th>
+      <td>45.0</td>
+      <td>48.0</td>
+      <td>NaN</td>
+      <td>68</td>
+      <td>68.0</td>
+    </tr>
+    <tr>
+      <th>B</th>
+      <td>10.0</td>
+      <td>NaN</td>
+      <td>22.0</td>
+      <td>37</td>
+      <td>88.0</td>
+    </tr>
+    <tr>
+      <th>C</th>
+      <td>NaN</td>
+      <td>89.0</td>
+      <td>89.0</td>
+      <td>13</td>
+      <td>59.0</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <td>66.0</td>
+      <td>NaN</td>
+      <td>88.0</td>
+      <td>47</td>
+      <td>89.0</td>
+    </tr>
+    <tr>
+      <th>E</th>
+      <td>82.0</td>
+      <td>38.0</td>
+      <td>NaN</td>
+      <td>78</td>
+      <td>73.0</td>
+    </tr>
+    <tr>
+      <th>F</th>
+      <td>10.0</td>
+      <td>21.0</td>
+      <td>81.0</td>
+      <td>70</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">cv_results</span> <span class="o">=</span> <span class="n">estimate_performance</span><span class="p">(</span><span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">real_sparse_mat</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Data sparsity is 20.0%. Using cross-validation...
+</pre>
+</div>
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -16162,7 +16415,7 @@ RMSE all: 0.01167553207781378
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[159]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
     <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
@@ -16184,7 +16437,7 @@ RMSE all: 0.01167553207781378
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[159]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 
 
 
@@ -16222,8 +16475,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>all</td>
       <td>correlation</td>
-      <td>-0.404187</td>
-      <td>8.748287e-01</td>
+      <td>-0.758746</td>
+      <td>0.626376</td>
     </tr>
     <tr>
       <th>1</th>
@@ -16231,8 +16484,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>all</td>
       <td>mae</td>
-      <td>36.741604</td>
-      <td>1.212600e+01</td>
+      <td>36.619235</td>
+      <td>10.661269</td>
     </tr>
     <tr>
       <th>2</th>
@@ -16240,8 +16493,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>all</td>
       <td>mse</td>
-      <td>2054.950232</td>
-      <td>1.159434e+03</td>
+      <td>1881.355182</td>
+      <td>823.004537</td>
     </tr>
     <tr>
       <th>3</th>
@@ -16249,8 +16502,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>all</td>
       <td>rmse</td>
-      <td>43.228941</td>
-      <td>1.438398e+01</td>
+      <td>42.014292</td>
+      <td>11.360480</td>
     </tr>
     <tr>
       <th>4</th>
@@ -16258,8 +16511,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>user</td>
       <td>correlation</td>
+      <td>-1.000000</td>
       <td>0.000000</td>
-      <td>1.414214e+00</td>
     </tr>
     <tr>
       <th>5</th>
@@ -16267,8 +16520,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>user</td>
       <td>mae</td>
-      <td>36.629386</td>
-      <td>1.206473e+01</td>
+      <td>35.503419</td>
+      <td>10.715971</td>
     </tr>
     <tr>
       <th>6</th>
@@ -16276,8 +16529,8 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>user</td>
       <td>mse</td>
-      <td>2042.186382</td>
-      <td>1.160706e+03</td>
+      <td>1796.397237</td>
+      <td>840.016277</td>
     </tr>
     <tr>
       <th>7</th>
@@ -16285,83 +16538,197 @@ RMSE all: 0.01167553207781378
       <td>test</td>
       <td>user</td>
       <td>rmse</td>
-      <td>37.607371</td>
-      <td>1.346175e+01</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>all</td>
-      <td>correlation</td>
-      <td>1.000000</td>
-      <td>4.291507e-08</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>all</td>
-      <td>mae</td>
-      <td>0.004285</td>
-      <td>1.732634e-03</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>all</td>
-      <td>mse</td>
-      <td>0.000075</td>
-      <td>6.774931e-05</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>all</td>
-      <td>rmse</td>
-      <td>0.007966</td>
-      <td>3.580199e-03</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>user</td>
-      <td>correlation</td>
-      <td>1.000000</td>
-      <td>1.770242e-07</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>user</td>
-      <td>mae</td>
-      <td>0.004134</td>
-      <td>1.575941e-03</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>user</td>
-      <td>mse</td>
-      <td>0.000071</td>
-      <td>6.149926e-05</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>NNMF_sgd</td>
-      <td>train</td>
-      <td>user</td>
-      <td>rmse</td>
-      <td>0.004934</td>
-      <td>1.825982e-03</td>
+      <td>35.842384</td>
+      <td>10.531357</td>
     </tr>
   </tbody>
 </table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Like before we can use <code>return_full_performance = True</code> and/or <code>return_agg=False</code> to see performance for all data subsets (i.e. test <em>and</em> train) and separately per fold</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+    <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+    <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">estimate_performance</span><span class="p">(</span><span class="n">NNMF_sgd</span><span class="p">,</span> <span class="n">real_sparse_mat</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Data sparsity is 20.0%. Using cross-validation...
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[19]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>algorithm</th>
+      <th>dataset</th>
+      <th>cv_fold</th>
+      <th>group</th>
+      <th>metric</th>
+      <th>score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>NNMF_sgd</td>
+      <td>test</td>
+      <td>1</td>
+      <td>all</td>
+      <td>correlation</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>NNMF_sgd</td>
+      <td>test</td>
+      <td>2</td>
+      <td>all</td>
+      <td>correlation</td>
+      <td>-1.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NNMF_sgd</td>
+      <td>test</td>
+      <td>3</td>
+      <td>all</td>
+      <td>correlation</td>
+      <td>-0.955540</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>NNMF_sgd</td>
+      <td>test</td>
+      <td>4</td>
+      <td>all</td>
+      <td>correlation</td>
+      <td>0.292516</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>NNMF_sgd</td>
+      <td>test</td>
+      <td>5</td>
+      <td>all</td>
+      <td>correlation</td>
+      <td>-0.624561</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>155</th>
+      <td>NNMF_sgd</td>
+      <td>train</td>
+      <td>6</td>
+      <td>user</td>
+      <td>rmse</td>
+      <td>0.007064</td>
+    </tr>
+    <tr>
+      <th>156</th>
+      <td>NNMF_sgd</td>
+      <td>train</td>
+      <td>7</td>
+      <td>user</td>
+      <td>rmse</td>
+      <td>0.016320</td>
+    </tr>
+    <tr>
+      <th>157</th>
+      <td>NNMF_sgd</td>
+      <td>train</td>
+      <td>8</td>
+      <td>user</td>
+      <td>rmse</td>
+      <td>0.003909</td>
+    </tr>
+    <tr>
+      <th>158</th>
+      <td>NNMF_sgd</td>
+      <td>train</td>
+      <td>9</td>
+      <td>user</td>
+      <td>rmse</td>
+      <td>0.005436</td>
+    </tr>
+    <tr>
+      <th>159</th>
+      <td>NNMF_sgd</td>
+      <td>train</td>
+      <td>10</td>
+      <td>user</td>
+      <td>rmse</td>
+      <td>0.002598</td>
+    </tr>
+  </tbody>
+</table>
+<p>160 rows × 6 columns</p>
 </div>
 </div>
 
@@ -16385,8 +16752,8 @@ RMSE all: 0.01167553207781378
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>If you already have a <em>sparse</em> dataset, <code>approximate_generalization</code> can help you assess how well collborative filtering works for your use case (at the cost of increasing sparsity during evaluation). This approach is the defacto standard in several other collaborative filtering toolboxes such as <a href="http://surpriselib.com/">Surprise</a>.</p>
-<p>If you're working with a small but <em>dense</em> dataset, using <code>estimate_performance</code> maybe preferable. That's because you can leverage ground truth observations and more carefully control how much sparsity you would like to use during model evaluation. This is useful when making new data collection or experimental design choices as it simulates how well a model will perform had your dataset been <em>sparse</em>.</p>
+<p>If you already have a <em>sparse</em> dataset, use <code>estimate_performance</code> along with <code>n_folds</code> to help you assess how well collborative filtering works for your use case (at the cost of increasing sparsity during evaluation). This approach is the defacto standard in several other collaborative filtering toolboxes such as <a href="http://surpriselib.com/">Surprise</a>.</p>
+<p>If you're working with a small but <em>dense</em> dataset, using <code>estimate_performance</code> with <code>n_iter</code> and <code>n_mask_items</code> provides you more fine grain control over exploring how different levels of sparsity affect performance This is useful when making new data collection or experimental design choices as it simulates how well a model will perform had your dataset been <em>sparse</em>.</p>
 
 </div>
 </div>
