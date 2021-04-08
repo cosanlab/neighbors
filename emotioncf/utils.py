@@ -455,8 +455,8 @@ def estimate_performance(
 
         def _run_sparse(
             i,
-            test,
             train,
+            test,
             algorithm,
             random_state,
             return_full_performance,
