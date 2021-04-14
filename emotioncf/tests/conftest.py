@@ -13,6 +13,7 @@ from emotioncf import (
     NNMF_mult,
     create_sparse_mask,
 )
+from string import ascii_letters
 
 ## DATA FIXTURES
 @fixture(scope="module")
@@ -29,6 +30,10 @@ def simulate_wide_data():
         rat[int(s / 2) : s, x] = rat[int(s / 2) : s, x] + x
     rat[int(s / 2) : s] = rat[int(s / 2) : s, ::-1]
     rat = pd.DataFrame(rat)
+    letters = list(ascii_letters)
+    letters += [f"{elem}1" for elem in letters]
+    rat.index = letters[: rat.shape[0]]
+    rat.columns = letters[: rat.shape[1]]
     rat.index.name = "User"
     rat.columns.name = "Item"
     return rat
@@ -111,12 +116,12 @@ def dilate_by_nsamples(request):
 
 
 # # KNN only models
-@fixture(params=["pearson", "correlation", "cosine"])
+@fixture(params=["pearson", "cosine"])
 def metric(request):
     return request.param
 
 
-@fixture(params=[None, 10])
+@fixture(params=[None, 3])
 def k(request):
     return request.param
 

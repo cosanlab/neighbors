@@ -7,6 +7,8 @@ import numpy as np
 from .base import Base, BaseNMF
 from .utils import nanpdist
 from ._fit import sgd, mult
+import warnings
+from numba.core.errors import NumbaPerformanceWarning
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -49,10 +51,9 @@ class Mean(Base):
 
         for row_idx, row in predictions.iterrows():
             row[row.isnull()] = self.mean[row.isnull()]
-            predictions.iloc[row_idx] = row
+            predictions.loc[row_idx] = row
 
         self.predictions = predictions
-        self.is_predict = True
 
 
 class KNN(Base):
@@ -87,7 +88,7 @@ class KNN(Base):
             skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.
         """
 
-        metrics = ["pearson", "spearman", "kendall", "cosine", "correlation"]
+        metrics = ["pearson", "spearman", "kendall", "cosine"]
         if metric not in metrics:
             raise ValueError(f"metric must be one of {metrics}")
 
@@ -119,14 +120,16 @@ class KNN(Base):
 
         """
 
-        data = self.masked_data if self.is_masked else self.data
-        predictions = []
+        predictions = self.masked_data.copy()
 
-        # Get top k most similar other users for each user
-        # We loop instead of apply because we want to retain row indices and column indices
-        for user_idx in range(data.shape[0]):
-            # Get all other users except current
-            top_users = self.user_similarity.iloc[user_idx].drop(user_idx)
+        for row_idx, row in predictions.iterrows():
+
+            # Get the similarity of this user to all other users, ignoring self-similarity
+            top_users = self.user_similarity.loc[row_idx].drop(row_idx)
+            if top_users.isnull().all():
+                warnings.warn(
+                    f"User {row_idx} has no variance in their ratings. Impossible to compute similarity with other users"
+                )
 
             # Remove nan users and sort
             top_users = top_users[~top_users.isnull()].sort_values(ascending=False)
@@ -135,14 +138,15 @@ class KNN(Base):
             if k is not None:
                 top_users = top_users[: k + 1]
 
-            # Get item predictions
-            predictions.append(
-                np.dot(top_users, self.data.loc[top_users.index]) / len(top_users)
+            # Get item predictions: similarity-weighted-mean of other user's ratings
+            preds = pd.Series(
+                np.dot(top_users, self.data.loc[top_users.index, :]) / len(top_users),
+                index=self.data.columns,
             )
+            row[row.isnull()] = preds[row.isnull()]
+            predictions.loc[row_idx] = row
 
-        self.predictions = pd.DataFrame(
-            predictions, index=data.index, columns=data.columns
-        )
+        self.predictions = predictions
 
 
 class NNMF_mult(BaseNMF):
@@ -222,16 +226,19 @@ class NNMF_mult(BaseNMF):
         X = self.masked_data.fillna(0).to_numpy()
 
         # Run multiplicative updating
-        error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
-            X,
-            self.W,
-            self.H,
-            self.data_range,
-            eps,
-            tol,
-            n_iterations,
-            verbose,
-        )
+        # Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=NumbaPerformanceWarning)
+            error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
+                X,
+                self.W,
+                self.H,
+                self.data_range,
+                eps,
+                tol,
+                n_iterations,
+                verbose,
+            )
 
         # Save outputs to model
         self.W, self.H = W, H
@@ -368,36 +375,39 @@ class NNMF_sgd(BaseNMF):
         seed = self.random_state.randint(np.iinfo(np.int32).max)
 
         # Run SGD
-        (
-            error_history,
-            converged,
-            n_iter,
-            delta,
-            norm_rmse,
-            user_bias,
-            user_vecs,
-            item_bias,
-            item_vecs,
-        ) = sgd(
-            X,
-            seed,
-            self.global_bias,
-            self.data_range,
-            tol,
-            self.user_bias,
-            self.user_vecs,
-            self.user_bias_reg,
-            self.user_fact_reg,
-            self.item_bias,
-            self.item_vecs,
-            self.item_bias_reg,
-            self.item_fact_reg,
-            n_iterations,
-            sample_row,
-            sample_col,
-            learning_rate,
-            verbose,
-        )
+        # Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=NumbaPerformanceWarning)
+            (
+                error_history,
+                converged,
+                n_iter,
+                delta,
+                norm_rmse,
+                user_bias,
+                user_vecs,
+                item_bias,
+                item_vecs,
+            ) = sgd(
+                X,
+                seed,
+                self.global_bias,
+                self.data_range,
+                tol,
+                self.user_bias,
+                self.user_vecs,
+                self.user_bias_reg,
+                self.user_fact_reg,
+                self.item_bias,
+                self.item_vecs,
+                self.item_bias_reg,
+                self.item_fact_reg,
+                n_iterations,
+                sample_row,
+                sample_col,
+                learning_rate,
+                verbose,
+            )
         # Save outputs to model
         (
             self.error_history,

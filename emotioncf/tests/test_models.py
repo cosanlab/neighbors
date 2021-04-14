@@ -172,15 +172,15 @@ def test_knn(model, dilate_by_nsamples, n_mask_items, k, metric):
     if model.n_mask_items == 0.5 and not model.is_mask_dilated and k == 3:
         true_scores = np.array(
             [
-                0.85812186,
-                13.46414568,
-                16.26052896,
-                0.84304036,
-                13.99007607,
-                16.78521663,
-                0.87251641,
-                12.9382153,
-                15.71833665,
+                0.91726067,
+                7.25200471,
+                12.36676527,
+                0.84237887,
+                14.50400943,
+                17.48924716,
+                1.0,
+                0.0,
+                0.0,
             ]
         )
     else:

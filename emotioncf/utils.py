@@ -221,9 +221,7 @@ def flatten_dataframe(data: pd.DataFrame) -> list:
     if not isinstance(data, pd.DataFrame):
         raise TypeError("input must be a pandas dataframe")
 
-    out = zip(
-        product(range(data.shape[0]), range(data.shape[1])), data.to_numpy().ravel()
-    )
+    out = zip(product(data.index, data.columns), data.to_numpy().ravel())
     return np.array([(elem[0][0], elem[0][1], elem[1]) for elem in out])
 
 
@@ -254,25 +252,33 @@ def unflatten_dataframe(
 
     if not isinstance(data, np.ndarray):
         raise TypeError("input should be a numpy array")
-    if num_rows is None:
-        try:
-            num_rows = int(data[:, 0].max()) + 1
-        except:  # noqa
-            raise TypeError(
-                "row_idx are non-numeric or mixed types. Unable to automatically determine the number of rows. Please set num_rows explicitly"
+    if index is None and num_rows is None:
+        index = list(dict.fromkeys(data[:, 0]))
+        num_rows = len(index)
+    elif index is not None and num_rows is None:
+        num_rows = len(index)
+    elif index is None and num_rows is not None:
+        index = list(dict.fromkeys(data[:, 0]))
+        if len(index) != num_rows:
+            raise ValueError(
+                "num_rows does not match the number of unique row_idx values in data"
             )
-    if num_cols is None:
-        try:
-            num_cols = int(data[:, 1].max()) + 1
-        except:  # noqa
-            raise TypeError(
-                "col_idx are non-numeric or mixed types. Unable to automatically determine the number of columns. Please set num_cols explicitly"
+    if columns is None and num_cols is None:
+        columns = list(dict.fromkeys(data[:, 1]))
+        num_cols = len(columns)
+    elif columns is not None and num_cols is None:
+        num_cols = len(columns)
+    elif columns is None and num_cols is not None:
+        columns = list(dict.fromkeys(data[:, 1]))
+        if len(columns) != num_cols:
+            raise ValueError(
+                "num_cols does not match the number of unique col_idx values in data"
             )
     out = np.empty((num_rows, num_cols))
     out[:] = np.nan
-    for elem in data:
-        out[int(elem[0]), int(elem[1])] = elem[2]
     out = pd.DataFrame(out, index=index, columns=columns)
+    for elem in data:
+        out.loc[elem[0], elem[1]] = np.float(elem[2])
     out.index.name = index_name
     out.columns.name = columns_name
     return out
