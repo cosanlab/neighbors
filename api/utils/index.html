@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/utils/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.0">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.33e2939f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -1074,7 +1074,7 @@
 
 
 <h4 id="emotioncf.utils.estimate_performance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1162,6 +1162,12 @@
         <td><code>False</code></td>
       </tr>
       <tr>
+        <td><code>timeit</code></td>
+        <td><code>bool, option</code></td>
+        <td><p>include a column of estimation + prediction duration for each iteration/fold in the results. Ignored when return_agg=True; Default True.</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
         <td><code>verbose</code></td>
         <td><code>bool</code></td>
         <td><p>print information messages on execution; Default True.</p></td>
@@ -1198,6 +1204,7 @@
     <span class="n">fit_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1217,6 +1224,7 @@
 <span class="sd">        fit_kwargs (dict, optional): A dictionary of arguments passed to the `.fit()` method of the model. Defaults to {}.</span>
 <span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.</span>
 <span class="sd">        parallelize (bool, optional): Use multiple *threads* to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple *processes* like joblib. Some algorithms like `NNMF_sgd` can see significant speed-ups (2-3x) when `True`. Others, like `NNMF_mult` do not not gain much benefit or may even slow down. Default False.</span>
+<span class="sd">        timeit (bool, option): include a column of estimation + prediction duration for each iteration/fold in the results. Ignored when return_agg=True; Default True.</span>
 <span class="sd">        verbose (bool, optional): print information messages on execution; Default True.</span>
 
 
@@ -1245,8 +1253,11 @@
             <span class="n">random_state</span><span class="p">,</span>
             <span class="n">n_mask_items</span><span class="p">,</span>
             <span class="n">return_full_performance</span><span class="p">,</span>
+            <span class="n">timeit</span><span class="p">,</span>
             <span class="n">fit_kwargs</span><span class="p">,</span>
         <span class="p">):</span>
+            <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
                 <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
@@ -1263,7 +1274,16 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">)</span>
             <span class="n">results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">return</span> <span class="n">results</span>
+
+            <span class="c1"># Individual user results</span>
+            <span class="n">user_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">user_results</span>
+            <span class="n">user_results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">user_results</span>
 
         <span class="k">if</span> <span class="n">parallelize</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -1278,6 +1298,7 @@
                     <span class="n">seeds</span><span class="p">,</span>
                     <span class="p">[</span><span class="n">n_mask_items</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
                     <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">timeit</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
                     <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1289,16 +1310,12 @@
                 <span class="n">seeds</span><span class="p">,</span>
                 <span class="p">[</span><span class="n">n_mask_items</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
                 <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">timeit</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
                 <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
-        <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
-            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
         <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;iter&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
+        <span class="n">user_agg_drop_col</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># SPARSE DATA so split observed values according to n_folds</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -1313,23 +1330,53 @@
             <span class="n">algorithm</span><span class="p">,</span>
             <span class="n">random_state</span><span class="p">,</span>
             <span class="n">return_full_performance</span><span class="p">,</span>
+            <span class="n">timeit</span><span class="p">,</span>
             <span class="n">fit_kwargs</span><span class="p">,</span>
         <span class="p">):</span>
+            <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
             <span class="n">test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span>
                 <span class="n">actual</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span>
             <span class="p">)</span>
             <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_results</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">})</span>
+
+            <span class="n">user_test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">user_results</span>
+            <span class="n">user_test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">user_test_results</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;rmse_test&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mse_test&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mae_test&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;correlation_test&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;cv_fold&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+
             <span class="k">if</span> <span class="n">return_full_performance</span><span class="p">:</span>
                 <span class="n">train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_results</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">})</span>
                 <span class="n">test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">test_results</span><span class="p">,</span> <span class="n">train_results</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
                 <span class="p">)</span>
-            <span class="k">return</span> <span class="n">test_results</span>
+
+                <span class="n">user_train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">user_results</span>
+                <span class="n">user_train_results</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="s2">&quot;rmse_train&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;mse_train&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;mae_train&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;correlation_train&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+                <span class="n">user_test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">user_train_results</span><span class="p">,</span> <span class="n">user_test_results</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span>
+                <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+            <span class="k">return</span> <span class="n">test_results</span><span class="p">,</span> <span class="n">user_test_results</span>
 
         <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_folds</span><span class="p">)</span>
         <span class="n">splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">))</span>
@@ -1349,6 +1396,7 @@
                     <span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
                     <span class="n">seeds</span><span class="p">,</span>
                     <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">timeit</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
                     <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1360,33 +1408,44 @@
                 <span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
                 <span class="n">seeds</span><span class="p">,</span>
                 <span class="p">[</span><span class="n">return_full_performance</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">timeit</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
                 <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
-        <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">])</span>
-            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cv&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset&quot;</span><span class="p">})</span>
-            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
-            <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
         <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;cv_fold&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
+        <span class="n">user_agg_drop_col</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span>
 
     <span class="c1"># Collect results</span>
-    <span class="n">all_results</span> <span class="o">=</span> <span class="n">all_results</span><span class="p">[</span><span class="n">col_order</span><span class="p">]</span>
+    <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+    <span class="n">group_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">]</span>
+    <span class="n">user_results</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span>
+    <span class="p">]</span>
+    <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">group_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">user_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">user_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Handle aggregation</span>
     <span class="k">if</span> <span class="n">return_agg</span><span class="p">:</span>
         <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">agg_stats</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">all_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+        <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">group_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
             <span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_stats</span><span class="p">)</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
             <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">col_order</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span>
+        <span class="n">user_results</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">user_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">user_agg_drop_col</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">group_results</span><span class="p">,</span> <span class="n">user_results</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">all_results</span>
+        <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
+            <span class="n">col_order</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">group_results</span><span class="p">[</span><span class="n">col_order</span><span class="p">],</span> <span class="n">user_results</span>
 </code></pre></div>
         </details>
     </div>
@@ -1522,10 +1581,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input must be a numpy array&quot;</span><span class="p">)</span>
 </code></pre></div>
@@ -1808,8 +1864,22 @@
         <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">flat</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]])</span>
 
         <span class="k">yield</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
-            <span class="n">train</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span>
-        <span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">)</span>
+            <span class="n">train</span><span class="p">,</span>
+            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
+            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
+            <span class="n">test</span><span class="p">,</span>
+            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
+            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1823,7 +1893,7 @@
 
 
 <h4 id="emotioncf.utils.unflatten_dataframe" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h4>
@@ -1846,7 +1916,7 @@
       <tr>
         <td><code>data</code></td>
         <td><code>ndarray</code></td>
-        <td><p>list of (row_idx, col_idx, val) tuples or numpy array of [row_idx, col_idx, val] lists.</p></td>
+        <td><p>n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -1859,6 +1929,30 @@
         <td><code>index</code></td>
         <td><code>list</code></td>
         <td><p>row names of new dataframe. Defaults to None.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>num_rows</code></td>
+        <td><code>int</code></td>
+        <td><p>total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>num_cols</code></td>
+        <td><code>int</code></td>
+        <td><p>total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>index_name</code></td>
+        <td><code>str; optional</code></td>
+        <td><p>Name of rows; Default None</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>columns_name</code></td>
+        <td><code>str; optional</code></td>
+        <td><p>Name of columns; Default None</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -1881,15 +1975,25 @@
         <details class="quote">
           <summary>Source code in <code>emotioncf/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">unflatten_dataframe</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (list, np.ndarray): list of (row_idx, col_idx, val) tuples or numpy array of [row_idx, col_idx, val] lists.</span>
+<span class="sd">        data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.</span>
 <span class="sd">        columns (list, optional): column names of new dataframe. Defaults to None.</span>
 <span class="sd">        index (list, optional): row names of new dataframe. Defaults to None.</span>
+<span class="sd">        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</span>
+<span class="sd">        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</span>
+<span class="sd">        index_name (str; optional): Name of rows; Default None</span>
+<span class="sd">        columns_name (str; optional): Name of columns; Default None</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: original unflattened dataframe</span>
@@ -1897,13 +2001,28 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input should be a numpy array&quot;</span><span class="p">)</span>
-    <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">num_rows</span>
-    <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">num_cols</span>
+    <span class="k">if</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;row_idx are non-numeric or mixed types. Unable to automatically determine the number of rows. Please set num_rows explicitly&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;col_idx are non-numeric or mixed types. Unable to automatically determine the number of columns. Please set num_cols explicitly&quot;</span>
+            <span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">))</span>
     <span class="n">out</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
         <span class="n">out</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">columns_name</span>
+    <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
         </details>
     </div>
@@ -1991,7 +2110,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d892486b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
       
     
   </body>

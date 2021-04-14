@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/base/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.0">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.1">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.33e2939f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.9299cb39.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -1290,12 +1290,12 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">]</span>
 
     <span class="c1"># Don&#39;t recompute results if we already have them</span>
-    <span class="k">if</span> <span class="n">return_cached</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">return_cached</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;Returning cached scores...set cache=False to force recomputation&quot;</span>
+                <span class="s2">&quot;Returning cached scores...set return_cached=False to force recomputation&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span>
     <span class="c1"># Compute results for all metrics, all datasets, separately for group and by subject</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1332,7 +1332,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
                 <span class="p">)</span>
             <span class="p">)</span>
     <span class="c1"># Save final results to longform df</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">subject_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">subject_results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">user_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">subject_results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">group_results</span><span class="p">)</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">group_results</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
@@ -1362,11 +1362,17 @@ Overlapping data will be averaged. This method computes and stores the dilated m
             <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">group_results</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span> <span class="o">=</span> <span class="n">group_results</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">w</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;User performance results (not returned) are accessible using .user_results&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Overall performance results (returned) are accesible using .overall_results&quot;</span>
+        <span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+    <span class="k">return</span> <span class="n">group_results</span>
 </code></pre></div>
         </details>
     </div>
@@ -1620,7 +1626,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
     <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d892486b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7353b375.min.js"></script>
       
     
   </body>
