@@ -630,16 +630,19 @@
     <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
     <span class="c1"># Run multiplicative updating</span>
-    <span class="n">error_history</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">norm_rmse</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">mult</span><span class="p">(</span>
-        <span class="n">X</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_range</span><span class="p">,</span>
-        <span class="n">eps</span><span class="p">,</span>
-        <span class="n">tol</span><span class="p">,</span>
-        <span class="n">n_iterations</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="c1"># Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
+        <span class="n">error_history</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">norm_rmse</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">mult</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_range</span><span class="p">,</span>
+            <span class="n">eps</span><span class="p">,</span>
+            <span class="n">tol</span><span class="p">,</span>
+            <span class="n">n_iterations</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="c1"># Save outputs to model</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span>
