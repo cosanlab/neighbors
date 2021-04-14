@@ -66,7 +66,7 @@ class KNN(Base):
         super().__init__(
             data, mask, n_mask_items, random_state=random_state, verbose=verbose
         )
-        self.subject_similarity = None
+        self.user_similarity = None
         self._last_metric = None
         self._last_dilate_by_nsamples = None
 
@@ -107,7 +107,7 @@ class KNN(Base):
                     columns=self.masked_data.index,
                 )
 
-            self.subject_similarity = sim
+            self.user_similarity = sim
         self._predict(k=k)
         self.is_fit = True
 
@@ -122,28 +122,22 @@ class KNN(Base):
         data = self.masked_data if self.is_masked else self.data
         predictions = []
 
-        # Get top k most similar other subjects for each subject
+        # Get top k most similar other users for each user
         # We loop instead of apply because we want to retain row indices and column indices
         for user_idx in range(data.shape[0]):
+            # Get all other users except current
+            top_users = self.user_similarity.iloc[user_idx].drop(user_idx)
+
+            # Remove nan users and sort
+            top_users = top_users[~top_users.isnull()].sort_values(ascending=False)
+
+            # Get top k if requested
             if k is not None:
-                top_subjects = (
-                    self.subject_similarity.iloc[user_idx]
-                    .drop(user_idx)
-                    .sort_values(ascending=False)[: k + 1]
-                )
-            else:
-                top_subjects = (
-                    self.subject_similarity.iloc[user_idx]
-                    .drop(user_idx)
-                    .sort_values(ascending=False)
-                )
-            # remove nan subjects
-            top_subjects = top_subjects[~top_subjects.isnull()]
+                top_users = top_users[: k + 1]
 
             # Get item predictions
             predictions.append(
-                np.dot(top_subjects, self.data.loc[top_subjects.index])
-                / len(top_subjects)
+                np.dot(top_users, self.data.loc[top_users.index]) / len(top_users)
             )
 
         self.predictions = pd.DataFrame(

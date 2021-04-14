@@ -27,9 +27,9 @@ def verify_fit(fit_kwargs):
 def verify_results(results, model, true_scores=None):
     """Helper function to test results object"""
     assert isinstance(results, pd.DataFrame)
-    assert model.results is not None
-    assert model.subject_results is not None
-    assert model.subject_results.shape == (model.data.shape[0], 4 * 3)
+    assert model.overall_results is not None
+    assert model.user_results is not None
+    assert model.user_results.shape == (model.data.shape[0], 4 * 3)
     # 4 metrics, 3 datasets, 2 "groups" (all, subject)
     assert results.shape == (4 * 3 * 2, 5)
     if model.is_dense:

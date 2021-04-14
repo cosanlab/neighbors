@@ -11,6 +11,7 @@ from itertools import product, chain
 from typing import Union
 from concurrent.futures import ThreadPoolExecutor
 import os
+import time
 
 __all__ = [
     "create_user_item_matrix",
@@ -118,10 +119,7 @@ def get_sparsity(arr):
     if isinstance(arr, np.ndarray):
         return 1 - (np.count_nonzero(arr) / arr.size)
     elif isinstance(arr, pd.DataFrame):
-        if arr.isnull().any().any():
-            return get_sparsity(arr.fillna(0).to_numpy())
-        else:
-            return get_sparsity(arr.to_numpy())
+        return arr.isnull().sum().sum() / arr.size
     else:
         raise TypeError("input must be a numpy array")
 
@@ -230,15 +228,25 @@ def flatten_dataframe(data: pd.DataFrame) -> list:
 
 
 def unflatten_dataframe(
-    data: np.ndarray, columns=None, index=None, num_rows=None, num_cols=None
+    data: np.ndarray,
+    columns=None,
+    index=None,
+    num_rows=None,
+    num_cols=None,
+    index_name=None,
+    columns_name=None,
 ) -> pd.DataFrame:
     """
     Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe
 
     Args:
-        data (list, np.ndarray): list of (row_idx, col_idx, val) tuples or numpy array of [row_idx, col_idx, val] lists.
+        data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.
         columns (list, optional): column names of new dataframe. Defaults to None.
         index (list, optional): row names of new dataframe. Defaults to None.
+        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)
+        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)
+        index_name (str; optional): Name of rows; Default None
+        columns_name (str; optional): Name of columns; Default None
 
     Returns:
         pd.DataFrame: original unflattened dataframe
@@ -246,13 +254,28 @@ def unflatten_dataframe(
 
     if not isinstance(data, np.ndarray):
         raise TypeError("input should be a numpy array")
-    num_rows = int(data[:, 0].max()) + 1 if num_rows is None else num_rows
-    num_cols = int(data[:, 1].max()) + 1 if num_cols is None else num_cols
+    if num_rows is None:
+        try:
+            num_rows = int(data[:, 0].max()) + 1
+        except:  # noqa
+            raise TypeError(
+                "row_idx are non-numeric or mixed types. Unable to automatically determine the number of rows. Please set num_rows explicitly"
+            )
+    if num_cols is None:
+        try:
+            num_cols = int(data[:, 1].max()) + 1
+        except:  # noqa
+            raise TypeError(
+                "col_idx are non-numeric or mixed types. Unable to automatically determine the number of columns. Please set num_cols explicitly"
+            )
     out = np.empty((num_rows, num_cols))
     out[:] = np.nan
     for elem in data:
         out[int(elem[0]), int(elem[1])] = elem[2]
-    return pd.DataFrame(out, index=index, columns=columns)
+    out = pd.DataFrame(out, index=index, columns=columns)
+    out.index.name = index_name
+    out.columns.name = columns_name
+    return out
 
 
 def downsample_dataframe(data, n_samples, sampling_freq=None, target_type="samples"):
@@ -329,8 +352,22 @@ def split_train_test(
         test = np.array([elem for elem in flat[start:stop]])
 
         yield unflatten_dataframe(
-            train, num_rows=num_rows, num_cols=num_cols
-        ), unflatten_dataframe(test, num_rows=num_rows, num_cols=num_cols)
+            train,
+            num_rows=num_rows,
+            num_cols=num_cols,
+            index=data.index,
+            columns=data.columns,
+            index_name=data.index.name,
+            columns_name=data.columns.name,
+        ), unflatten_dataframe(
+            test,
+            num_rows=num_rows,
+            num_cols=num_cols,
+            index=data.index,
+            columns=data.columns,
+            index_name=data.index.name,
+            columns_name=data.columns.name,
+        )
 
 
 def estimate_performance(
@@ -345,6 +382,7 @@ def estimate_performance(
     fit_kwargs: dict = {},
     random_state=None,
     parallelize=False,
+    timeit=True,
     verbose=True,
 ) -> pd.DataFrame:
     """
@@ -364,6 +402,7 @@ def estimate_performance(
         fit_kwargs (dict, optional): A dictionary of arguments passed to the `.fit()` method of the model. Defaults to {}.
         random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.
         parallelize (bool, optional): Use multiple *threads* to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple *processes* like joblib. Some algorithms like `NNMF_sgd` can see significant speed-ups (2-3x) when `True`. Others, like `NNMF_mult` do not not gain much benefit or may even slow down. Default False.
+        timeit (bool, option): include a column of estimation + prediction duration for each iteration/fold in the results. Ignored when return_agg=True; Default True.
         verbose (bool, optional): print information messages on execution; Default True.
 
 
@@ -392,8 +431,11 @@ def estimate_performance(
             random_state,
             n_mask_items,
             return_full_performance,
+            timeit,
             fit_kwargs,
         ):
+            if timeit:
+                start = time.time()
             model = algorithm(
                 data=data,
                 random_state=random_state,
@@ -410,7 +452,16 @@ def estimate_performance(
             else:
                 results = model.summary(return_cached=False, dataset="missing")
             results["iter"] = i + 1
-            return results
+
+            # Individual user results
+            user_results = model.user_results
+            user_results["iter"] = i + 1
+
+            if timeit:
+                stop = time.time()
+                duration = stop - start
+                results["duration"] = duration
+            return results, user_results
 
         if parallelize:
             if verbose:
@@ -425,6 +476,7 @@ def estimate_performance(
                     seeds,
                     [n_mask_items] * n_iter,
                     [return_full_performance] * n_iter,
+                    [timeit] * n_iter,
                     [fit_kwargs] * n_iter,
                 )
         else:
@@ -436,16 +488,12 @@ def estimate_performance(
                 seeds,
                 [n_mask_items] * n_iter,
                 [return_full_performance] * n_iter,
+                [timeit] * n_iter,
                 [fit_kwargs] * n_iter,
             )
 
-        all_results = list(all_results)
-        all_results = (
-            pd.concat(all_results, ignore_index=True)
-            .sort_values(by=["group", "dataset", "metric"])
-            .reset_index(drop=True)
-        )
         col_order = ["algorithm", "dataset", "iter", "group", "metric", "score"]
+        user_agg_drop_col = ["iter"]
     else:
         # SPARSE DATA so split observed values according to n_folds
         if verbose:
@@ -460,23 +508,53 @@ def estimate_performance(
             algorithm,
             random_state,
             return_full_performance,
+            timeit,
             fit_kwargs,
         ):
+            if timeit:
+                start = time.time()
             model = algorithm(data=train, random_state=random_state, verbose=False)
             model.fit(**fit_kwargs)
             test_results = model.summary(
                 actual=test, dataset="full", return_cached=False
             )
             test_results["cv_fold"] = i + 1
-            test_results["cv"] = "test"
+            test_results["dataset"] = test_results.dataset.map({"full": "test"})
+
+            user_test_results = model.user_results
+            user_test_results["cv_fold"] = i + 1
+            user_test_results.columns = [
+                "rmse_test",
+                "mse_test",
+                "mae_test",
+                "correlation_test",
+                "cv_fold",
+            ]
+
             if return_full_performance:
                 train_results = model.summary(dataset="full", return_cached=False)
                 train_results["cv_fold"] = i + 1
-                train_results["cv"] = "train"
+                train_results["dataset"] = train_results.dataset.map({"full": "train"})
                 test_results = pd.concat(
                     [test_results, train_results], ignore_index=True
                 )
-            return test_results
+
+                user_train_results = model.user_results
+                user_train_results.columns = [
+                    "rmse_train",
+                    "mse_train",
+                    "mae_train",
+                    "correlation_train",
+                ]
+                user_test_results = pd.concat(
+                    [user_train_results, user_test_results], axis=1
+                )
+
+            if timeit:
+                stop = time.time()
+                duration = stop - start
+                test_results["duration"] = duration
+            return test_results, user_test_results
 
         seeds = random_state.randint(np.iinfo(np.int32).max, size=n_folds)
         splits = list(split_train_test(data, n_folds, random_state=random_state))
@@ -496,6 +574,7 @@ def estimate_performance(
                     [algorithm] * n_folds,
                     seeds,
                     [return_full_performance] * n_folds,
+                    [timeit] * n_folds,
                     [fit_kwargs] * n_folds,
                 )
         else:
@@ -507,30 +586,41 @@ def estimate_performance(
                 [algorithm] * n_folds,
                 seeds,
                 [return_full_performance] * n_folds,
+                [timeit] * n_folds,
                 [fit_kwargs] * n_folds,
             )
 
-        all_results = list(all_results)
-        all_results = (
-            pd.concat(all_results, ignore_index=True)
-            .drop(columns=["dataset"])
-            .rename(columns={"cv": "dataset"})
-            .sort_values(by=["group", "dataset", "metric"])
-            .reset_index(drop=True)
-        )
         col_order = ["algorithm", "dataset", "cv_fold", "group", "metric", "score"]
+        user_agg_drop_col = ["cv_fold"]
 
     # Collect results
-    all_results = all_results[col_order]
+    all_results = list(all_results)
+    group_results = [elem[0] for elem in all_results]
+    user_results = [
+        elem[1].reset_index().rename(columns={"User": "user"}) for elem in all_results
+    ]
+    group_results = (
+        pd.concat(group_results, ignore_index=True)
+        .sort_values(by=["group", "dataset", "metric"])
+        .reset_index(drop=True)
+    )
+    user_results = pd.concat(user_results, ignore_index=True)
+
+    # Handle aggregation
     if return_agg:
         col_order = ["algorithm", "dataset", "group", "metric"] + agg_stats
-        out = (
-            all_results.groupby(["algorithm", "dataset", "group", "metric"])
+        group_results = (
+            group_results.groupby(["algorithm", "dataset", "group", "metric"])
             .score.agg(agg_stats)
             .reset_index()
             .sort_values(by=["dataset", "group", "metric"])
             .reset_index(drop=True)[col_order]
         )
-        return out
+        user_results = (
+            user_results.groupby("user").mean().drop(columns=user_agg_drop_col)
+        )
+        return group_results, user_results
     else:
-        return all_results
+        if timeit:
+            col_order += ["duration"]
+        return group_results[col_order], user_results

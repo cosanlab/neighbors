@@ -45,8 +45,8 @@ class Base(object):
         self.n_mask_items = n_mask_items
         self.data_range = self.data.max().max() - self.data.min().min()
         self.is_dense = True
-        self.results = None
-        self.subject_results = None
+        self.overall_results = None
+        self.user_results = None
         self.n_users = data.shape[0]
         self.n_items = data.shape[1]
         self.random_state = check_random_state(random_state)
@@ -506,12 +506,12 @@ class Base(object):
             dataset = [dataset]
 
         # Don't recompute results if we already have them
-        if return_cached and self.results is not None:
+        if return_cached and self.overall_results is not None:
             if verbose:
                 print(
-                    "Returning cached scores...set cache=False to force recomputation"
+                    "Returning cached scores...set return_cached=False to force recomputation"
                 )
-            return self.results
+            return self.overall_results
         # Compute results for all metrics, all datasets, separately for group and by subject
         group_results = {
             "algorithm": self.__class__.__name__,
@@ -548,7 +548,7 @@ class Base(object):
                     )
                 )
         # Save final results to longform df
-        self.subject_results = pd.concat(subject_results, axis=1)
+        self.user_results = pd.concat(subject_results, axis=1)
         group_results = pd.DataFrame(group_results)
         group_results = (
             group_results.reset_index()
@@ -578,11 +578,17 @@ class Base(object):
                 ["algorithm", "dataset", "group", "metric", "score"]
             ]
         )
-        self.results = group_results
+        self.overall_results = group_results
         if verbose and w:
             print(w[-1].message)
+            print(
+                "User performance results (not returned) are accessible using .user_results"
+            )
+            print(
+                "Overall performance results (returned) are accesible using .overall_results"
+            )
 
-        return self.results
+        return group_results
 
 
 class BaseNMF(Base):

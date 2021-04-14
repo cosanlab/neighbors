@@ -18,55 +18,67 @@ from emotioncf import (
 
 
 def test_estimate_performance(simulate_wide_data):
-    # Dense data
-    out = estimate_performance(Mean, simulate_wide_data, verbose=True)
-    assert out.shape == (4 * 2, 6)
-    # Include observed and missing scores in output and parallelize
-    out = estimate_performance(
+    # DENSE DATA
+    # 1) Only out-of-sample
+    group_out, user_out = estimate_performance(Mean, simulate_wide_data, verbose=True)
+    assert group_out.shape == (4 * 2, 6)
+    assert user_out.shape == (50, 4)
+    # 2) In and out-of-sample
+    group_out, user_out = estimate_performance(
         Mean,
         simulate_wide_data,
         verbose=True,
         return_full_performance=True,
         parallelize=True,
     )
-    assert out.shape == (4 * 2 * 2, 6)
-    missing = out.query("dataset == 'missing' and group =='all'")["mean"]
-    observed = out.query("dataset == 'observed' and group =='all'")["mean"]
+    assert group_out.shape == (4 * 2 * 2, 6)
+    assert user_out.shape == (50, 8)
+    missing = group_out.query("dataset == 'missing' and group =='all'")["mean"]
+    observed = group_out.query("dataset == 'observed' and group =='all'")["mean"]
     # Make sure all missing scores are worse than observed
     for i, (o, m) in enumerate(zip(observed, missing)):
         if i == 0:
             assert o > m
         else:
             assert o < m
-    # Non-aggregated output
-    out = estimate_performance(Mean, simulate_wide_data, return_agg=False, verbose=True)
-    assert out.shape == (4 * 2 * 10, 6)
+    # 3) Non-aggregated out-of-sample, with timing info
+    group_out, user_out = estimate_performance(
+        Mean, simulate_wide_data, return_agg=False, verbose=True
+    )
+    assert group_out.shape == (4 * 2 * 10, 7)
+    assert user_out.shape == (50 * 10, 6)
 
-    # Sparse data
+    # SPARSE DATA
     mask = create_sparse_mask(simulate_wide_data)
     masked_data = simulate_wide_data[mask]
-    out = estimate_performance(Mean, masked_data, verbose=True)
-    assert out.shape == (4 * 2, 6)
-    # Include test and train scores in output and parallelize
-    out = estimate_performance(
+    # 1) Only out-of-sample
+    group_out, user_out = estimate_performance(Mean, masked_data, verbose=True)
+    assert group_out.shape == (4 * 2, 6)
+    assert user_out.shape == (50, 4)
+    # 2) In and out-of-sample
+    group_out, user_out = estimate_performance(
         Mean,
         simulate_wide_data,
         verbose=True,
         return_full_performance=True,
         parallelize=True,
     )
-    assert out.shape == (4 * 2 * 2, 6)
-    test = out.query("dataset == 'test' and group =='all'")["mean"]
-    train = out.query("dataset == 'train' and group =='all'")["mean"]
+    assert group_out.shape == (4 * 2 * 2, 6)
+    assert user_out.shape == (50, 8)
+    test = group_out.query("dataset == 'test' and group =='all'")["mean"]
+    train = group_out.query("dataset == 'train' and group =='all'")["mean"]
     # Make sure all test scores are worse than train
     for i, (o, m) in enumerate(zip(train, test)):
         if i == 0:
             assert o > m
         else:
             assert o < m
-    # Non-aggregated output
-    out = estimate_performance(Mean, masked_data, return_agg=False, verbose=True)
-    assert out.shape == (4 * 2 * 10, 6)
+    # 3) Non-aggregated out-of-sample, without timing info
+    group_out, user_out = estimate_performance(
+        Mean, masked_data, return_agg=False, verbose=True, timeit=False
+    )
+    assert group_out.shape == (4 * 2 * 10, 6)
+    assert user_out.shape == (50 * 10, 6)
 
 
 def test_create_and_invert_user_item_matrix(simulate_long_data, simulate_wide_data):
