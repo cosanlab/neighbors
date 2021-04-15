@@ -1,296 +1,257 @@
 """
-Test core algorithms
+Modular testing for core algorithms. For ease of testing each test makes use of parameterized fixtures defined in conftest.py. Fixtures are passed in as args to each test function which automatically generates a complete grid of parameter combinations for each test.
+
+Tests are split up by model for ease of modular testing (i.e. using pytest -k 'test_name') and to avoid creating uneccesary parameter combinations, thereby reducing the total number of tests.
+
+For running tests in parallel `pip install pytest-xdist` and for nicer testing output `pip install pytest-sugar`.
+
+Then you can run pytest locally using `pytest -rs -n auto`, to see skip messages at the end of the test session and visually confirm that only intended skipped tests are being skipped. To aid in this, all pytest.skip() messages end with 'OK' for intentionally skipped tests.
 """
-import numpy as np
-import pandas as pd
-from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd, create_train_test_mask
-from emotioncf.base import Base
-import matplotlib.pyplot as plt
+
+from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd, Base
 import pytest
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 
-def basecf_method_test(cf=None, dataset=None):
-    """Test methods and attributes common to all models"""
+def verify_fit(fit_kwargs):
+    """Helper function to test fit call"""
+    model = fit_kwargs.pop("model")
+    model.fit(**fit_kwargs)
+    assert model.is_fit
+    assert model.predictions is not None
+    return model.summary(), model
 
-    print(f"\n\nEval on: {dataset}")
 
-    # Check masking
-    if cf.is_mask:
-        print("model has mask")
-        assert cf.train_mask.shape == (50, 100)
+def verify_results(results, model, true_scores=None):
+    """Helper function to test results object"""
+    assert isinstance(results, pd.DataFrame)
+    assert model.overall_results is not None
+    assert model.user_results is not None
+    assert model.user_results.shape == (model.data.shape[0], 4 * 3)
+    # 4 metrics, 3 datasets, 2 "groups" (all, subject)
+    assert results.shape == (4 * 3 * 2, 5)
+    if model.is_dense:
+        assert not results.isnull().any().any()
     else:
-        print("model has NO mask")
+        assert results.isnull().sum().sum() == 8
 
-    # Check dilation
-    if cf.is_mask_dilated:
-        assert cf.dilated_mask.sum(axis=1).sum() > cf.train_mask.sum(axis=1).sum()
-
-    # Check predict
-    if cf.is_predict:
-        print(".predict() has been called")
-        assert cf.predictions.shape == (50, 100)
-    else:
-        print(".predict() has NOT been called")
-
-    # Check performance methods
-    if cf.is_fit and cf.is_predict:
-        if dataset == "all" or (cf.is_mask and dataset in ["train", "test"]):
-            mse = cf.get_mse(dataset=dataset)
-            r = cf.get_corr(dataset=dataset)
-            sub_r = cf.get_sub_corr(dataset=dataset)
-            sub_mse = cf.get_sub_mse(dataset=dataset)
-            assert isinstance(mse, float)
-            assert isinstance(r, float)
-            assert isinstance(sub_r, np.ndarray)
-            assert len(sub_r) == cf.data.shape[0]
-            assert isinstance(sub_mse, np.ndarray)
-            assert len(sub_mse) == cf.data.shape[0]
-            assert mse > 0
-            assert np.abs(r) > 0
-            assert np.abs(np.nanmean(sub_r)) > 0
-
-            cf.plot_predictions(dataset=dataset, verbose=True)
-            plt.close()
-            print(f"MSE: {mse}")
-
-    # Check long format structure
-    df = cf.to_long_df()
-    assert isinstance(df, pd.DataFrame)
-    assert "Condition" in df.columns
-    assert "Observed" in df["Condition"].unique()
-    if cf.is_predict:
-        assert "Predicted" in df["Condition"].unique()
-        assert df.shape[0] == cf.data.shape[0] * cf.data.shape[1] * 2
-    if cf.is_mask:
-        assert "Mask" in df.columns
+    # For regression testing our results should be relatively consistent, this just ensures that. We expect performances to be in the same ballpark (+/- 2), so ignore MSE because that fluctuates much more than RMSE, MAE, or corr
+    if true_scores is not None:
+        assert np.allclose(
+            results.query("metric != 'mse' and group == 'all'").score.to_numpy(),
+            true_scores,
+            atol=2,
+        )
 
 
-def basecf_method_all_tests(cf=None):
-    basecf_method_test(cf=cf, dataset="all")
-    basecf_method_test(cf=cf, dataset="train")
-    basecf_method_test(cf=cf, dataset="test")
-
-
-@pytest.mark.parametrize(
-    ["mask", "n_train_items", "dilate_ts_n_samples"],
-    [(None, None, None), (None, 20, None), (None, None, 2)],
-)
-def test_cf_mean(mask, n_train_items, dilate_ts_n_samples, simulate_wide_data):
-    disp_dict = {
-        "mask": mask,
-        "n_train_items": n_train_items,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
-    }
-    cf = Mean(simulate_wide_data, mask=mask, n_train_items=n_train_items)
-    print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
-
-    cf.fit(dilate_ts_n_samples=dilate_ts_n_samples)
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
-    cf.predict()
-    cf.split_train_test()
-    cf.fit(dilate_ts_n_samples=dilate_ts_n_samples)
-    cf.predict()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
-
-
-@pytest.mark.parametrize(
-    ["metric", "k", "n_train_items", "dilate_ts_n_samples"],
-    [("pearson", None, 50, 2), ("correlation", 10, 0.5, 2), ("cosine", 10, 0.95, None)],
-)
-def test_cf_knn(metric, k, n_train_items, dilate_ts_n_samples, simulate_wide_data):
-    disp_dict = {
-        "metric": metric,
-        "k": k,
-        "n_train_items": n_train_items,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
-    }
-    cf = KNN(simulate_wide_data)
-    print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
-
-    cf.fit(metric=metric)
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
-    cf.predict(k=k)
-    cf.split_train_test(n_train_items=n_train_items)
-    cf.fit(metric=metric, dilate_ts_n_samples=dilate_ts_n_samples)
-    cf.predict(k=k)
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
-
-
-@pytest.mark.parametrize(
-    ["n_iterations", "n_train_items", "tol", "dilate_ts_n_samples", "n_factors"],
-    [
-        (100, 0.1, 0.001, None, 10),
-        (30, 50, 0.0001, None, None),
-        (10, 0.5, 0.001, 2, 5),
-        (5000, 0.5, 1e-12, 2, 5),
-    ],
-)
-def test_cf_nnmf_mult(
-    n_iterations, n_train_items, tol, dilate_ts_n_samples, n_factors, simulate_wide_data
-):
-    disp_dict = {
-        "n_iterations": n_iterations,
-        "n_train_items": n_train_items,
-        "tol": tol,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
-        "n_factors": n_factors,
-    }
-
-    cf = NNMF_mult(simulate_wide_data)
-    print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
-
-    # Initial fitting on all data
-    cf.fit(
-        n_iterations=n_iterations,
-        tol=tol,
-        verbose=True,
-    )
-    cf.plot_learning()
-    plt.close()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
-
-    # Predictions on all data
-    cf.predict()
-
-    # Now split
-    cf.split_train_test(n_train_items=n_train_items)
-
-    # Return fit
-    cf.fit(
-        n_iterations=n_iterations,
-        tol=tol,
-        dilate_ts_n_samples=dilate_ts_n_samples,
-        verbose=True,
-    )
-
-    # Rerun predict
-    cf.predict()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
-
-
-@pytest.mark.parametrize(
-    ["n_iterations", "n_train_items", "tol", "dilate_ts_n_samples", "n_factors"],
-    [
-        (100, 0.1, 0.001, None, 10),
-        (30, 50, 0.0001, None, None),
-        (10, 0.5, 0.001, 2, 5),
-        (5000, 0.5, 1e-12, 2, 5),
-    ],
-)
-def test_cf_nnmf_sgd(
-    n_iterations, n_train_items, tol, dilate_ts_n_samples, n_factors, simulate_wide_data
-):
-    disp_dict = {
-        "n_iterations": n_iterations,
-        "n_train_items": n_train_items,
-        "tol": tol,
-        "dilate_ts_n_samples": dilate_ts_n_samples,
-        "n_factors": n_factors,
-    }
-
-    cf = NNMF_sgd(simulate_wide_data)
-    print(f"\nMODEL: {cf}\nTEST PARAMS: {disp_dict}")
-
-    # Initial fitting on all data
-    cf.fit(
-        n_iterations=n_iterations,
-        tol=tol,
-        verbose=True,
-    )
-    cf.plot_learning()
-    plt.close()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train"]]
-
-    # Predictions on all data
-    cf.predict()
-
-    # Now split
-    cf.split_train_test(n_train_items=n_train_items)
-
-    # Return fit
-    cf.fit(
-        n_iterations=n_iterations,
-        tol=tol,
-        dilate_ts_n_samples=dilate_ts_n_samples,
-        verbose=True,
-    )
-
-    # Rerun predict
-    cf.predict()
-    _ = [basecf_method_test(cf, dataset) for dataset in ["all", "train", "test"]]
+def verify_plotting(model):
+    for dataset in ["full", "observed", "missing"]:
+        out = model.plot_predictions(dataset=dataset)
+        if dataset != "missing":
+            assert isinstance(out, tuple)
+        plt.close("all")
 
 
 def test_downsample(simulate_wide_data):
+    n_users, n_items = simulate_wide_data.shape
+    cf = Base(simulate_wide_data)
+    assert cf.data.shape == (n_users, n_items)
+
+    # Test sampling_freq has no effect if target_type = 'samples'
+    sampling_freq, target = 10, 2
+    expected_items = int(n_items * (1 / target))
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="samples")
+    assert cf.data.shape == (n_users, expected_items)
+
+    # Test each target_type
+    sampling_freq, target = 10, 2
+    cf = Base(simulate_wide_data)
+    expected_items = int(n_items * (1 / (target * sampling_freq)))
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="seconds")
+    assert cf.data.shape == (n_users, expected_items)
+
+    sampling_freq, target = 10, 5
+    cf = Base(simulate_wide_data)
+    expected_items = int(n_items * (1 / (sampling_freq / target)))
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
+    assert cf.data.shape == (n_users, expected_items)
+
+    # Make sure downsampling affects fitted model artifacts
     cf = Mean(simulate_wide_data)
-    cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    assert cf.data.shape == (50, 50)
-    cf = Mean(simulate_wide_data)
-    cf.downsample(sampling_freq=10, target=5, target_type="hz")
-    assert cf.data.shape == (50, 50)
-    cf = Mean(simulate_wide_data)
-    cf.downsample(sampling_freq=10, target=2, target_type="seconds")
-    assert cf.data.shape == (50, 5)
-    cf = Mean(simulate_wide_data)
-    cf.split_train_test(n_train_items=20)
+    cf.create_masked_data(n_mask_items=0.5)
     cf.fit()
-    cf.predict()
-    cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    assert cf.data.shape == (50, 50)
-    assert cf.train_mask.shape == (50, 50)
-    assert cf.predictions.shape == (50, 50)
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
+    assert cf.data.shape == (n_users, expected_items)
+    assert cf.mask.shape == (n_users, expected_items)
+    assert cf.masked_data.shape == (n_users, expected_items)
+    assert cf.predictions.shape == (n_users, expected_items)
 
+    # Make sure downsampling affects fitted model artifactsa including dilation
     cf = Mean(simulate_wide_data)
-    cf.split_train_test(n_train_items=20)
-    cf.fit(dilate_ts_n_samples=2)
-    cf.predict()
-    cf.downsample(sampling_freq=10, target=2, target_type="samples")
-    assert cf.dilated_mask.shape == (50, 50)
-    assert cf.train_mask.shape == (50, 50)
-    assert cf.predictions.shape == (50, 50)
+    cf.create_masked_data(n_mask_items=0.5)
+    cf.fit(dilate_by_nsamples=5)
+    cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
+    assert cf.data.shape == (n_users, expected_items)
+    assert cf.mask.shape == (n_users, expected_items)
+    assert cf.dilated_mask.shape == (n_users, expected_items)
+    assert cf.masked_data.shape == (n_users, expected_items)
+    assert cf.predictions.shape == (n_users, expected_items)
 
 
-def test_base_class(simulate_wide_data):
+def test_init_and_dilate(init, mask, n_mask_items):
+    """Test model initialization, initial masking, and dilation"""
 
-    # Init
-    model = Base(simulate_wide_data)
-    assert ~model.data.isnull().any().any()
-    assert model.train_mask is None
-    assert model.n_train_items is None
+    print(init.__class__.__name__)
+    # Test that we calculate a mask
+    if mask is not None or n_mask_items is not None:
+        assert init.is_masked
+        assert init.masked_data.isnull().any().any()
 
-    with pytest.raises(ValueError):
-        model.get_data("train")
+    # Test the mask is the right shape
+    if n_mask_items is not None:
+        total_items = init.data.shape[1]
+        if isinstance(n_mask_items, (float, np.floating)):
+            n_false_items = int(total_items * n_mask_items)
+        else:
+            n_false_items = n_mask_items
+        calculated_n_false_items = init.masked_data.isnull().sum(1)[0]
+        assert n_false_items == calculated_n_false_items
 
-    # Masking from training size
-    model = Base(simulate_wide_data, n_train_items=0.1)
-    assert ~model.data.isnull().any().any()
-    assert model.masked_data.isnull().any().any()
-    assert model.is_mask is True
-    assert model.train_mask is not None
+    # Test no accidental masking
+    if mask is None and n_mask_items is None:
+        assert not init.is_masked
+        assert not init.masked_data.isnull().any().any()
 
-    # Masking from input mask
-    mask = create_train_test_mask(simulate_wide_data)
-    model = Base(simulate_wide_data, mask=mask)
-    assert ~model.data.isnull().any().any()
-    assert model.masked_data.isnull().any().any()
-    assert model.is_mask is True
-    assert model.train_mask is not None
+        # Test fit failure when not masked
+        with pytest.raises(ValueError):
+            init.fit()
+    if mask is not None or n_mask_items is not None:
+        # Test dilation
+        n_masked = init.masked_data.isnull().sum().sum()
+        init.dilate_mask(n_samples=5)
+        assert init.dilated_mask is not None
+        assert init.is_mask_dilated is True
+        # More values when we dilate the mask
+        assert init.dilated_mask.sum().sum() > init.mask.sum().sum()
+        # Fewer masked values after we dilate the mask
+        assert n_masked > init.masked_data.isnull().sum().sum()
 
-    # Ensure get_data respects mask
-    train = model.get_data("train")
-    test = model.get_data("test")
-    all_data = model.get_data()
 
-    assert train.isnull().sum().sum() > test.isnull().sum().sum()
-    assert ~all_data.isnull().any().any()
+def test_mean(model, dilate_by_nsamples, n_mask_items):
+    """Test Mean model"""
+    if not isinstance(model, Mean):
+        pytest.skip("Skip non Mean - OK")
+    results, model = verify_fit(locals())
+    if model.n_mask_items == 0.5 and not model.is_mask_dilated:
+        true_scores = np.array(
+            [
+                8.12277126e-01,
+                9.75982274e00,
+                1.75006327e01,
+                5.61000920e-01,
+                1.95196455e01,
+                2.47496320e01,
+                1.00000000e00,
+                0.00000000e00,
+                0.00000000e00,
+            ]
+        )
+    else:
+        true_scores = None
+    verify_results(results, model, true_scores)
+    verify_plotting(model)
 
-    with pytest.raises(ValueError):
-        model = Base(simulate_wide_data, mask=mask, n_train_items=0.1)
 
-    # Mask dilation
-    masked_data = model.dilate_mask(n_samples=5)
-    assert model.is_mask_dilated is True
-    assert masked_data.equals(model.masked_data)
-    assert masked_data.isnull().sum().sum() > mask.sum().sum()
+def test_knn(model, dilate_by_nsamples, n_mask_items, k, metric):
+    """Test KNN model"""
+    if not isinstance(model, KNN):
+        pytest.skip("Skip non KNN - OK")
+    results, model = verify_fit(locals())
+    if model.n_mask_items == 0.5 and not model.is_mask_dilated and k == 3:
+        true_scores = np.array(
+            [
+                0.91726067,
+                7.25200471,
+                12.36676527,
+                0.84237887,
+                14.50400943,
+                17.48924716,
+                1.0,
+                0.0,
+                0.0,
+            ]
+        )
+    else:
+        true_scores = None
+    verify_results(results, model, true_scores)
+    verify_plotting(model)
 
-    # Make sure get_data respects dilation
-    assert train.isnull().sum().sum() > model.get_data("train").isnull().sum().sum()
+
+def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iterations):
+    """Test NNMF_mult model"""
+    if not isinstance(model, NNMF_mult):
+        pytest.skip("Skip non NNMF_mult - OK")
+    results, model = verify_fit(locals())
+    if (
+        model.n_mask_items == 0.5
+        and not model.is_mask_dilated
+        and n_iterations == 100
+        and n_factors is None
+        and model.converged is True
+    ):
+        true_scores = np.array(
+            [
+                5.03636830e-01,
+                1.89621113e01,
+                3.39885854e01,
+                -2.78597027e-02,
+                3.69112079e01,
+                4.80280757e01,
+                9.97852743e-01,
+                1.01301480e00,
+                1.93696252e00,
+            ]
+        )
+    else:
+        true_scores = None
+    verify_results(results, model, true_scores)
+    verify_plotting(model)
+    # Smoke test for plotting learning curves
+    model.plot_learning()
+    plt.close("all")
+
+
+def test_nmf_sgd(model, dilate_by_nsamples, n_mask_items, n_factors, n_iterations):
+    """Test NNMF_sgd model"""
+    if not isinstance(model, NNMF_sgd):
+        pytest.skip("Skip non NNMF_sgd - OK")
+    results, model = verify_fit(locals())
+    if (
+        model.n_mask_items == 0.5
+        and not model.is_mask_dilated
+        and n_iterations == 100
+        and n_factors is None
+        and model.converged is True
+    ):
+        true_scores = np.array(
+            [
+                0.89757001,
+                7.96887004,
+                13.33854933,
+                0.78658875,
+                15.44602272,
+                18.85269805,
+                0.99977349,
+                0.49171737,
+                0.63997854,
+            ]
+        )
+    else:
+        true_scores = None
+    verify_results(results, model, true_scores)
+    verify_plotting(model)
+    # Smoke test for plotting learning curves
+    model.plot_learning()
+    plt.close("all")

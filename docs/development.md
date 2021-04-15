@@ -1,4 +1,4 @@
-# Development
+# Contributing to development
 
 Each new push or pull-request to the code base for this toolbox will automatically be run through testing and documentation building via github actions.
 
@@ -10,7 +10,7 @@ To develop this package or its documentation locally you will need to install a 
 
 ## Testing
 
-To run tests just call `pytest` from the root of this repository. New tests can be added in `emotioncf/tests/`.
+To run tests just call `pytest` from the root of this repository. New tests can be added in `emotioncf/tests/`. To speed up tests you can optionally `pip install pytest-xdist` to parallelize testing and use it with: `pytest -rs -n auto`.
 
 ## Formatting
 
@@ -34,7 +34,7 @@ To change how the automatic workflow builds are specified, make the relevant edi
 
 ## Documentation
 
-Documentation is built with [mkdocs](https://www.mkdocs.org/) using the [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/) and [mkdocstrings](https://pawamoy.github.io/mkdocstrings/) extension. 
+Documentation is built with [mkdocs](https://www.mkdocs.org/) using the [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/), [mkdocstrings](https://pawamoy.github.io/mkdocstrings/), and [mkdocs-jupyter](https://github.com/danielfrg/mkdocs-jupyter) plugins. 
 
 
 ### Live server

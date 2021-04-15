@@ -12,18 +12,20 @@ markdown_extensions:
   - pymdownx.highlight
 nav:
   - Home: index.md
-  - Quick Overview: overview.md
-  - Development: development.md
+  - Quick Overview: examples/overview
+  - Working with Time-Series: timeseries.md
+  - Contributing to Development: development.md
   - API Reference:
       - emotioncf.utils: api/utils.md
-      - emotioncf.cf:
-          - Base: api/base.md
+      - emotioncf.base: api/base.md
+      - emotioncf.models:
           - Mean: api/mean.md
           - KNN: api/knn.md
           - NNMF_mult: api/nmf_m.md
           - NNMF_sgd: api/nmf_s.md
 plugins:
   - search
+  - mkdocs-jupyter
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -36,6 +38,6 @@ plugins:
             show_source: true
             show_if_no_docstring: false
             show_category_heading: false
-            heading_level: 3
+            heading_level: 4
       watch:
         - emotioncf

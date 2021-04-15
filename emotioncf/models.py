@@ -7,6 +7,8 @@ import numpy as np
 from .base import Base, BaseNMF
 from .utils import nanpdist
 from ._fit import sgd, mult
+import warnings
+from numba.core.errors import NumbaPerformanceWarning
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -16,11 +18,15 @@ class Mean(Base):
     The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.mean = None
 
-    def fit(self, dilate_ts_n_samples=None, **kwargs):
+    def fit(self, dilate_by_nsamples=None, **kwargs):
 
         """Fit collaborative model to train data.  Calculate similarity between subjects across items
 
@@ -29,34 +35,25 @@ class Mean(Base):
 
         """
 
-        if self.is_mask:
-            if dilate_ts_n_samples is not None:
-                _ = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-                self.mean = self.masked_data[self.dilated_mask].mean(
-                    skipna=True, axis=0
-                )
-            else:
-                self.mean = self.masked_data[self.train_mask].mean(skipna=True, axis=0)
-        else:
-            self.mean = self.data.mean(skipna=True, axis=0)
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
+
+        self.dilate_mask(n_samples=dilate_by_nsamples)
+        self.mean = self.masked_data.mean(skipna=True, axis=0)
+        self._predict()
         self.is_fit = True
 
-    def predict(self):
+    def _predict(self):
 
-        """Predict missing items using other subject's item means.
+        """Predict missing items using other subject's item means."""
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
+        predictions = self.masked_data.copy()
 
-        """
+        for row_idx, row in predictions.iterrows():
+            row[row.isnull()] = self.mean[row.isnull()]
+            predictions.loc[row_idx] = row
 
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
-
-        self.predictions = self.data.copy()
-        for row in self.data.iterrows():
-            self.predictions.loc[row[0]] = self.mean
-        self.is_predict = True
+        self.predictions = predictions
 
 
 class KNN(Base):
@@ -64,86 +61,92 @@ class KNN(Base):
     The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method.
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
-        self.subject_similarity = None
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
+        self.user_similarity = None
+        self._last_metric = None
+        self._last_dilate_by_nsamples = None
 
-    def fit(self, metric="pearson", dilate_ts_n_samples=None, **kwargs):
+    def fit(
+        self,
+        k=None,
+        metric="pearson",
+        dilate_by_nsamples=None,
+        skip_refit=False,
+        **kwargs,
+    ):
 
-        """Fit collaborative model to train data.  Calculate similarity between subjects across items
+        """Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.
 
         Args:
+            k (int): number of closest neighbors to use
             metric (str; optional): type of similarity. One of 'pearson', 'spearman', 'kendall', 'cosine', or 'correlation'. 'correlation' is just an alias for 'pearson'. Default 'pearson'.
+            skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.
         """
 
-        metrics = ["pearson", "spearman", "kendall", "cosine", "correlation"]
+        metrics = ["pearson", "spearman", "kendall", "cosine"]
         if metric not in metrics:
             raise ValueError(f"metric must be one of {metrics}")
 
-        if self.is_mask:
-            data = self.data[self.train_mask]
-        else:
-            data = self.data.copy()
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
 
-        if dilate_ts_n_samples is not None:
-            data = self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-            data = data[self.dilated_mask]
+        # If fit is being called more than once in a row with different k, but no other arguments are changing, reuse the last computed similarity matrix to save time. Otherwise re-calculate it
+        if not skip_refit:
+            self.dilate_mask(n_samples=dilate_by_nsamples)
+            if metric in ["pearson", "kendall", "spearman"]:
+                # Fall back to pandas
+                sim = self.masked_data.T.corr(method=metric)
+            else:
+                sim = pd.DataFrame(
+                    1 - nanpdist(self.masked_data.to_numpy(), metric=metric),
+                    index=self.masked_data.index,
+                    columns=self.masked_data.index,
+                )
 
-        if metric in ["pearson", "kendall", "spearman"]:
-            # Fall back to pandas
-            sim = data.T.corr(method=metric)
-        else:
-            sim = pd.DataFrame(
-                1 - nanpdist(data.to_numpy(), metric=metric),
-                index=data.index,
-                columns=data.index,
-            )
-
-        self.subject_similarity = sim
+            self.user_similarity = sim
+        self._predict(k=k)
         self.is_fit = True
 
-    def predict(self, k=None, **kwargs):
-        """Predict Subject's missing items using similarity based collaborative filtering.
+    def _predict(self, k=None):
+        """Make predictions using computed subject similarities.
 
         Args:
             k (int): number of closest neighbors to use
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
-
         """
 
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
+        predictions = self.masked_data.copy()
 
-        if self.is_mask:
-            data = self.masked_data.copy()
-        else:
-            data = self.data.copy()
+        for row_idx, row in predictions.iterrows():
 
-        pred = pd.DataFrame(np.zeros(data.shape))
-        pred.columns = data.columns
-        pred.index = data.index
-        for row in data.iterrows():
+            # Get the similarity of this user to all other users, ignoring self-similarity
+            top_users = self.user_similarity.loc[row_idx].drop(row_idx)
+            if top_users.isnull().all():
+                warnings.warn(
+                    f"User {row_idx} has no variance in their ratings. Impossible to compute similarity with other users"
+                )
+
+            # Remove nan users and sort
+            top_users = top_users[~top_users.isnull()].sort_values(ascending=False)
+
+            # Get top k if requested
             if k is not None:
-                top_subjects = (
-                    self.subject_similarity.loc[row[0]]
-                    .drop(row[0])
-                    .sort_values(ascending=False)[0:k]
-                )
-            else:
-                top_subjects = (
-                    self.subject_similarity.loc[row[0]]
-                    .drop(row[0])
-                    .sort_values(ascending=False)
-                )
-            top_subjects = top_subjects[~top_subjects.isnull()]  # remove nan subjects
-            for col in data.iteritems():
-                pred.loc[row[0], col[0]] = np.dot(
-                    top_subjects, self.data.loc[top_subjects.index, col[0]].T
-                ) / len(top_subjects)
-        self.predictions = pred
-        self.is_predict = True
+                top_users = top_users[: k + 1]
+
+            # Get item predictions: similarity-weighted-mean of other user's ratings
+            preds = pd.Series(
+                np.dot(top_users, self.data.loc[top_users.index, :]) / len(top_users),
+                index=self.data.columns,
+            )
+            row[row.isnull()] = preds[row.isnull()]
+            predictions.loc[row_idx] = row
+
+        self.predictions = predictions
 
 
 class NNMF_mult(BaseNMF):
@@ -156,10 +159,15 @@ class NNMF_mult(BaseNMF):
 
     The implementation here follows closely that of Lee & Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf
 
+    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.H = None  # factors x items
         self.W = None  # user x factors
         self.n_factors = None
@@ -170,11 +178,12 @@ class NNMF_mult(BaseNMF):
     def fit(
         self,
         n_factors=None,
-        n_iterations=5000,
+        n_iterations=1000,
         tol=1e-6,
         eps=1e-6,
         verbose=False,
-        dilate_ts_n_samples=None,
+        dilate_by_nsamples=None,
+        **kwargs,
     ):
 
         """Fit NNMF collaborative filtering model to train data using multiplicative updating.
@@ -187,11 +196,18 @@ class NNMF_mult(BaseNMF):
             tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
             eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.
             verbose (bool, optional): print information about training. Defaults to False.
-            dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
-            save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
+            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
         """
 
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
+
         n_users, n_items = self.data.shape
+
+        if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
+            n_factors, np.floating
+        ):
+            raise TypeError("n_factors must be an integer < number of items")
 
         if n_factors is None:
             n_factors = n_items
@@ -201,44 +217,32 @@ class NNMF_mult(BaseNMF):
         # Initialize W and H at non-negative scaled random values
         # We use random initialization scaled by the data, like sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
         avg = np.sqrt(np.nanmean(self.data) / n_factors)
-        self.H = avg * np.random.rand(n_factors, n_items)
-        self.W = avg * np.random.rand(n_users, n_factors)
+        self.H = avg * self.random_state.rand(n_factors, n_items)
+        self.W = avg * self.random_state.rand(n_users, n_factors)
 
-        # Appropriately handle mask
-        # TODO: refactor this masking block to match the SGD implementation
-        if self.is_mask:
-            if dilate_ts_n_samples is not None:
-                masked_X = self._dilate_ts_rating_samples(
-                    n_samples=dilate_ts_n_samples
-                ).values
-                mask = self.dilated_mask.values
-            else:
-                mask = self.train_mask.values
-                masked_X = self.data.values * mask
-            masked_X[np.isnan(masked_X)] = 0
-        else:
-            masked_X = self.data.values
-            mask = np.ones(self.data.shape)
-
-        # Ger data randge for norm_mse
-        data_range = self.data.max().max() - self.data.min().min()
+        # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix: https://arxiv.org/pdf/1612.06037.pdf
+        self.dilate_mask(n_samples=dilate_by_nsamples)
+        # fillna(0) is equivalent to hadamard (element-wise) product with a binary mask
+        X = self.masked_data.fillna(0).to_numpy()
 
         # Run multiplicative updating
-        error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
-            masked_X,
-            self.W,
-            self.H,
-            data_range,
-            eps,
-            tol,
-            n_iterations,
-            verbose,
-        )
+        # Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=NumbaPerformanceWarning)
+            error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
+                X,
+                self.W,
+                self.H,
+                self.data_range,
+                eps,
+                tol,
+                n_iterations,
+                verbose,
+            )
 
         # Save outputs to model
         self.W, self.H = W, H
         self.error_history = error_history
-        self.is_fit = True
         self._n_iter = n_iter
         self._delta = delta
         self._norm_rmse = norm_rmse
@@ -252,24 +256,19 @@ class NNMF_mult(BaseNMF):
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
-                print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
+                print(f"\tFinal delta exceeds tol: {tol} <= {self._delta}")
 
             print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
+        self._predict()
+        self.is_fit = True
 
-    def predict(self):
+    def _predict(self):
 
-        """Predict Subject's missing items using NNMF with multiplicative updating
+        """Predict subjects' missing items using NNMF with multiplicative updating"""
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
-        """
-
-        if not self.is_fit:
-            raise ValueError("You must fit() model first before using this method.")
-
-        self.predictions = self.data.copy()
-        self.predictions.loc[:, :] = np.dot(self.W, self.H)
-        self.is_predict = True
+        self.predictions = pd.DataFrame(
+            self.W @ self.H, index=self.data.index, columns=self.data.columns
+        )
 
 
 class NNMF_sgd(BaseNMF):
@@ -280,10 +279,16 @@ class NNMF_sgd(BaseNMF):
 
     The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
 
+    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices
+
     """
 
-    def __init__(self, data, mask=None, n_train_items=None):
-        super().__init__(data, mask, n_train_items)
+    def __init__(
+        self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
+    ):
+        super().__init__(
+            data, mask, n_mask_items, random_state=random_state, verbose=verbose
+        )
         self.n_factors = None
 
     def __repr__(self):
@@ -297,10 +302,11 @@ class NNMF_sgd(BaseNMF):
         item_bias_reg=0.0,
         user_bias_reg=0.0,
         learning_rate=0.001,
-        n_iterations=5000,
+        n_iterations=1000,
         tol=1e-6,
         verbose=False,
-        dilate_ts_n_samples=None,
+        dilate_by_nsamples=None,
+        **kwargs,
     ):
         """
         Fit NNMF collaborative filtering model using stochastic-gradient-descent
@@ -315,13 +321,20 @@ class NNMF_sgd(BaseNMF):
             n_iterations (int, optional): total number of training iterations if convergence is not achieved. Defaults to 5000.
             tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
             verbose (bool, optional): print information about training. Defaults to False.
-            dilate_ts_n_samples (int, optional): How many items to dilate by prior to training. Defaults to None.
-            save_learning (bool, optional): Save error for each training iteration for diagnostic purposes. Set this to False if memory is a limitation and the n_iterations is very large. Defaults to True.
-            fast_sdg (bool; optional): Use an JIT compiled SGD for faster fitting. Note that verbose outputs are not compatible with this option and error history is always saved; Default False
+            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
         """
+
+        # Call parent fit which acts as a guard for non-masked data
+        super().fit()
 
         # initialize variables
         n_users, n_items = self.data.shape
+
+        if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
+            n_factors, np.floating
+        ):
+            raise TypeError("n_factors must be an integer < number of items")
+
         if n_factors is None:
             n_factors = n_items
 
@@ -333,70 +346,68 @@ class NNMF_sgd(BaseNMF):
         self.error_history = []
 
         # Perform dilation if requested
-        if dilate_ts_n_samples is not None:
-            self._dilate_ts_rating_samples(n_samples=dilate_ts_n_samples)
-
-        # Appropriately handle mask
-        if self.is_mask:
-            if self.is_mask_dilated:
-                data = self.masked_data[self.dilated_mask]
-                sample_row, sample_col = self.dilated_mask.values.nonzero()
-                self.global_bias = data[self.dilated_mask].mean().mean()
-            else:
-                data = self.masked_data[self.train_mask]
-                sample_row, sample_col = self.train_mask.values.nonzero()
-                self.global_bias = data[self.train_mask].mean().mean()
+        self.dilate_mask(n_samples=dilate_by_nsamples)
+        # Get indices of missing data to compute
+        if self.is_mask_dilated:
+            sample_row, sample_col = self.dilated_mask.values.nonzero()
         else:
-            data = self.data.copy()
-            sample_row, sample_col = zip(*np.argwhere(~np.isnan(data.values)))
-            self.global_bias = data.values[~np.isnan(data.values)].mean()
+            sample_row, sample_col = self.mask.values.nonzero()
 
         # Convert tuples cause numba complains
         sample_row, sample_col = np.array(sample_row), np.array(sample_col)
 
-        # Initialize user and item biases and latent vectors
+        # Initialize global, user, and item biases and latent vectors
+        self.global_bias = self.masked_data.mean().mean()
         self.user_bias = np.zeros(n_users)
         self.item_bias = np.zeros(n_items)
-        self.user_vecs = np.random.normal(
+
+        # Like multiplicative updating orient these as user x factor, factor x item
+        self.user_vecs = self.random_state.normal(
             scale=1.0 / n_factors, size=(n_users, n_factors)
         )
-        self.item_vecs = np.random.normal(
-            scale=1.0 / n_factors, size=(n_items, n_factors)
+        self.item_vecs = self.random_state.normal(
+            scale=1.0 / n_factors, size=(n_factors, n_items)
         )
 
-        # Get data range for norm_rmse
-        data_range = self.data.max().max() - self.data.min().min()
+        X = self.masked_data.to_numpy()
+
+        # Generate seed for shuffling within sgd
+        seed = self.random_state.randint(np.iinfo(np.int32).max)
 
         # Run SGD
-        (
-            error_history,
-            converged,
-            n_iter,
-            delta,
-            norm_rmse,
-            user_bias,
-            user_vecs,
-            item_bias,
-            item_vecs,
-        ) = sgd(
-            data.to_numpy(),
-            self.global_bias,
-            data_range,
-            tol,
-            self.user_bias,
-            self.user_vecs,
-            self.user_bias_reg,
-            self.user_fact_reg,
-            self.item_bias,
-            self.item_vecs,
-            self.item_bias_reg,
-            self.item_fact_reg,
-            n_iterations,
-            sample_row,
-            sample_col,
-            learning_rate,
-            verbose,
-        )
+        # Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=NumbaPerformanceWarning)
+            (
+                error_history,
+                converged,
+                n_iter,
+                delta,
+                norm_rmse,
+                user_bias,
+                user_vecs,
+                item_bias,
+                item_vecs,
+            ) = sgd(
+                X,
+                seed,
+                self.global_bias,
+                self.data_range,
+                tol,
+                self.user_bias,
+                self.user_vecs,
+                self.user_bias_reg,
+                self.user_fact_reg,
+                self.item_bias,
+                self.item_vecs,
+                self.item_bias_reg,
+                self.item_fact_reg,
+                n_iterations,
+                sample_row,
+                sample_col,
+                learning_rate,
+                verbose,
+            )
         # Save outputs to model
         (
             self.error_history,
@@ -412,7 +423,6 @@ class NNMF_sgd(BaseNMF):
             item_vecs,
         )
 
-        self.is_fit = True
         self._n_iter = n_iter
         self._delta = delta
         self._norm_rmse = norm_rmse
@@ -425,26 +435,22 @@ class NNMF_sgd(BaseNMF):
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
-                print(f"\tFinal delta exceeds tol: {tol} <= {np.round(self._delta, 5)}")
+                print(f"\tFinal delta exceeds tol: {tol} <= {self._delta}")
 
             print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
 
-    def predict(self):
+        self._predict()
+        self.is_fit = True
 
-        """Predict Subject's missing items using NNMF with stochastic gradient descent
+    def _predict(self):
 
-        Returns:
-            predicted_rating (Dataframe): adds field to object instance
-        """
+        """Predict User's missing items using NNMF with stochastic gradient descent"""
 
-        self.predictions = self.data.copy()
-        for u in range(self.user_vecs.shape[0]):
-            for i in range(self.item_vecs.shape[0]):
-                self.predictions.iloc[u, i] = self._predict_single(u, i)
-        self.is_predict = True
-
-    def _predict_single(self, u, i):
-        """ Single user and item prediction."""
-        prediction = self.global_bias + self.user_bias[u] + self.item_bias[i]
-        prediction += self.user_vecs[u, :].dot(self.item_vecs[i, :].T)
-        return prediction
+        # user x factor * factor item + biases
+        predictions = self.user_vecs @ self.item_vecs
+        predictions = (
+            (predictions.T + self.user_bias).T + self.item_bias + self.global_bias
+        )
+        self.predictions = pd.DataFrame(
+            predictions, index=self.data.index, columns=self.data.columns
+        )

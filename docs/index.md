@@ -14,11 +14,11 @@ pip install git+https://github.com/cosanlab/emotionCF.git
 
 ## Getting started
 
-Checkout the [quick overview](overview.md) for examples to help you get started.  
+Checkout the [quick overview](examples/overview) for examples to help you get started.  
 
 Or check out the API reference on the left to explore the details of specific models.
 
-A unique feature of this toolbox is its support for [working with time-series data](overview/#working-with-time-series-data).
+A unique feature of this toolbox is its support for [working with time-series data](timeseries.md).
 
 ## Algorithms
 
