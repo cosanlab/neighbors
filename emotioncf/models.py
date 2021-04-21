@@ -204,10 +204,10 @@ class NNMF_mult(BaseNMF):
 
         n_users, n_items = self.data.shape
 
-        if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
-            n_factors, np.floating
-        ):
-            raise TypeError("n_factors must be an integer < number of items")
+        if (
+            isinstance(n_factors, int) and (n_factors > n_items and n_factors > n_users)
+        ) or isinstance(n_factors, np.floating):
+            raise TypeError("n_factors must be an integer < number of items and users")
 
         if n_factors is None:
             n_factors = min([n_users, n_items])
@@ -330,10 +330,10 @@ class NNMF_sgd(BaseNMF):
         # initialize variables
         n_users, n_items = self.data.shape
 
-        if (isinstance(n_factors, int) and n_factors >= n_items) or isinstance(
-            n_factors, np.floating
-        ):
-            raise TypeError("n_factors must be an integer < number of items")
+        if (
+            isinstance(n_factors, int) and (n_factors > n_items and n_factors > n_users)
+        ) or isinstance(n_factors, np.floating):
+            raise TypeError("n_factors must be an integer < number of items and users")
 
         if n_factors is None:
             n_factors = min([n_users, n_items])
