@@ -210,7 +210,7 @@ class NNMF_mult(BaseNMF):
             raise TypeError("n_factors must be an integer < number of items")
 
         if n_factors is None:
-            n_factors = n_items
+            n_factors = min([n_users, n_items])
 
         self.n_factors = n_factors
 
@@ -336,7 +336,7 @@ class NNMF_sgd(BaseNMF):
             raise TypeError("n_factors must be an integer < number of items")
 
         if n_factors is None:
-            n_factors = n_items
+            n_factors = min([n_users, n_items])
 
         self.n_factors = n_factors
         self.item_fact_reg = item_fact_reg
