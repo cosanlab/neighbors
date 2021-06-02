@@ -83,6 +83,10 @@ def sgd(
             # Keep track of total squared error
             total_error += np.power(e, 2)
 
+        # Force non-negativity. Surprise does this per-epoch via re-initialization. We do this per sweep over all training data, e.g. see: https://github.com/NicolasHug/Surprise/blob/master/surprise/prediction_algorithms/matrix_factorization.pyx#L671
+        user_vecs = np.maximum(user_vecs, 0)
+        item_vecs = np.maximum(item_vecs, 0)
+
         # Normalize the current error with respect to the range of the dataset
         rmse = np.sqrt(total_error / len(training_indices))
         norm_rmse = rmse / data_range

@@ -337,7 +337,7 @@ class Base(object):
 
     def to_long_df(self):
 
-        """ Create a long format pandas dataframe with observed, predicted, and mask."""
+        """Create a long format pandas dataframe with observed, predicted, and mask."""
 
         observed = pd.DataFrame(columns=["User", "Item", "Rating", "Condition"])
         for row in self.data.iterrows():
@@ -626,5 +626,37 @@ class BaseNMF(Base):
             if save:
                 plt.savefig(save, bbox_inches="tight")
             return f, ax
+        else:
+            raise ValueError("Model has not been fit.")
+
+    def plot_factors(self, save=False, **kwargs):
+        """
+        Plot user x factor and item x factor matrices
+
+        Args:
+            save (bool/str/Path, optional): if a string or path is provided will save the figure to that location. Defaults to False.
+            kwargs: additional arguments to seaborn.heatmap
+
+        Returns:
+            tuple: (figure handle, axes handle)
+        """
+
+        if self.is_fit:
+            f, axs = plt.subplots(1, 2, figsize=(12, 6))
+            if hasattr(self, "W"):
+                _ = sns.heatmap(self.W, ax=axs[0], **kwargs)
+                _ = sns.heatmap(self.H, ax=axs[1], **kwargs)
+            else:
+                _ = sns.heatmap(self.user_vecs, ax=axs[0], **kwargs)
+                _ = sns.heatmap(self.item_vecs, ax=axs[1], **kwargs)
+            axs[0].set_xlabel("Factor", fontsize=18)
+            axs[0].set_ylabel("User", fontsize=18)
+            axs[0].set_title("User Factors", fontsize=18)
+            axs[1].set_xlabel("Item", fontsize=18)
+            axs[1].set_ylabel("Factor", fontsize=18)
+            axs[1].set_title("Item Factors", fontsize=18)
+            if save:
+                plt.savefig(save, bbox_inches="tight")
+            return f, axs
         else:
             raise ValueError("Model has not been fit.")

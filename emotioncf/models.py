@@ -217,8 +217,8 @@ class NNMF_mult(BaseNMF):
         # Initialize W and H at non-negative scaled random values
         # We use random initialization scaled by the data, like sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
         avg = np.sqrt(np.nanmean(self.data) / n_factors)
-        self.H = avg * self.random_state.rand(n_factors, n_items)
-        self.W = avg * self.random_state.rand(n_users, n_factors)
+        self.H = np.abs(avg * self.random_state.rand(n_factors, n_items))
+        self.W = np.abs(avg * self.random_state.rand(n_users, n_factors))
 
         # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix: https://arxiv.org/pdf/1612.06037.pdf
         self.dilate_mask(n_samples=dilate_by_nsamples)
@@ -362,11 +362,11 @@ class NNMF_sgd(BaseNMF):
         self.item_bias = np.zeros(n_items)
 
         # Like multiplicative updating orient these as user x factor, factor x item
-        self.user_vecs = self.random_state.normal(
-            scale=1.0 / n_factors, size=(n_users, n_factors)
+        self.user_vecs = np.abs(
+            self.random_state.normal(scale=1.0 / n_factors, size=(n_users, n_factors))
         )
-        self.item_vecs = self.random_state.normal(
-            scale=1.0 / n_factors, size=(n_factors, n_items)
+        self.item_vecs = np.abs(
+            self.random_state.normal(scale=1.0 / n_factors, size=(n_factors, n_items))
         )
 
         X = self.masked_data.to_numpy()

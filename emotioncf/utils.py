@@ -102,6 +102,8 @@ def create_user_item_matrix(df, columns=None, force_float=True, errors="raise"):
             "Auto-converting data to floats failed, probably because you have non-numeric data in some rows. You can set errors = 'coerce' to set these failures to NaN"
         )
         raise (e)
+    ratings.index.name = "User"
+    ratings.columns.name = "Item"
 
     return ratings
 
