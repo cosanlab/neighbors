@@ -429,9 +429,15 @@ class Base(object):
         sub_rating_conv_mn[new_mask] = np.nan
         return sub_rating_conv_mn
 
-    def _dilate_ts_rating_samples(self, n_samples=None):
+    def dilate_mask(self, n_samples=None):
 
-        """Alias for `.dilate_mask`"""
+        """Dilate sparse time-series data by n_samples.
+        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation. This is an alias to `._dilate_ts_rating_samples`
+
+        Args:
+            nsamples (int):  Number of samples to dilate data
+
+        """
 
         if not self.is_masked and n_samples is not None:
             raise ValueError("Make sure model instance has been masked.")
@@ -459,18 +465,6 @@ class Base(object):
             self.dilated_mask = None
             self.is_mask_dilated = False
             self.dilated_by_nsamples = None
-
-    def dilate_mask(self, n_samples=None):
-
-        """Dilate sparse time-series data by n_samples.
-        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation. This is an alias to `._dilate_ts_rating_samples`
-
-        Args:
-            nsamples (int):  Number of samples to dilate data
-
-        """
-
-        self._dilate_ts_rating_samples(n_samples=n_samples)
 
     def fit(self, **kwargs):
         """Replaced by sub-classes. This call just ensures that a model's data is sparse prior to fitting"""
