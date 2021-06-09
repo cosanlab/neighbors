@@ -33,7 +33,7 @@ class Base(object):
         """
         if not isinstance(data, pd.DataFrame):
             raise ValueError("data must be a pandas dataframe instance")
-        self.data = data
+        self.data = data.copy()
         self.predictions = None
         self.is_fit = False
         self.mask = None
@@ -52,10 +52,10 @@ class Base(object):
         self.random_state = check_random_state(random_state)
 
         # Check for null values in input data and if they exist treat the data as already masked
-        if data.isnull().any().any():
+        if self.data.isnull().any().any():
             if verbose:
                 print("data contains NaNs...treating as pre-masked")
-            self.mask = ~data.isnull()
+            self.mask = ~self.data.isnull()
             self.is_masked = True
             self.is_dense = False
 
@@ -67,7 +67,7 @@ class Base(object):
                 )
             if mask.shape != data.shape:
                 raise ValueError("mask must be the same shape as data")
-            self.mask = mask
+            self.mask = mask.copy()
             self.masked_data = self.data[self.mask]
             self.is_masked = True
 
