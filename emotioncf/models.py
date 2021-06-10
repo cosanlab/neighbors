@@ -107,11 +107,12 @@ class KNN(Base):
                 sim = self.masked_data.T.corr(method=metric)
             else:
                 # Convert distance metrics to similarity (currently only cosine)
+                # Also ensure that they're all positive because cosine similarity can be negative if one of the vectors is negative despite having a positive relationship with the nother vector. NOTE: we might want to change this in the future if we support additional metrics
                 sim = pd.DataFrame(
                     1 - nanpdist(self.masked_data.to_numpy(), metric=metric),
                     index=self.masked_data.index,
                     columns=self.masked_data.index,
-                )
+                ).abs()
 
             self.user_similarity = sim
         self._predict(k=k)
@@ -147,6 +148,10 @@ class KNN(Base):
             if self.metric in ["correlation", "pearson", "spearman"]:
                 top_users += 1
                 top_users /= 2
+
+            assert (
+                1 >= top_users >= 0
+            ), "user_similarities contain negative values; cannot compute predictions"
 
             # Get item predictions: similarity-weighted-mean of other user's ratings
             # Users with highest similarity get full weight (i.e. 1), users with lowest similarity get no weight (i.e. 0)
