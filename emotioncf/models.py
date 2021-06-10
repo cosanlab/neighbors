@@ -112,7 +112,11 @@ class KNN(Base):
                     1 - nanpdist(self.masked_data.to_numpy(), metric=metric),
                     index=self.masked_data.index,
                     columns=self.masked_data.index,
-                ).abs()
+                )
+                if any(sim < 0):
+                    raise ValueError(
+                        f"user similarites contain negative values but metric was {self.metric}. You may want to check your data or consider a different distance metric"
+                    )
 
             self.user_similarity = sim
         self._predict(k=k)
@@ -145,13 +149,14 @@ class KNN(Base):
                 top_users = top_users[: k + 1]
 
             # Rescale similarity metrics between -1 to 1 to 0 to 1 like cosine for the dot product below
-            if self.metric in ["correlation", "pearson", "spearman"]:
-                top_users += 1
-                top_users /= 2
+            top_users = np.clip(top_users, 0, 1)
+            # if self.metric in ["correlation", "pearson", "spearman"]:
+            #     top_users += 1
+            #     top_users /= 2
 
-            assert (
-                1 >= top_users >= 0
-            ), "user_similarities contain negative values; cannot compute predictions"
+            # assert (
+            #     1 >= top_users >= 0
+            # ), "user_similarities contain negative values; cannot compute predictions"
 
             # Get item predictions: similarity-weighted-mean of other user's ratings
             # Users with highest similarity get full weight (i.e. 1), users with lowest similarity get no weight (i.e. 0)
