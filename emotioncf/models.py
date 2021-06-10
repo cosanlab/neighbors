@@ -65,13 +65,15 @@ class KNN(Base):
             data, mask, n_mask_items, random_state=random_state, verbose=verbose
         )
         self.user_similarity = None
-        self._last_metric = None
-        self._last_dilate_by_nsamples = None
+        self.metric = None
+
+    def __repr__(self):
+        return f"{super().__repr__()[:-1]}, similarity_metric={self.metric})"
 
     def fit(
         self,
         k=None,
-        metric="pearson",
+        metric="correlation",
         dilate_by_nsamples=None,
         skip_refit=False,
         **kwargs,
@@ -81,13 +83,18 @@ class KNN(Base):
 
         Args:
             k (int): number of closest neighbors to use
-            metric (str; optional): type of similarity. One of 'pearson', 'spearman', 'kendall', 'cosine', or 'correlation'. 'correlation' is just an alias for 'pearson'. Default 'pearson'.
+            metric (str; optional): type of similarity. One of 'correlation', 'spearman', 'kendall', 'cosine', or 'pearson'. 'pearson' is just an alias for 'correlation'. Default 'correlation'.
             skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.
         """
 
-        metrics = ["pearson", "spearman", "kendall", "cosine"]
+        metrics = ["pearson", "spearman", "kendall", "cosine", "correlation"]
         if metric not in metrics:
             raise ValueError(f"metric must be one of {metrics}")
+
+        self.metric = metric
+
+        if metric == "correlation":
+            metric = "pearson"
 
         # Call parent fit which acts as a guard for non-masked data
         super().fit()
@@ -99,6 +106,7 @@ class KNN(Base):
                 # Fall back to pandas
                 sim = self.masked_data.T.corr(method=metric)
             else:
+                # Convert distance metrics to similarity (currently only cosine)
                 sim = pd.DataFrame(
                     1 - nanpdist(self.masked_data.to_numpy(), metric=metric),
                     index=self.masked_data.index,
@@ -110,7 +118,7 @@ class KNN(Base):
         self.is_fit = True
 
     def _predict(self, k=None):
-        """Make predictions using computed subject similarities.
+        """Make predictions using computed user similarities.
 
         Args:
             k (int): number of closest neighbors to use
@@ -135,7 +143,13 @@ class KNN(Base):
             if k is not None:
                 top_users = top_users[: k + 1]
 
+            # Rescale similarity metrics between -1 to 1 to 0 to 1 like cosine for the dot product below
+            if self.metric in ["correlation", "pearson", "spearman"]:
+                top_users += 1
+                top_users /= 2
+
             # Get item predictions: similarity-weighted-mean of other user's ratings
+            # Users with highest similarity get full weight (i.e. 1), users with lowest similarity get no weight (i.e. 0)
             preds = pd.Series(
                 np.dot(top_users, self.data.loc[top_users.index, :]) / len(top_users),
                 index=self.data.columns,
