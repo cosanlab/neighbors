@@ -36,11 +36,11 @@ class Base(object):
         self.data = data.copy()
         self.predictions = None
         self.is_fit = False
-        self.mask = None
+        self.mask = None  # boolean matrix of observed value indices
         self.is_masked = False
-        self.masked_data = data
+        self.masked_data = data  # boolean mask applied to data
         self.is_mask_dilated = False
-        self.dilated_mask = None
+        self.dilated_mask = None  # booleanized masked_data after dilation
         self.dilated_by_nsamples = None
         self.n_mask_items = n_mask_items
         self.data_range = self.data.max().max() - self.data.min().min()
@@ -94,9 +94,8 @@ class Base(object):
     def score(
         self,
         metric="rmse",
-        by_subject=False,
         dataset="missing",
-        verbose=True,
+        by_user=False,
         actual=None,
     ):
         """Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the `.summary()` method instead, which scores all metrics.
@@ -104,10 +103,11 @@ class Base(object):
         Args:
             metric (str; optional): what metric to compute, one of 'rmse', 'mse', 'mae' or 'correlation'; Default 'rmse'.
             dataset (str; optional): how to compute scoring, either using 'observed', 'missing' or 'full'. Default 'missing'.
+            by_user (bool; optional): whether to return a single score over all data points or a pandas Series of scores per user. Default False.
             actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
 
         Returns:
-            float: score
+            float/pd.Series: score
 
         """
 
@@ -131,16 +131,15 @@ class Base(object):
                 )
 
         if actual is None:
-            if verbose:
-                warnings.warn(
-                    "Cannot score predictions on missing data because true values were never observed!"
-                )
+            warnings.warn(
+                "Cannot score predictions on missing data because true values were never observed!"
+            )
             return None
 
         with warnings.catch_warnings():
             # Catch 'Mean of empty slice' warnings from np.nanmean
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            if by_subject:
+            if by_user:
                 scores = []
                 for userid in range(actual.shape[0]):
                     user_actual = actual.iloc[userid, :].values
@@ -200,6 +199,7 @@ class Base(object):
         self.is_masked = True
         self.n_mask_items = n_mask_items
 
+    # TODO: Clean up aesthetics of these plots. Remove title from right most panel and despine
     def plot_predictions(
         self, dataset="missing", verbose=True, figsize=(15, 8), heatmapkwargs={}
     ):
@@ -263,9 +263,7 @@ class Base(object):
             ax[2].set_ylabel("Predicted Ratings")
             ax[2].set_title("Predicted Ratings")
 
-            r = self.score(
-                dataset=dataset, by_subject=True, metric="correlation"
-            ).mean()
+            r = self.score(dataset=dataset, by_user=True, metric="correlation").mean()
 
             if verbose:
                 print("Average user correlation: %s" % r)
@@ -384,20 +382,21 @@ class Base(object):
         if dataset == "full":
             return (self.data, self.predictions)
 
+        # NOTE: always use self.mask to grab locations of observed and missing values rather than where masked_data is or isn't null. This is because dilation will by design *reduce* the sparsity of self.masked_data, meaning non-null indices are only a subset of the true missing values
         elif dataset == "observed":
             return (
-                self.data[self.masked_data.notnull()],
-                self.predictions[self.masked_data.notnull()],
+                self.data[self.mask],
+                self.predictions[self.mask],
             )
         elif dataset == "missing":
-            # This happens if the input data already has NaNs that were not the result of a masking operation by a model on dense data
             if self.is_dense:
                 return (
-                    self.data[self.masked_data.isnull()],
-                    self.predictions[self.masked_data.isnull()],
+                    self.data[~self.mask],
+                    self.predictions[~self.mask],
                 )
             else:
-                return (None, self.predictions[self.masked_data.isnull()])
+                # This happens if the input data already has NaNs that were not the result of a masking operation by a model on dense data. In this case we never observed ground truth values to compare against predictions
+                return (None, self.predictions[~self.mask])
 
     @staticmethod
     def _conv_ts_mean_overlap(sub_rating, n_samples=5):
@@ -432,13 +431,15 @@ class Base(object):
     def dilate_mask(self, n_samples=None):
 
         """Dilate sparse time-series data by n_samples.
-        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation. This is an alias to `._dilate_ts_rating_samples`
+        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation.
 
         Args:
             nsamples (int):  Number of samples to dilate data
 
         """
 
+        if self.mask is None:
+            raise ValueError("Model has no mask and requires one to perform dilation")
         if not self.is_masked and n_samples is not None:
             raise ValueError("Make sure model instance has been masked.")
 
@@ -448,16 +449,16 @@ class Base(object):
             raise TypeError("nsamples should be an integer < the number of items")
 
         # Always reset to the undilated mask first
-        self.masked_data = self.data[self.mask] if self.mask is not None else self.data
+        self.masked_data = self.data[self.mask]
 
         if n_samples is not None:
-            # Update masked data with dilation
+            # After masking, perform dilation and save as the new masked data
             self.masked_data = self.masked_data.apply(
                 lambda x: self._conv_ts_mean_overlap(x, n_samples=n_samples),
                 axis=1,
                 result_type="broadcast",
             )
-            # Save dilated mask
+            # Calculate and save dilated mask
             self.dilated_mask = ~self.masked_data.isnull()
             self.is_mask_dilated = True
             self.dilated_by_nsamples = n_samples
@@ -519,14 +520,13 @@ class Base(object):
                 this_subject_result = []
                 for dat in dataset:
                     this_group_result[dat] = self.score(
-                        metric=metric, dataset=dat, verbose=verbose, actual=actual
+                        metric=metric, dataset=dat, actual=actual
                     )
                     this_subject_result.append(
                         self.score(
                             metric=metric,
                             dataset=dat,
-                            by_subject=True,
-                            verbose=verbose,
+                            by_user=True,
                             actual=actual,
                         )
                     )

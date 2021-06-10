@@ -28,7 +28,7 @@ class Mean(Base):
 
     def fit(self, dilate_by_nsamples=None, **kwargs):
 
-        """Fit collaborative model to train data.  Calculate similarity between subjects across items
+        """Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.
 
         Args:
             dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
@@ -47,13 +47,10 @@ class Mean(Base):
 
         """Predict missing items using other subject's item means."""
 
-        predictions = self.masked_data.copy()
-
-        for row_idx, row in predictions.iterrows():
-            row[row.isnull()] = self.mean[row.isnull()]
-            predictions.loc[row_idx] = row
-
-        self.predictions = predictions
+        # Always predict mean (learned on observed values) for observed and missing values
+        self.predictions = pd.concat([self.mean] * self.data.shape[0], axis=1).T
+        self.predictions.index = self.data.index
+        self.predictions.columns = self.data.columns
 
 
 class KNN(Base):
@@ -122,7 +119,7 @@ class KNN(Base):
 
         predictions = self.masked_data.copy()
 
-        for row_idx, row in predictions.iterrows():
+        for row_idx, _ in self.masked_data.iterrows():
 
             # Get the similarity of this user to all other users, ignoring self-similarity
             top_users = self.user_similarity.loc[row_idx].drop(row_idx)
@@ -143,8 +140,7 @@ class KNN(Base):
                 np.dot(top_users, self.data.loc[top_users.index, :]) / len(top_users),
                 index=self.data.columns,
             )
-            row[row.isnull()] = preds[row.isnull()]
-            predictions.loc[row_idx] = row
+            predictions.loc[row_idx] = preds
 
         self.predictions = predictions
 
