@@ -8,6 +8,8 @@ from .base import Base, BaseNMF
 from .utils import nanpdist
 from ._fit import sgd, mult
 import warnings
+import matplotlib.pyplot as plt
+import seaborn as sns
 from numba.core.errors import NumbaPerformanceWarning
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
@@ -55,7 +57,7 @@ class Mean(Base):
 
 class KNN(Base):
     """
-    The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method.
+    The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method. NOTE: If user similiarity cannot be computed or no observed ratings have been made by the top k simililar users, this algorithm will fallback to the global mean on observed data for prediction (i.e. like the `Mean` model).
     """
 
     def __init__(
@@ -72,7 +74,7 @@ class KNN(Base):
 
     def fit(
         self,
-        k=None,
+        k=10,
         metric="correlation",
         dilate_by_nsamples=None,
         skip_refit=False,
@@ -82,7 +84,7 @@ class KNN(Base):
         """Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.
 
         Args:
-            k (int): number of closest neighbors to use
+            k (int): maximum number of other users to use when making a prediction for a single user. If set to None will use all users. Default 10. Note: it's possible for predictions to come from fewer than k other users if a particular user has fewer similar neighbors with positive similarity scores.
             metric (str; optional): type of similarity. One of 'correlation', 'spearman', 'kendall', 'cosine', or 'pearson'. 'pearson' is just an alias for 'correlation'. Default 'correlation'.
             skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.
         """
@@ -102,27 +104,26 @@ class KNN(Base):
         # If fit is being called more than once in a row with different k, but no other arguments are changing, reuse the last computed similarity matrix to save time. Otherwise re-calculate it
         if not skip_refit:
             self.dilate_mask(n_samples=dilate_by_nsamples)
+
+            # Store the mean because we'll use it in cases we can't make a prediction
+            self.mean = self.masked_data.mean(skipna=True, axis=0)
+
             if metric in ["pearson", "kendall", "spearman"]:
                 # Fall back to pandas
                 sim = self.masked_data.T.corr(method=metric)
             else:
                 # Convert distance metrics to similarity (currently only cosine)
-                # Also ensure that they're all positive because cosine similarity can be negative if one of the vectors is negative despite having a positive relationship with the nother vector. NOTE: we might want to change this in the future if we support additional metrics
                 sim = pd.DataFrame(
                     1 - nanpdist(self.masked_data.to_numpy(), metric=metric),
                     index=self.masked_data.index,
                     columns=self.masked_data.index,
                 )
-                if any(sim < 0):
-                    raise ValueError(
-                        f"user similarites contain negative values but metric was {self.metric}. You may want to check your data or consider a different distance metric"
-                    )
 
             self.user_similarity = sim
         self._predict(k=k)
         self.is_fit = True
 
-    def _predict(self, k=None):
+    def _predict(self, k):
         """Make predictions using computed user similarities.
 
         Args:
@@ -134,39 +135,103 @@ class KNN(Base):
 
         for row_idx, _ in self.masked_data.iterrows():
 
+            user_prediction_error = False
             # Get the similarity of this user to all other users, ignoring self-similarity
-            top_users = self.user_similarity.loc[row_idx].drop(row_idx)
-            if top_users.isnull().all():
+            top_user_sims = self.user_similarity.loc[row_idx].drop(row_idx)
+            if top_user_sims.isnull().all():
                 warnings.warn(
-                    f"User {row_idx} has no variance in their ratings. Impossible to compute similarity with other users"
+                    f"User {row_idx} has no variance in their ratings. Impossible to compute similarity with other users. Falling back to global mean for all predictions"
                 )
+                user_prediction_error = True  # can't predict
+            else:
+                # Remove nan users and sort
+                top_user_sims = top_user_sims[~top_user_sims.isnull()].sort_values(
+                    ascending=False
+                )
+                if len(top_user_sims) == 0:
+                    user_prediction_error = True  # can't predict
+                else:
+                    # Get top k if requested
+                    if k is not None:
+                        top_user_sims = top_user_sims[: k + 1]
 
-            # Remove nan users and sort
-            top_users = top_users[~top_users.isnull()].sort_values(ascending=False)
+                    # Rescale similarity scores to the range 0 - 1, which has the effect of zeroing out negative similarities for currently supported similarity metrics.
+                    # NOTE: we should revisit this approach for non-normalized similarity metrics e.g. euclidean distance
+                    top_user_sims = top_user_sims.clip(lower=0, upper=1)
 
-            # Get top k if requested
-            if k is not None:
-                top_users = top_users[: k + 1]
+                    # No top users with positive correlations
+                    if len(np.nonzero(top_user_sims.to_numpy())[0]) == 0:
+                        user_prediction_error = True
+                    else:
+                        # NOTE: this code block is just a vectorized version of looping over every item for the current user and seeing whether we have observed ratings for each of the k other users to make a prediction with. We do this because for each item the *actual* number of other users' data availble for prediction will vary between 0-k based the pattern of sparsity
 
-            # Rescale similarity metrics between -1 to 1 to 0 to 1 like cosine for the dot product below
-            top_users = np.clip(top_users, 0, 1)
-            # if self.metric in ["correlation", "pearson", "spearman"]:
-            #     top_users += 1
-            #     top_users /= 2
+                        # Get the observed ratings from top users
+                        top_user_ratings = self.masked_data.loc[top_user_sims.index, :]
 
-            # assert (
-            #     1 >= top_users >= 0
-            # ), "user_similarities contain negative values; cannot compute predictions"
+                        # Make predictions = user_similarity_scores (column vector) * user x item (matrix of observed ratings)
+                        preds = (top_user_sims * top_user_ratings.T).T
 
-            # Get item predictions: similarity-weighted-mean of other user's ratings
-            # Users with highest similarity get full weight (i.e. 1), users with lowest similarity get no weight (i.e. 0)
-            preds = pd.Series(
-                np.dot(top_users, self.data.loc[top_users.index, :]) / len(top_users),
-                index=self.data.columns,
-            )
-            predictions.loc[row_idx] = preds
+                        # Convert 0 predictions to NaNs so we can properly compute the denominator of: dot-product / num_other_users to properly make a prediction
+                        preds = preds.replace(0, np.nan)
+                        # Get the *actual* number of other users for each item
+                        num_top_per_item = (~preds.isnull()).sum(axis=0)
+                        # Adjust predictions appropriately
+                        preds = preds.sum() / num_top_per_item
+
+                        # For items we can't predict because we never observed the kth most similar user's actual rating, fill in with the global mean for that item
+                        if preds.isnull().any():
+                            preds[preds.isnull()] = self.mean[preds.isnull()]
+
+                        predictions.loc[row_idx] = preds.to_numpy()
+
+            # Handle cases where we were unable to make any predictions for this user
+            if user_prediction_error:
+                warnings.warn(
+                    f"Not enough similar users with data to make any predictions for user {row_idx}. Falling back to global mean for all predictions"
+                )
+                predictions.loc[row_idx, :] = self.mean.to_numpy()
 
         self.predictions = predictions
+
+    def plot_user_similarity(
+        self, figsize=(8, 8), label_fontsize=16, hide_title=False, heatmap_kwargs={}
+    ):
+        """
+        Plot a heatmap of user x user similarities learned on the observed data
+
+        Args:
+            figsize (tuple, optional): matplotlib figure size. Defaults to (8, 8).
+            label_fontsize (int; optional): fontsize for title text; Default 16
+            hide_title (bool; optional): hide title containing metric information; Default False
+            heatmap_kwargs (dict, optional): addition arguments to seaborn.heatmap.
+
+        Returns:
+            ax: matplotib axis handle
+        """
+        if not self.is_fit:
+            raise ValueError("Model as not been fit")
+        if self.metric in ["correlation", "pearson", "spearman"]:
+            vmin, vmax = -1, 1
+            cmap = "RdBu_r"
+        else:
+            vmin, vmax = 0, 1
+            cmap = None
+
+        _, ax = plt.subplots(1, 1, figsize=figsize)
+        _ = ax.set(xlabel=None, ylabel=None)
+
+        ax = sns.heatmap(
+            self.user_similarity,
+            vmin=vmin,
+            vmax=vmax,
+            cmap=cmap,
+            square=True,
+            ax=ax,
+            **heatmap_kwargs,
+        )
+        if not hide_title:
+            _ = ax.set_title(f"Metric: {self.metric}", fontsize=label_fontsize)
+        return ax
 
 
 class NNMF_mult(BaseNMF):

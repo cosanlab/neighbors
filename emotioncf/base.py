@@ -199,35 +199,41 @@ class Base(object):
         self.is_masked = True
         self.n_mask_items = n_mask_items
 
-    # TODO: Clean up aesthetics of these plots. Remove title from right most panel and despine
     def plot_predictions(
-        self, dataset="missing", verbose=True, figsize=(15, 8), heatmapkwargs={}
+        self,
+        dataset="missing",
+        figsize=(16, 8),
+        label_fontsize=16,
+        hide_title=False,
+        heatmapkwargs={},
     ):
         """Create plot of actual vs predicted values.
 
         Args:
             dataset (str; optional): one of 'full', 'observed', or 'missing'. Default 'missing'.
-            verbose (bool; optional): print the averaged subject correlation while plotting; Default True
+            figsize (tuple; optional): matplotlib figure size; Default (16,8)
+            label_fontsize (int; optional): fontsize for all axis labels and titles; Default 16
+            hide_title (bool; optional): hide title containing RMSE and correlation performance if available; Default False
+            heatmap_kwargs (dict, optional): addition arguments to seaborn.heatmap.
 
         Returns:
-            float: pearson correlation
+            tuple: (figure handle, axis handle)
 
         """
 
         if not self.is_fit:
             raise ValueError("Model has not been fit")
 
-        vmax = max(self.masked_data.max().max(), self.predictions.max().max())
-        vmin = min(self.masked_data.min().min(), self.predictions.min().min())
+        vmax = max(self.data.max().max(), self.data.max().max())
+        vmin = min(self.data.min().min(), self.data.min().min())
 
         actual, pred = self._retrieve_predictions(dataset)
 
         if actual is None:
             ncols = 2
-            if verbose:
-                warnings.warn(
-                    "Cannot score predictions on missing data because true values were never observed!"
-                )
+            warnings.warn(
+                "Cannot score predictions on missing data because true values were never observed!"
+            )
         else:
             ncols = 3
 
@@ -241,15 +247,15 @@ class Base(object):
 
         # The original data matrix (potentially masked)
         sns.heatmap(self.masked_data, ax=ax[0], **heatmapkwargs)
-        ax[0].set_title("Actual User/Item Ratings")
-        ax[0].set_xlabel("Items", fontsize=18)
-        ax[0].set_ylabel("Users", fontsize=18)
+        ax[0].set_title("Actual User/Item Ratings", fontsize=label_fontsize)
+        ax[0].set_xlabel("Items", fontsize=label_fontsize)
+        ax[0].set_ylabel("Users", fontsize=label_fontsize)
 
         # The predicted data matrix
         sns.heatmap(self.predictions, ax=ax[1], **heatmapkwargs)
-        ax[1].set_title("Predicted User/Item Ratings")
-        ax[1].set_xlabel("Items", fontsize=18)
-        ax[1].set_ylabel("Users", fontsize=18)
+        ax[1].set_title("Predicted User/Item Ratings", fontsize=label_fontsize)
+        ax[1].set_xlabel("Items", fontsize=label_fontsize)
+        ax[1].set_ylabel("Users", fontsize=label_fontsize)
         f.tight_layout()
 
         # Scatter plot if we can calculate it
@@ -259,17 +265,22 @@ class Base(object):
                 actual[~nans],
                 pred[~nans],
             )
-            ax[2].set_xlabel("Actual Ratings")
-            ax[2].set_ylabel("Predicted Ratings")
-            ax[2].set_title("Predicted Ratings")
+            ax[2].set_xlabel("Actual", fontsize=label_fontsize)
+            ax[2].set_ylabel("Predicted", fontsize=label_fontsize)
+            ax[2].set_title("Ratings", fontsize=label_fontsize)
+            sns.despine()
 
-            r = self.score(dataset=dataset, by_user=True, metric="correlation").mean()
+            r = self.score(dataset=dataset, by_user=True, metric="correlation")
+            rmse = self.score(dataset=dataset, by_user=True, metric="rmse")
+            if not hide_title:
+                plt.suptitle(
+                    f"Mean RMSE: {np.round(rmse.mean(),3)} +/- {np.round(rmse.std(), 3)}\nMean Correlation: {np.round(r.mean(), 3)} +/- {np.round(r.std(), 3)}",
+                    y=1.07,
+                    fontsize=label_fontsize + 2,
+                )
+            plt.subplots_adjust(wspace=0.2)
 
-            if verbose:
-                print("Average user correlation: %s" % r)
-            return f, r
-
-        return f
+        return f, ax
 
     def downsample(self, n_samples, sampling_freq=None, target_type="samples"):
 
