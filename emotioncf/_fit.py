@@ -22,8 +22,8 @@ def sgd(
     item_bias_reg,
     item_fact_reg,
     n_iterations,
-    sample_row,
-    sample_col,
+    row_indices,
+    col_indices,
     learning_rate,
     verbose,
 ):
@@ -37,8 +37,9 @@ def sgd(
     np.random.seed(seed)
     for this_iter in range(n_iterations):
 
-        # Shuffle training indices
-        training_indices = np.arange(len(sample_row))
+        # Generate shuffled order to loop over training data
+        # Recall that row_indices and col_indices need to be looped over simultaneously to properly index each training value at [row, col]
+        training_indices = np.arange(len(row_indices))
         np.random.shuffle(training_indices)
 
         if verbose and this_iter > 0 and this_iter % 10 == 0:
@@ -59,8 +60,8 @@ def sgd(
         # Because we're iterating an user-item combo at a time, track total error
         total_error = 0
         for idx in training_indices:
-            u = sample_row[idx]
-            i = sample_col[idx]
+            u = row_indices[idx]
+            i = col_indices[idx]
 
             prediction = global_bias + user_bias[u] + item_bias[i]
             prediction += user_vecs[u, :] @ item_vecs[:, i]
@@ -156,7 +157,6 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
         # Make prediction and get error
         errors = X - W @ H
         rmse = np.sqrt(np.mean(np.power(errors, 2)))
-        # error = np.linalg.norm(X - W @ H, ord="fro")
 
         # Normalize current error with respect to max of dataset
         norm_rmse = rmse / data_range

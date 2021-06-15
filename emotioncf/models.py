@@ -299,14 +299,18 @@ class NNMF_mult(BaseNMF):
 
         self.n_factors = n_factors
 
-        # Initialize W and H at non-negative scaled random values
-        # We use random initialization scaled by the data, like sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
-        avg = np.sqrt(np.nanmean(self.data) / n_factors)
-        self.H = np.abs(avg * self.random_state.rand(n_factors, n_items))
-        self.W = np.abs(avg * self.random_state.rand(n_users, n_factors))
+        # Initialize W and H as non-negative scaled random values
+        # We use random initialization scaled by the number of factors not unlike sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
+        self.W = np.abs(
+            self.random_state.normal(scale=1.0 / n_factors, size=(n_users, n_factors))
+        )
+        self.H = np.abs(
+            self.random_state.normal(scale=1.0 / n_factors, size=(n_factors, n_items))
+        )
 
-        # Unlike SGD, we explicitly set missing data to 0 so that it gets ignored in the multiplicative update. See Zhu, 2016 for a justification of using a binary mask matrix: https://arxiv.org/pdf/1612.06037.pdf
+        # Whereas in SGD we explity pass in indices of training data for fitting, here we set testing indices to 0 so they have no impact on the multiplicative update. See Zhu, 2016 for more details: https://arxiv.org/pdf/1612.06037.pdf
         self.dilate_mask(n_samples=dilate_by_nsamples)
+
         # fillna(0) is equivalent to hadamard (element-wise) product with a binary mask
         X = self.masked_data.fillna(0).to_numpy()
 
@@ -432,21 +436,22 @@ class NNMF_sgd(BaseNMF):
 
         # Perform dilation if requested
         self.dilate_mask(n_samples=dilate_by_nsamples)
-        # Get indices of missing data to compute
+
+        # Get indices of training data to compute; np.nonzero returns a tuple of row and column indices that when iterated over simultaneosly yield the [row_index, col_index] of each training observation
         if self.is_mask_dilated:
-            sample_row, sample_col = self.dilated_mask.values.nonzero()
+            row_indices, col_indices = self.dilated_mask.values.nonzero()
         else:
-            sample_row, sample_col = self.mask.values.nonzero()
+            row_indices, col_indices = self.mask.values.nonzero()
 
         # Convert tuples cause numba complains
-        sample_row, sample_col = np.array(sample_row), np.array(sample_col)
+        row_indices, col_indices = np.array(row_indices), np.array(col_indices)
 
         # Initialize global, user, and item biases and latent vectors
         self.global_bias = self.masked_data.mean().mean()
         self.user_bias = np.zeros(n_users)
         self.item_bias = np.zeros(n_items)
 
-        # Like multiplicative updating orient these as user x factor, factor x item
+        # Initialize random values oriented these as user x factor, factor x item
         self.user_vecs = np.abs(
             self.random_state.normal(scale=1.0 / n_factors, size=(n_users, n_factors))
         )
@@ -488,8 +493,8 @@ class NNMF_sgd(BaseNMF):
                 self.item_bias_reg,
                 self.item_fact_reg,
                 n_iterations,
-                sample_row,
-                sample_col,
+                row_indices,
+                col_indices,
                 learning_rate,
                 verbose,
             )

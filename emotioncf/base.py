@@ -16,7 +16,13 @@ class Base(object):
     """
 
     def __init__(
-        self, data, mask=None, n_mask_items=None, random_state=None, verbose=True
+        self,
+        data,
+        mask=None,
+        n_mask_items=None,
+        data_range=None,
+        random_state=None,
+        verbose=True,
     ):
         """
         Initialize a base collaborative filtering model
@@ -25,6 +31,7 @@ class Base(object):
             data (pd.DataFrame): users x items dataframe
             mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
             n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
+            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values
             random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.
             verbose (bool; optional): print any initialization warnings; Default True
 
@@ -43,7 +50,11 @@ class Base(object):
         self.dilated_mask = None  # booleanized masked_data after dilation
         self.dilated_by_nsamples = None
         self.n_mask_items = n_mask_items
-        self.data_range = self.data.max().max() - self.data.min().min()
+        self.data_range = (
+            self.data.max().max() - self.data.min().min()
+            if data_range is None
+            else data_range
+        )
         self.is_dense = True
         self.overall_results = None
         self.user_results = None
@@ -628,6 +639,7 @@ class BaseNMF(Base):
                 ylabel="Normalized RMSE",
                 title=f"Final Normalized RMSE: {np.round(self._norm_rmse, 3)}\nConverged: {self.converged}",
             )
+            sns.despine()
             if save:
                 plt.savefig(save, bbox_inches="tight")
             return f, ax
