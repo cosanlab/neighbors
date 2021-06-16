@@ -29,9 +29,9 @@ def verify_results(results, model, true_scores=None):
     assert isinstance(results, pd.DataFrame)
     assert model.overall_results is not None
     assert model.user_results is not None
-    assert model.user_results.shape == (model.data.shape[0], 4 * 3)
-    # 4 metrics, 3 datasets, 2 "groups" (all, subject)
-    assert results.shape == (4 * 3 * 2, 5)
+    assert model.user_results.shape == (model.data.shape[0], 4 * 2)
+    # 4 metrics, 2 datasets (default .summary returns observed and missing only), 2 "groups" (all, subject)
+    assert results.shape == (4 * 2 * 2, 5)
     if model.is_dense:
         assert not results.isnull().any().any()
     else:
@@ -147,9 +147,6 @@ def test_mean(model, dilate_by_nsamples, n_mask_items):
     if model.n_mask_items == 0.5 and not model.is_mask_dilated:
         true_scores = np.array(
             [
-                0.58414005,
-                19.18273446,
-                24.35923903,
                 0.55695942,
                 19.73822567,
                 25.1216878,
@@ -172,9 +169,6 @@ def test_knn(model, dilate_by_nsamples, n_mask_items, k, metric):
     if model.n_mask_items == 0.5 and not model.is_mask_dilated and k == 3:
         true_scores = np.array(
             [
-                0.85322605,
-                13.80550369,
-                16.74663341,
                 0.84244861,
                 14.40186486,
                 17.49846264,
@@ -203,9 +197,6 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
     ):
         true_scores = np.array(
             [
-                5.03636830e-01,
-                1.89621113e01,
-                3.39885854e01,
                 -2.78597027e-02,
                 3.69112079e01,
                 4.80280757e01,
@@ -237,9 +228,6 @@ def test_nmf_sgd(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteration
     ):
         true_scores = np.array(
             [
-                0.89757001,
-                7.96887004,
-                13.33854933,
                 0.78658875,
                 15.44602272,
                 18.85269805,

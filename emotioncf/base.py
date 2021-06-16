@@ -508,7 +508,7 @@ class Base(object):
             verbose (bool, optional): Print warning messages during scoring. Defaults to True.
             return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to False.
             actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
-            dataset (str/list/None): dataset to score. Must be some combination of 'full', 'observed', and 'missing' or None to score all; Default None
+            dataset (str/list/None): dataset to score. Must be some combination of 'full', 'observed', and 'missing' or None to score both 'observed' and 'missing'; Default None
 
         Returns:
             pd.DataFrame: long-form dataframe of model performance
@@ -518,7 +518,7 @@ class Base(object):
             raise ValueError("Model has not been fit!")
 
         if dataset is None:
-            dataset = ["full", "missing", "observed"]
+            dataset = ["missing", "observed"]
         elif isinstance(dataset, str):
             dataset = [dataset]
 
