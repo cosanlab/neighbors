@@ -106,7 +106,7 @@ class Base(object):
         self,
         metric="rmse",
         dataset="missing",
-        by_user=False,
+        by_user=True,
         actual=None,
     ):
         """Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the `.summary()` method instead, which scores all metrics.
@@ -114,7 +114,7 @@ class Base(object):
         Args:
             metric (str; optional): what metric to compute, one of 'rmse', 'mse', 'mae' or 'correlation'; Default 'rmse'.
             dataset (str; optional): how to compute scoring, either using 'observed', 'missing' or 'full'. Default 'missing'.
-            by_user (bool; optional): whether to return a single score over all data points or a pandas Series of scores per user. Default False.
+            by_user (bool; optional): whether to return a single score over all data points or a pandas Series of scores per user. Default True.
             actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
 
         Returns:
@@ -542,7 +542,7 @@ class Base(object):
                 this_subject_result = []
                 for dat in dataset:
                     this_group_result[dat] = self.score(
-                        metric=metric, dataset=dat, actual=actual
+                        metric=metric, dataset=dat, actual=actual, by_user=False
                     )
                     this_subject_result.append(
                         self.score(

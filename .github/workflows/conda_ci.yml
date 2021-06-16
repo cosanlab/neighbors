@@ -46,7 +46,7 @@ jobs:
     steps:
       # Step up miniconda
       - name: Download and setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@059455a698430d8b68fa317268fa2e3da3492a98
         with:
           miniconda-version: "latest"
           python-version: ${{ matrix.python-version }}
@@ -143,7 +143,7 @@ jobs:
         run: mkdocs build
 
       - name: Deploy docs
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
