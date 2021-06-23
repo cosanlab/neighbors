@@ -28,12 +28,13 @@ class Mean(Base):
         )
         self.mean = None
 
-    def fit(self, dilate_by_nsamples=None, **kwargs):
+    def fit(self, dilate_by_nsamples=None, axis=0, **kwargs):
 
         """Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.
 
         Args:
             dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data
+            axis (int): dimension along which to compute mean, 0 = mean across users separately by item, 1 = mean across items separately by user; Default 0
 
         """
 
@@ -41,7 +42,7 @@ class Mean(Base):
         super().fit()
 
         self.dilate_mask(n_samples=dilate_by_nsamples)
-        self.mean = self.masked_data.mean(skipna=True, axis=0)
+        self.mean = self.masked_data.mean(skipna=True, axis=axis)
         self._predict()
         self.is_fit = True
 
@@ -76,6 +77,7 @@ class KNN(Base):
         self,
         k=10,
         metric="correlation",
+        axis=0,
         dilate_by_nsamples=None,
         skip_refit=False,
         **kwargs,
@@ -86,6 +88,7 @@ class KNN(Base):
         Args:
             k (int): maximum number of other users to use when making a prediction for a single user. If set to None will use all users. Default 10. Note: it's possible for predictions to come from fewer than k other users if a particular user has fewer similar neighbors with positive similarity scores.
             metric (str; optional): type of similarity. One of 'correlation', 'spearman', 'kendall', 'cosine', or 'pearson'. 'pearson' is just an alias for 'correlation'. Default 'correlation'.
+            axis (int): dimension along which to compute mean, 0 = mean across users separately by item, 1 = mean across items separately by user; Default 0
             skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.
         """
 
@@ -106,7 +109,7 @@ class KNN(Base):
             self.dilate_mask(n_samples=dilate_by_nsamples)
 
             # Store the mean because we'll use it in cases we can't make a prediction
-            self.mean = self.masked_data.mean(skipna=True, axis=0)
+            self.mean = self.masked_data.mean(skipna=True, axis=axis)
 
             if metric in ["pearson", "kendall", "spearman"]:
                 # Fall back to pandas
@@ -169,16 +172,23 @@ class KNN(Base):
                         top_user_ratings = self.masked_data.loc[top_user_sims.index, :]
 
                         # Make predictions = user_similarity_scores (column vector) * user x item (matrix of observed ratings)
+                        # Do this in pandas rather than numpy because numpy will return nans when summing items if any item is nan
+                        # Yields user x item matrix of ratings scaled by similarities
                         preds = (top_user_sims * top_user_ratings.T).T
+                        # Add up the ratings from other users ignoring NaNs; this serves as the numerator of the formula
+                        rating_sums = preds.sum()
 
-                        # Convert 0 predictions to NaNs so we can properly compute the denominator of: dot-product / num_other_users to properly make a prediction
-                        preds = preds.replace(0, np.nan)
-                        # Get the *actual* number of other users for each item
-                        num_top_per_item = (~preds.isnull()).sum(axis=0)
-                        # Adjust predictions appropriately
-                        preds = preds.sum() / num_top_per_item
+                        # Now some of the values in preds will be nan because we never observed a rating for that user + item combo. We need to know how many are nans and which exact ones, because we need to sum down users for preds and then divide by the sum of the similarity weights we did end up using.
+                        # Get locations of where we were able to make a prediction.
+                        preds_mask = ~preds.isnull()
+                        # Broadcast the user similarity vector over the user x item matrix so each column now contains the user similarity score if observed a prediction from that user and a 0 if not (True is converted to 1 during this multiplication whereas False is converted to 0)
+                        user_sims_mat = (preds_mask.T * top_user_sims).T
+                        # Now we can just sum down the rows which will give us the sum of the similarity weights we actually used
+                        sim_sums = user_sims_mat.sum()
+                        # Finally get the predictions by dividing the sum of ratings by sum of similarities we ended up using. This is how Surprise does it too: https://github.com/NicolasHug/Surprise/blob/master/surprise/prediction_algorithms/knns.py#L124
+                        preds = rating_sums / sim_sums
 
-                        # For items we can't predict because we never observed the kth most similar user's actual rating, fill in with the global mean for that item
+                        # For items we can't predict because we never observed any ratings from the top k users for that item, fill in with the global mean for that item
                         if preds.isnull().any():
                             preds[preds.isnull()] = self.mean[preds.isnull()]
 

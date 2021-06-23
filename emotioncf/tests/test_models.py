@@ -166,7 +166,12 @@ def test_knn(model, dilate_by_nsamples, n_mask_items, k, metric):
     if not isinstance(model, KNN):
         pytest.skip("Skip non KNN - OK")
     results, model = verify_fit(locals())
-    if model.n_mask_items == 0.5 and not model.is_mask_dilated and k == 3:
+    if (
+        model.n_mask_items == 0.5
+        and metric == "correlation"
+        and not model.is_mask_dilated
+        and k == 3
+    ):
         true_scores = np.array(
             [
                 0.84244861,
