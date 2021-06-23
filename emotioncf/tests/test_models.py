@@ -46,6 +46,21 @@ def verify_results(results, model, true_scores=None):
         )
 
 
+def verify_transform(model):
+    out = model.transform()
+    # Handle edge case where masking leads to an entire column of NaNs i.e. no ratings at all for a single item
+    if not len(
+        model.masked_data.columns[model.masked_data.isnull().all()].tolist()
+    ) and not len(model.predictions.columns[model.predictions.isnull().all()].tolist()):
+        # Aside from that edge case there should be no missing values in the output of .transform()
+        assert not out.isnull().any().any()
+    else:
+        pytest.skip("Skip masking edgecase - OK")
+
+    out = model.transform(return_only_predictions=True)
+    assert out.equals(model.predictions)
+
+
 def verify_plotting(model):
     for dataset in ["full", "observed", "missing"]:
         out = model.plot_predictions(dataset=dataset)
@@ -159,6 +174,7 @@ def test_mean(model, dilate_by_nsamples, n_mask_items):
         true_scores = None
     verify_results(results, model, true_scores)
     verify_plotting(model)
+    verify_transform(model)
 
 
 def test_knn(model, dilate_by_nsamples, n_mask_items, k, metric):
@@ -186,6 +202,7 @@ def test_knn(model, dilate_by_nsamples, n_mask_items, k, metric):
         true_scores = None
     verify_results(results, model, true_scores)
     verify_plotting(model)
+    verify_transform(model)
 
 
 def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iterations):
@@ -214,6 +231,7 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
         true_scores = None
     verify_results(results, model, true_scores)
     verify_plotting(model)
+    verify_transform(model)
     # Smoke test for plotting learning curves
     model.plot_learning()
     plt.close("all")
@@ -245,6 +263,7 @@ def test_nmf_sgd(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteration
         true_scores = None
     verify_results(results, model, true_scores)
     verify_plotting(model)
+    verify_transform(model)
     # Smoke test for plotting learning curves
     model.plot_learning()
     plt.close("all")

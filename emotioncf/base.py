@@ -606,6 +606,28 @@ class Base(object):
 
         return group_results
 
+    def transform(self, return_only_predictions=False):
+        """
+        Return a user x item matrix of predictions after a model has been fit
+
+        Args:
+            return_only_predictions (bool, optional): Returns both training and testing predictions rather than simply filling in missing values with predictions. Defaults to False.
+
+        Returns:
+            pd.DataFrame: user x item ratings
+        """
+
+        if not self.is_fit:
+            raise ValueError("Model has not been fit!")
+        if return_only_predictions:
+            return self.predictions
+        else:
+            # Propagate observed values to return object
+            out = self.data[self.mask]
+            # Fill in missing values with predictions
+            out[~self.mask] = self.predictions[~self.mask]
+            return out
+
 
 class BaseNMF(Base):
     """
