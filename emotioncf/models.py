@@ -23,6 +23,16 @@ class Mean(Base):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
+        """
+        Args:
+            data (pd.DataFrame): users x items dataframe
+            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
+            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
+            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values
+            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.
+            verbose (bool; optional): print any initialization warnings; Default True
+
+        """
         super().__init__(
             data, mask, n_mask_items, random_state=random_state, verbose=verbose
         )
@@ -64,6 +74,16 @@ class KNN(Base):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
+        """
+        Args:
+            data (pd.DataFrame): users x items dataframe
+            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
+            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
+            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values
+            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.
+            verbose (bool; optional): print any initialization warnings; Default True
+
+        """
         super().__init__(
             data, mask, n_mask_items, random_state=random_state, verbose=verbose
         )
@@ -260,6 +280,16 @@ class NNMF_mult(BaseNMF):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
+        """
+        Args:
+            data (pd.DataFrame): users x items dataframe
+            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
+            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
+            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values
+            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.
+            verbose (bool; optional): print any initialization warnings; Default True
+
+        """
         super().__init__(
             data, mask, n_mask_items, random_state=random_state, verbose=verbose
         )
@@ -385,6 +415,16 @@ class NNMF_sgd(BaseNMF):
     def __init__(
         self, data, mask=None, n_mask_items=None, verbose=True, random_state=None
     ):
+        """
+        Args:
+            data (pd.DataFrame): users x items dataframe
+            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.
+            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.
+            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values
+            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.
+            verbose (bool; optional): print any initialization warnings; Default True
+
+        """
         super().__init__(
             data, mask, n_mask_items, random_state=random_state, verbose=verbose
         )

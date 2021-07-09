@@ -35,8 +35,6 @@ class Base(object):
             random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.
             verbose (bool; optional): print any initialization warnings; Default True
 
-        Raises:
-            ValueError: [description]
         """
         if not isinstance(data, pd.DataFrame):
             raise ValueError("data must be a pandas dataframe instance")
@@ -216,7 +214,7 @@ class Base(object):
         figsize=(16, 8),
         label_fontsize=16,
         hide_title=False,
-        heatmapkwargs={},
+        heatmap_kwargs={},
     ):
         """Create plot of actual vs predicted values.
 
@@ -248,22 +246,22 @@ class Base(object):
         else:
             ncols = 3
 
-        heatmapkwargs.setdefault("square", False)
-        heatmapkwargs.setdefault("xticklabels", False)
-        heatmapkwargs.setdefault("yticklabels", False)
-        heatmapkwargs.setdefault("vmax", vmax)
-        heatmapkwargs.setdefault("vmin", vmin)
+        heatmap_kwargs.setdefault("square", False)
+        heatmap_kwargs.setdefault("xticklabels", False)
+        heatmap_kwargs.setdefault("yticklabels", False)
+        heatmap_kwargs.setdefault("vmax", vmax)
+        heatmap_kwargs.setdefault("vmin", vmin)
 
         f, ax = plt.subplots(nrows=1, ncols=ncols, figsize=figsize)
 
         # The original data matrix (potentially masked)
-        sns.heatmap(self.masked_data, ax=ax[0], **heatmapkwargs)
+        sns.heatmap(self.masked_data, ax=ax[0], **heatmap_kwargs)
         ax[0].set_title("Actual User/Item Ratings", fontsize=label_fontsize)
         ax[0].set_xlabel("Items", fontsize=label_fontsize)
         ax[0].set_ylabel("Users", fontsize=label_fontsize)
 
         # The predicted data matrix
-        sns.heatmap(self.predictions, ax=ax[1], **heatmapkwargs)
+        sns.heatmap(self.predictions, ax=ax[1], **heatmap_kwargs)
         ax[1].set_title("Predicted User/Item Ratings", fontsize=label_fontsize)
         ax[1].set_xlabel("Items", fontsize=label_fontsize)
         ax[1].set_ylabel("Users", fontsize=label_fontsize)

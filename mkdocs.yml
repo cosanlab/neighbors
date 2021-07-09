@@ -8,7 +8,6 @@ theme:
 markdown_extensions:
   - admonition
   - codehilite
-  - pymdownx.superfences
   - pymdownx.highlight
 nav:
   - Home: index.md
@@ -31,13 +30,15 @@ plugins:
       handlers:
         python:
           selection:
-            filters:
-              - "!^__"
-              - "!^_"
+            inherited_members: True
+          filters:
+            - "^__init__$"
           rendering:
             show_source: true
-            show_if_no_docstring: false
-            show_category_heading: false
+            show_if_no_docstring: False
+            show_root_toc_entry: True
+            show_root_members_full_path: True
+            show_category_heading: False
             heading_level: 4
       watch:
         - emotioncf
