@@ -27,7 +27,7 @@ def sgd(
     learning_rate,
     verbose,
 ):
-    """SGD Update"""
+    """SGD Update. This implementation is nearly identitical the the SVD implementation used by Simon Funk in the Netflix challenge and implemented in Surprise with a few small differences. We currently only support a single learning rate for all parameters (Surprise supports independent learning rates, but doesn't use them by default), we don't train in batched epochs but rather over *all* training data in each iteration, and we force user and item factor values to be >=0 after each pass over the training data."""
 
     error_history = np.zeros((n_iterations))
     converged = False
@@ -56,7 +56,8 @@ def sgd(
                 tol,
             )
 
-        # Loop over every data point in the training set, make a prediction, calculate error, and update biases and eights
+        # Loop over every data point in the training set, make a prediction, calculate error, and update biases and vectors
+        # Very similar to Surprise's SVD implementation: https://github.com/NicolasHug/Surprise/blob/master/surprise/prediction_algorithms/matrix_factorization.pyx#L159
         # Because we're iterating an user-item combo at a time, track total error
         total_error = 0
         for idx in training_indices:
