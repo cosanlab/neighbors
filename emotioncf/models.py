@@ -448,7 +448,7 @@ class NNMF_sgd(BaseNMF):
         **kwargs,
     ):
         """
-        Fit NNMF collaborative filtering model using stochastic-gradient-descent
+        Fit NNMF collaborative filtering model using stochastic-gradient-descent. **Note:** Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it's likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use `verbose=True` to help determine at what iteration these degenerate fits occur.
 
         Args:
             n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.

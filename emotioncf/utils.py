@@ -391,7 +391,7 @@ def estimate_performance(
     random_state=None,
     parallelize=False,
     timeit=True,
-    verbose=True,
+    verbose=False,
 ) -> pd.DataFrame:
     """
     Repeatedly fit a model with data to estimate performance. If input data is dense (contains no missing values) then this function will fit the model `n_iter` times after applying a different random mask each iteration according to `n_mask_items`. This is useful for testing how an algorithm *would have performed* given data of a specified sparsity.
@@ -411,7 +411,7 @@ def estimate_performance(
         random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.
         parallelize (bool, optional): Use multiple *threads* to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple *processes* like joblib. Some algorithms like `NNMF_sgd` can see significant speed-ups (2-3x) when `True`. Others, like `NNMF_mult` do not not gain much benefit or may even slow down. Default False.
         timeit (bool, option): include a column of estimation + prediction duration for each iteration/fold in the results. Ignored when return_agg=True; Default True.
-        verbose (bool, optional): print information messages on execution; Default True.
+        verbose (bool, optional): print information messages on execution; Default False.
 
 
     Returns:
@@ -425,10 +425,7 @@ def estimate_performance(
 
     if sparsity == 0.0:
         # DENSE DATA so re-mask each iteration
-        if verbose:
-            print(
-                f"Data sparsity is {np.round(sparsity*100,2)}%. Using random masking..."
-            )
+        print(f"Data sparsity is {np.round(sparsity*100,2)}%. Using random masking...")
 
         seeds = random_state.randint(np.iinfo(np.int32).max, size=n_iter)
 
@@ -453,12 +450,10 @@ def estimate_performance(
             model.fit(**fit_kwargs)
             # observed + missing
             if return_full_performance:
-                results = model.summary(
-                    return_cached=False, dataset=["missing", "observed"]
-                )
+                results = model.summary(dataset=["missing", "observed"])
             # only missing
             else:
-                results = model.summary(return_cached=False, dataset="missing")
+                results = model.summary(dataset="missing")
             results["iter"] = i + 1
 
             # Individual user results
@@ -504,10 +499,9 @@ def estimate_performance(
         user_agg_drop_col = ["iter"]
     else:
         # SPARSE DATA so split observed values according to n_folds
-        if verbose:
-            print(
-                f"Data sparsity is {np.round(sparsity*100,2)}%. Using cross-validation..."
-            )
+        print(
+            f"Data sparsity is {np.round(sparsity*100,2)}%. Using cross-validation..."
+        )
 
         def _run_sparse(
             i,
@@ -523,9 +517,7 @@ def estimate_performance(
                 start = time.time()
             model = algorithm(data=train, random_state=random_state, verbose=False)
             model.fit(**fit_kwargs)
-            test_results = model.summary(
-                actual=test, dataset="full", return_cached=False
-            )
+            test_results = model.summary(actual=test, dataset="full")
             test_results["cv_fold"] = i + 1
             test_results["dataset"] = test_results.dataset.map({"full": "test"})
 
@@ -540,7 +532,7 @@ def estimate_performance(
             ]
 
             if return_full_performance:
-                train_results = model.summary(dataset="full", return_cached=False)
+                train_results = model.summary(dataset="full")
                 train_results["cv_fold"] = i + 1
                 train_results["dataset"] = train_results.dataset.map({"full": "train"})
                 test_results = pd.concat(

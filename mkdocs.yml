@@ -11,8 +11,10 @@ markdown_extensions:
   - pymdownx.highlight
 nav:
   - Home: index.md
-  - Quick Overview: examples/overview
-  - Working with Time-Series: timeseries.md
+  - Tutorials:
+      - 1) Working with Dense Data: examples/dense-data
+      - 2) Working with Sparse Data: examples/sparse-data
+      - 3) Working with Time-Series: examples/timeseries-data
   - Contributing to Development: development.md
   - API Reference:
       - emotioncf.utils: api/utils.md

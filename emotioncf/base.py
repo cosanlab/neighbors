@@ -498,15 +498,14 @@ class Base(object):
                 ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
             )
 
-    def summary(self, verbose=True, return_cached=False, actual=None, dataset=None):
+    def summary(self, verbose=False, actual=None, dataset=None):
         """
         Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.
 
         Args:
-            verbose (bool, optional): Print warning messages during scoring. Defaults to True.
-            return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to False.
+            verbose (bool, optional): Print warning messages during scoring. Defaults to False.
             actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized
-            dataset (str/list/None): dataset to score. Must be some combination of 'full', 'observed', and 'missing' or None to score both 'observed' and 'missing'; Default None
+            dataset (str/None): dataset to score. Must be one of 'full', 'observed','missing' or None to score both 'observed' and 'missing'; Default None
 
         Returns:
             pd.DataFrame: long-form dataframe of model performance
@@ -516,17 +515,21 @@ class Base(object):
             raise ValueError("Model has not been fit!")
 
         if dataset is None:
-            dataset = ["missing", "observed"]
+            if actual is None:
+                if self.is_dense:
+                    dataset = ["missing", "observed"]
+                else:
+                    dataset = ["observed"]
+            else:
+                dataset = ["missing", "observed"]
+
         elif isinstance(dataset, str):
+            if actual is None and not self.is_dense and dataset in ["full", "missing"]:
+                raise ValueError(
+                    "Cannot score predictions on missing values because no ground truth was observed"
+                )
             dataset = [dataset]
 
-        # Don't recompute results if we already have them
-        if return_cached and self.overall_results is not None:
-            if verbose:
-                print(
-                    "Returning cached scores...set return_cached=False to force recomputation"
-                )
-            return self.overall_results
         # Compute results for all metrics, all datasets, separately for group and by subject
         group_results = {
             "algorithm": self.__class__.__name__,
@@ -593,8 +596,9 @@ class Base(object):
             ]
         )
         self.overall_results = group_results
-        if verbose and w:
-            print(w[-1].message)
+        if verbose:
+            if w:
+                print(w[-1].message)
             print(
                 "User performance results (not returned) are accessible using .user_results"
             )
