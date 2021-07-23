@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/nmf_s/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.0">
     
     
       
@@ -22,10 +22,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fe914879.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ba0d045b.min.css">
         
       
     
@@ -114,14 +114,18 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
       </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-      </button>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -217,25 +221,61 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      <label class="md-nav__link" for="__nav_2">
+        Tutorials
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../examples/overview" class="md-nav__link">
-        Quick Overview
+      <a href="../../examples/dense-data" class="md-nav__link">
+        1) Working with Dense Data
       </a>
     </li>
   
 
-    
-      
-      
-      
-
+          
+            
   
   
   
     <li class="md-nav__item">
-      <a href="../../timeseries/" class="md-nav__link">
-        Working with Time-Series
+      <a href="../../examples/sparse-data" class="md-nav__link">
+        2) Working with Sparse Data
       </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/timeseries-data" class="md-nav__link">
+        3) Working with Time-Series
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -250,6 +290,21 @@
     <li class="md-nav__item">
       <a href="../../development/" class="md-nav__link">
         Contributing to Development
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releasenotes/" class="md-nav__link">
+        Release Notes
       </a>
     </li>
   
@@ -656,7 +711,8 @@
       <p>The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.</p>
 <p>Training is performed via stochastic-gradient-descent and continues until convergence or the maximum number of iterations has been reached. Unlike <code>NNMF_mult</code> errors during training are used to update latent factors <em>separately</em> for each user/item combination. Additionally this implementation is more flexible as it supports hyperparameters for various kinds of regularization at the cost of increased computation time.</p>
 <p>The number of factors, convergence, and maximum iterations can be controlled with the <code>n_factors</code>, <code>tol</code>, and <code>max_iterations</code> arguments to the <code>.fit</code> method. By default the number of factors = the number items.</p>
-<p><em>Note</em>: <code>random_state</code> does not control the sgd fit, only the initialization of the factor matrices</p>
+<p><code>random_state</code> does not control the sgd fit, only the initialization of the factor matrices</p>
+<p><strong>Important Note</strong>: model fitting can be highly sensitive to the regularization hyper-parameters passed to <code>.fit</code>. These hyper-parameters control the amount of regularization used when learning user and item factors and biases. By default <em>no regularization</em> is performed. For some combinations of hyper-parameters (e.g. large <code>user_fact_reg</code> and small <code>item_fact_reg</code>) latent vectors can blow up to infinity producing <code>NaNs</code> in model estimates. Model fitting will not fail in these cases so <strong>caution</strong> should be taken when making use of hyper-parameters.</p>
 
 
 
@@ -1053,7 +1109,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
     <div class="doc doc-contents ">
 
-      <p>Fit NNMF collaborative filtering model using stochastic-gradient-descent</p>
+      <p>Fit NNMF collaborative filtering model using stochastic-gradient-descent. <strong>Note:</strong> Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it's likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use <code>verbose=True</code> to help determine at what iteration these degenerate fits occur.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1145,7 +1201,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Fit NNMF collaborative filtering model using stochastic-gradient-descent</span>
+<span class="sd">    Fit NNMF collaborative filtering model using stochastic-gradient-descent. **Note:** Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it&#39;s likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use `verbose=True` to help determine at what iteration these degenerate fits occur.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.</span>
@@ -1803,7 +1859,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 <h4 id="emotioncf.models.NNMF_sgd.summary" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
@@ -1829,13 +1885,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       <tr>
         <td><code>verbose</code></td>
         <td><code>bool</code></td>
-        <td><p>Print warning messages during scoring. Defaults to True.</p></td>
-        <td><code>True</code></td>
-      </tr>
-      <tr>
-        <td><code>return_cached</code></td>
-        <td><code>bool</code></td>
-        <td><p>Save time by returning already computed scores if they exist. Defaults to False.</p></td>
+        <td><p>Print warning messages during scoring. Defaults to False.</p></td>
         <td><code>False</code></td>
       </tr>
       <tr>
@@ -1846,8 +1896,8 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       </tr>
       <tr>
         <td><code>dataset</code></td>
-        <td><code>str/list/None</code></td>
-        <td><p>dataset to score. Must be some combination of 'full', 'observed', and 'missing' or None to score both 'observed' and 'missing'; Default None</p></td>
+        <td><code>str/None</code></td>
+        <td><p>dataset to score. Must be one of 'full', 'observed','missing' or None to score both 'observed' and 'missing'; Default None</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -1869,15 +1919,14 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 </table>
         <details class="quote">
           <summary>Source code in <code>emotioncf/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_cached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        verbose (bool, optional): Print warning messages during scoring. Defaults to True.</span>
-<span class="sd">        return_cached (bool, optional): Save time by returning already computed scores if they exist. Defaults to False.</span>
+<span class="sd">        verbose (bool, optional): Print warning messages during scoring. Defaults to False.</span>
 <span class="sd">        actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized</span>
-<span class="sd">        dataset (str/list/None): dataset to score. Must be some combination of &#39;full&#39;, &#39;observed&#39;, and &#39;missing&#39; or None to score both &#39;observed&#39; and &#39;missing&#39;; Default None</span>
+<span class="sd">        dataset (str/None): dataset to score. Must be one of &#39;full&#39;, &#39;observed&#39;,&#39;missing&#39; or None to score both &#39;observed&#39; and &#39;missing&#39;; Default None</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: long-form dataframe of model performance</span>
@@ -1887,17 +1936,21 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has not been fit!&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dense</span><span class="p">:</span>
+                <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;observed&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">]</span>
+
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dense</span> <span class="ow">and</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot score predictions on missing values because no ground truth was observed&quot;</span>
+            <span class="p">)</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">]</span>
 
-    <span class="c1"># Don&#39;t recompute results if we already have them</span>
-    <span class="k">if</span> <span class="n">return_cached</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;Returning cached scores...set return_cached=False to force recomputation&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span>
     <span class="c1"># Compute results for all metrics, all datasets, separately for group and by subject</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1964,8 +2017,9 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="p">]</span>
     <span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span> <span class="o">=</span> <span class="n">group_results</span>
-    <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">w</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">w</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="s2">&quot;User performance results (not returned) are accessible using .user_results&quot;</span>
         <span class="p">)</span>
@@ -2184,10 +2238,10 @@ Overlapping data will be averaged. This method computes and stores the dilated m
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.53c85856.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.82b56eb2.min.js"></script>
+      <script src="../../assets/javascripts/bundle.716f8af4.min.js"></script>
       
     
   </body>
