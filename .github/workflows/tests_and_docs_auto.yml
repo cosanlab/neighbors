@@ -1,4 +1,4 @@
-name: EmotionCF
+name: Tests (Auto)
 
 on:
   push:
