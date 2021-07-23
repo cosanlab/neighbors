@@ -16,6 +16,7 @@ nav:
       - 2) Working with Sparse Data: examples/sparse-data
       - 3) Working with Time-Series: examples/timeseries-data
   - Contributing to Development: development.md
+  - Release Notes: releasenotes.md
   - API Reference:
       - emotioncf.utils: api/utils.md
       - emotioncf.base: api/base.md

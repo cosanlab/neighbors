@@ -408,7 +408,9 @@ class NNMF_sgd(BaseNMF):
 
     The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
 
-    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices
+    `random_state` does not control the sgd fit, only the initialization of the factor matrices
+
+    **Important Note**: model fitting can be highly sensitive to the regularization hyper-parameters passed to `.fit`. These hyper-parameters control the amount of regularization used when learning user and item factors and biases. By default *no regularization* is performed. For some combinations of hyper-parameters (e.g. large `user_fact_reg` and small `item_fact_reg`) latent vectors can blow up to infinity producing `NaNs` in model estimates. Model fitting will not fail in these cases so **caution** should be taken when making use of hyper-parameters.
 
     """
 
