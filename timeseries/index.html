@@ -338,42 +338,18 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../api/utils/" class="md-nav__link">
-        emotioncf.utils
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../api/base/" class="md-nav__link">
-        emotioncf.base
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" >
       
-      <label class="md-nav__link" for="__nav_5_3">
+      <label class="md-nav__link" for="__nav_5_1">
         emotioncf.models
         <span class="md-nav__icon md-icon"></span>
       </label>
       <nav class="md-nav" aria-label="emotioncf.models" data-md-level="2">
-        <label class="md-nav__title" for="__nav_5_3">
+        <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
           emotioncf.models
         </label>
@@ -433,6 +409,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/utils/" class="md-nav__link">
+        emotioncf.utils
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -476,11 +464,10 @@
                 <h1 id="working-with-time-series-data">Working with Time-Series Data</h1>
 <p>A unique feature of this toolbox, is that it has also been designed to work with time-series data.</p>
 <p>For example, model instances can be downsampled across items, where items refers to time samples. You must specify the <code>sampling_freq</code> of the data, and the <code>target</code>, where target must have a <code>target_type</code> of <code>['hz','samples','seconds']</code>.  Downsampling is performed by averaging over bin windows.  In this example we downsample a dataset from 10Hz to 5Hz.</p>
-<div class="codehilite"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">sampling_freq</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;hz&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">cf</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">sampling_freq</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;hz&#39;</span><span class="p">)</span>
 </code></pre></div>
-
 <p>It is also possible to leverage presumed autocorrelation when training models by using the <code>dilate_by_nsamples=n_samples</code> keyword.  This flag will convolve a boxcar kernel of width <code>n_samples</code> with each user's rating from <code>model.train_mask</code>.  The dilation will be centered on each sample.  The intuition here is that if a subject rates an item at a given time point, say '50', they likely will have rated time points immediately preceding and following similarly (e.g., <code>[50,50,50]</code>).  This is due to autocorrelation in the data.  More presumed autocorrelation will likely benefit from a higher number of samples being selected.  This will allow time series that are sparsely sampled to be estimated more accurately.</p>
-<div class="codehilite"><pre><span></span><code><span class="n">cf</span> <span class="o">=</span> <span class="n">NNMF_sgd</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">.5</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">cf</span> <span class="o">=</span> <span class="n">NNMF_sgd</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">.5</span><span class="p">)</span>
 <span class="n">cf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
      <span class="n">user_fact_reg</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
      <span class="n">item_fact_reg</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> 
