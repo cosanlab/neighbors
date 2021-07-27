@@ -6,19 +6,19 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A Python package to perform collaborative filtering on emotion datasets">
+        <meta name="description" content="A Python package to perform collaborative filtering on social and emotion datasets">
       
       
       
       
-        <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/base/">
+        <link rel="canonical" href="https://cosanlab.github.io/neighbors/api/base/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.1">
     
     
       
-        <title>emotioncf.base - EmotionCF</title>
+        <title>neighbors.base - neighbors</title>
       
     
     
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#emotioncfbase" class="md-skip">
+        <a href="#neighborsbase" class="md-skip">
           Skip to content
         </a>
       
@@ -78,7 +78,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="EmotionCF" class="md-header__button md-logo" aria-label="EmotionCF" data-md-component="logo">
+    <a href="../.." title="neighbors" class="md-header__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -91,13 +91,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            EmotionCF
+            neighbors
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              emotioncf.base
+              neighbors.base
             
           </span>
         </div>
@@ -143,13 +143,13 @@
     
       <div class="md-header__source">
         
-<a href="https://github.com/cosanlab/emotionCF/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/cosanlab/neighbors/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    cosanlab/emotioncf
+    cosanlab/neighbors
   </div>
 </a>
       </div>
@@ -175,24 +175,24 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="EmotionCF" class="md-nav__button md-logo" aria-label="EmotionCF" data-md-component="logo">
+    <a href="../.." title="neighbors" class="md-nav__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
 
     </a>
-    EmotionCF
+    neighbors
   </label>
   
     <div class="md-nav__source">
       
-<a href="https://github.com/cosanlab/emotionCF/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/cosanlab/neighbors/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    cosanlab/emotioncf
+    cosanlab/neighbors
   </div>
 </a>
     </div>
@@ -345,13 +345,13 @@
         <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" >
       
       <label class="md-nav__link" for="__nav_5_1">
-        emotioncf.models
+        neighbors.models
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="emotioncf.models" data-md-level="2">
+      <nav class="md-nav" aria-label="neighbors.models" data-md-level="2">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
-          emotioncf.models
+          neighbors.models
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -415,7 +415,7 @@
   
     <li class="md-nav__item">
       <a href="../utils/" class="md-nav__link">
-        emotioncf.utils
+        neighbors.utils
       </a>
     </li>
   
@@ -453,161 +453,161 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base" class="md-nav__link">
-    emotioncf.base.Base
+  <a href="#neighbors.base.Base" class="md-nav__link">
+    neighbors.base.Base
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.__init__" class="md-nav__link">
+  <a href="#neighbors.base.Base.__init__" class="md-nav__link">
     __init__()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.create_masked_data" class="md-nav__link">
+  <a href="#neighbors.base.Base.create_masked_data" class="md-nav__link">
     create_masked_data()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.dilate_mask" class="md-nav__link">
+  <a href="#neighbors.base.Base.dilate_mask" class="md-nav__link">
     dilate_mask()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.downsample" class="md-nav__link">
+  <a href="#neighbors.base.Base.downsample" class="md-nav__link">
     downsample()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.fit" class="md-nav__link">
+  <a href="#neighbors.base.Base.fit" class="md-nav__link">
     fit()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.plot_predictions" class="md-nav__link">
+  <a href="#neighbors.base.Base.plot_predictions" class="md-nav__link">
     plot_predictions()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.score" class="md-nav__link">
+  <a href="#neighbors.base.Base.score" class="md-nav__link">
     score()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.summary" class="md-nav__link">
+  <a href="#neighbors.base.Base.summary" class="md-nav__link">
     summary()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.to_long_df" class="md-nav__link">
+  <a href="#neighbors.base.Base.to_long_df" class="md-nav__link">
     to_long_df()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.Base.transform" class="md-nav__link">
+  <a href="#neighbors.base.Base.transform" class="md-nav__link">
     transform()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF" class="md-nav__link">
-    emotioncf.base.BaseNMF
+  <a href="#neighbors.base.BaseNMF" class="md-nav__link">
+    neighbors.base.BaseNMF
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.create_masked_data" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.create_masked_data" class="md-nav__link">
     create_masked_data()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.dilate_mask" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.dilate_mask" class="md-nav__link">
     dilate_mask()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.downsample" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.downsample" class="md-nav__link">
     downsample()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.fit" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.fit" class="md-nav__link">
     fit()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.plot_factors" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.plot_factors" class="md-nav__link">
     plot_factors()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.plot_learning" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.plot_learning" class="md-nav__link">
     plot_learning()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.plot_predictions" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.plot_predictions" class="md-nav__link">
     plot_predictions()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.score" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.score" class="md-nav__link">
     score()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.summary" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.summary" class="md-nav__link">
     summary()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.to_long_df" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.to_long_df" class="md-nav__link">
     to_long_df()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.base.BaseNMF.transform" class="md-nav__link">
+  <a href="#neighbors.base.BaseNMF.transform" class="md-nav__link">
     transform()
   </a>
   
@@ -625,19 +625,19 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/cosanlab/emotionCF/edit/master/docs/api/base.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/cosanlab/neighbors/edit/master/docs/api/base.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="emotioncfbase">emotioncf.base</h1>
+                <h1 id="neighborsbase">neighbors.base</h1>
 <p>This module doesn't contain any models but serves as the base class that all models inherit from. You won't typically utilize these classes directly unless you're creating a custom estimator. </p>
 <p>The method documentation here applies to <em>all models</em>. </p>
 
 
   <div class="doc doc-object doc-class">
 
-<a id="emotioncf.base.Base"></a>
+<a id="neighbors.base.Base"></a>
     <div class="doc doc-contents first">
 
       <p>This is the base class for all model types.</p>
@@ -659,7 +659,7 @@
 
 
 
-<h4 id="emotioncf.base.Base.__init__" class="doc doc-heading">
+<h4 id="neighbors.base.Base.__init__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -722,7 +722,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">data</span><span class="p">,</span>
@@ -813,7 +813,7 @@
 
 
 
-<h4 id="emotioncf.base.Base.create_masked_data" class="doc doc-heading">
+<h4 id="neighbors.base.Base.create_masked_data" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></code>
 
 
@@ -843,7 +843,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a mask and apply it to data using number of items or % of items</span>
@@ -880,7 +880,7 @@
 
 
 
-<h4 id="emotioncf.base.Base.dilate_mask" class="doc doc-heading">
+<h4 id="neighbors.base.Base.dilate_mask" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -911,7 +911,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Dilate sparse time-series data by n_samples.</span>
@@ -962,7 +962,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.downsample" class="doc doc-heading">
+<h4 id="neighbors.base.Base.downsample" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
 
 
@@ -1007,7 +1007,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1081,7 +1081,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.fit" class="doc doc-heading">
+<h4 id="neighbors.base.Base.fit" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
@@ -1092,7 +1092,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       <p>Replaced by sub-classes. This call just ensures that a model's data is sparse prior to fitting</p>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Replaced by sub-classes. This call just ensures that a model&#39;s data is sparse prior to fitting&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
@@ -1115,7 +1115,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.plot_predictions" class="doc doc-heading">
+<h4 id="neighbors.base.Base.plot_predictions" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">plot_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{})</span></code>
 
 
@@ -1184,7 +1184,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_predictions</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span>
@@ -1279,7 +1279,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.score" class="doc doc-heading">
+<h4 id="neighbors.base.Base.score" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -1342,7 +1342,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
@@ -1437,7 +1437,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.summary" class="doc doc-heading">
+<h4 id="neighbors.base.Base.summary" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -1494,7 +1494,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</span>
@@ -1616,7 +1616,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.to_long_df" class="doc doc-heading">
+<h4 id="neighbors.base.Base.to_long_df" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_long_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
@@ -1627,7 +1627,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       <p>Create a long format pandas dataframe with observed, predicted, and mask.</p>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to_long_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Create a long format pandas dataframe with observed, predicted, and mask.&quot;&quot;&quot;</span>
@@ -1671,7 +1671,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.Base.transform" class="doc doc-heading">
+<h4 id="neighbors.base.Base.transform" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -1716,7 +1716,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a user x item matrix of predictions after a model has been fit</span>
@@ -1758,7 +1758,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
   <div class="doc doc-object doc-class">
 
-<a id="emotioncf.base.BaseNMF"></a>
+<a id="neighbors.base.BaseNMF"></a>
     <div class="doc doc-contents first">
 
       <p>Base class for NMF algorithms.</p>
@@ -1782,7 +1782,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.create_masked_data" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.create_masked_data" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -1815,7 +1815,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a mask and apply it to data using number of items or % of items</span>
@@ -1852,7 +1852,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.dilate_mask" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.dilate_mask" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -1886,7 +1886,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Dilate sparse time-series data by n_samples.</span>
@@ -1937,7 +1937,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.downsample" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.downsample" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -1985,7 +1985,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2059,7 +2059,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.fit" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.fit" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -2073,7 +2073,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       <p>Replaced by sub-classes. This call just ensures that a model's data is sparse prior to fitting</p>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Replaced by sub-classes. This call just ensures that a model&#39;s data is sparse prior to fitting&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
@@ -2096,7 +2096,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.plot_factors" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.plot_factors" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">plot_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
@@ -2147,7 +2147,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot user x factor and item x factor matrices</span>
@@ -2191,7 +2191,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.plot_learning" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.plot_learning" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">plot_learning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -2236,7 +2236,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_learning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot training error over iterations for diagnostic purposes</span>
@@ -2274,7 +2274,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.plot_predictions" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.plot_predictions" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">plot_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{})</span></code>
 
   <span class="doc doc-properties">
@@ -2346,7 +2346,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_predictions</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span>
@@ -2441,7 +2441,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.score" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.score" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -2507,7 +2507,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
@@ -2602,7 +2602,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.summary" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.summary" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -2662,7 +2662,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</span>
@@ -2784,7 +2784,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.to_long_df" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.to_long_df" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">to_long_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -2798,7 +2798,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
       <p>Create a long format pandas dataframe with observed, predicted, and mask.</p>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to_long_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Create a long format pandas dataframe with observed, predicted, and mask.&quot;&quot;&quot;</span>
@@ -2842,7 +2842,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-<h4 id="emotioncf.base.BaseNMF.transform" class="doc doc-heading">
+<h4 id="neighbors.base.BaseNMF.transform" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
@@ -2890,7 +2890,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/base.py</code></summary>
+          <summary>Source code in <code>neighbors/base.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a user x item matrix of predictions after a model has been fit</span>

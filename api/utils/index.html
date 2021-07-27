@@ -6,19 +6,19 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A Python package to perform collaborative filtering on emotion datasets">
+        <meta name="description" content="A Python package to perform collaborative filtering on social and emotion datasets">
       
       
       
       
-        <link rel="canonical" href="https://cosanlab.github.io/emotionCF/api/utils/">
+        <link rel="canonical" href="https://cosanlab.github.io/neighbors/api/utils/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.1">
     
     
       
-        <title>emotioncf.utils - EmotionCF</title>
+        <title>neighbors.utils - neighbors</title>
       
     
     
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#emotioncfutils" class="md-skip">
+        <a href="#neighborsutils" class="md-skip">
           Skip to content
         </a>
       
@@ -78,7 +78,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="EmotionCF" class="md-header__button md-logo" aria-label="EmotionCF" data-md-component="logo">
+    <a href="../.." title="neighbors" class="md-header__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -91,13 +91,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            EmotionCF
+            neighbors
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              emotioncf.utils
+              neighbors.utils
             
           </span>
         </div>
@@ -143,13 +143,13 @@
     
       <div class="md-header__source">
         
-<a href="https://github.com/cosanlab/emotionCF/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/cosanlab/neighbors/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    cosanlab/emotioncf
+    cosanlab/neighbors
   </div>
 </a>
       </div>
@@ -175,24 +175,24 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="EmotionCF" class="md-nav__button md-logo" aria-label="EmotionCF" data-md-component="logo">
+    <a href="../.." title="neighbors" class="md-nav__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
 
     </a>
-    EmotionCF
+    neighbors
   </label>
   
     <div class="md-nav__source">
       
-<a href="https://github.com/cosanlab/emotionCF/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/cosanlab/neighbors/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
-    cosanlab/emotioncf
+    cosanlab/neighbors
   </div>
 </a>
     </div>
@@ -347,13 +347,13 @@
         <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" >
       
       <label class="md-nav__link" for="__nav_5_1">
-        emotioncf.models
+        neighbors.models
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="emotioncf.models" data-md-level="2">
+      <nav class="md-nav" aria-label="neighbors.models" data-md-level="2">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
-          emotioncf.models
+          neighbors.models
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -426,12 +426,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          emotioncf.utils
+          neighbors.utils
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        emotioncf.utils
+        neighbors.utils
       </a>
       
         
@@ -449,91 +449,91 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils" class="md-nav__link">
-    emotioncf.utils
+  <a href="#neighbors.utils" class="md-nav__link">
+    neighbors.utils
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.check_random_state" class="md-nav__link">
+  <a href="#neighbors.utils.check_random_state" class="md-nav__link">
     check_random_state()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.create_sparse_mask" class="md-nav__link">
+  <a href="#neighbors.utils.create_sparse_mask" class="md-nav__link">
     create_sparse_mask()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.create_user_item_matrix" class="md-nav__link">
+  <a href="#neighbors.utils.create_user_item_matrix" class="md-nav__link">
     create_user_item_matrix()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.downsample_dataframe" class="md-nav__link">
+  <a href="#neighbors.utils.downsample_dataframe" class="md-nav__link">
     downsample_dataframe()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.estimate_performance" class="md-nav__link">
+  <a href="#neighbors.utils.estimate_performance" class="md-nav__link">
     estimate_performance()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.flatten_dataframe" class="md-nav__link">
+  <a href="#neighbors.utils.flatten_dataframe" class="md-nav__link">
     flatten_dataframe()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.get_size_in_mb" class="md-nav__link">
+  <a href="#neighbors.utils.get_size_in_mb" class="md-nav__link">
     get_size_in_mb()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.get_sparsity" class="md-nav__link">
+  <a href="#neighbors.utils.get_sparsity" class="md-nav__link">
     get_sparsity()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.invert_user_item_matrix" class="md-nav__link">
+  <a href="#neighbors.utils.invert_user_item_matrix" class="md-nav__link">
     invert_user_item_matrix()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.nanpdist" class="md-nav__link">
+  <a href="#neighbors.utils.nanpdist" class="md-nav__link">
     nanpdist()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.split_train_test" class="md-nav__link">
+  <a href="#neighbors.utils.split_train_test" class="md-nav__link">
     split_train_test()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.unflatten_dataframe" class="md-nav__link">
+  <a href="#neighbors.utils.unflatten_dataframe" class="md-nav__link">
     unflatten_dataframe()
   </a>
   
@@ -579,91 +579,91 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils" class="md-nav__link">
-    emotioncf.utils
+  <a href="#neighbors.utils" class="md-nav__link">
+    neighbors.utils
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.check_random_state" class="md-nav__link">
+  <a href="#neighbors.utils.check_random_state" class="md-nav__link">
     check_random_state()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.create_sparse_mask" class="md-nav__link">
+  <a href="#neighbors.utils.create_sparse_mask" class="md-nav__link">
     create_sparse_mask()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.create_user_item_matrix" class="md-nav__link">
+  <a href="#neighbors.utils.create_user_item_matrix" class="md-nav__link">
     create_user_item_matrix()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.downsample_dataframe" class="md-nav__link">
+  <a href="#neighbors.utils.downsample_dataframe" class="md-nav__link">
     downsample_dataframe()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.estimate_performance" class="md-nav__link">
+  <a href="#neighbors.utils.estimate_performance" class="md-nav__link">
     estimate_performance()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.flatten_dataframe" class="md-nav__link">
+  <a href="#neighbors.utils.flatten_dataframe" class="md-nav__link">
     flatten_dataframe()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.get_size_in_mb" class="md-nav__link">
+  <a href="#neighbors.utils.get_size_in_mb" class="md-nav__link">
     get_size_in_mb()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.get_sparsity" class="md-nav__link">
+  <a href="#neighbors.utils.get_sparsity" class="md-nav__link">
     get_sparsity()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.invert_user_item_matrix" class="md-nav__link">
+  <a href="#neighbors.utils.invert_user_item_matrix" class="md-nav__link">
     invert_user_item_matrix()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.nanpdist" class="md-nav__link">
+  <a href="#neighbors.utils.nanpdist" class="md-nav__link">
     nanpdist()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.split_train_test" class="md-nav__link">
+  <a href="#neighbors.utils.split_train_test" class="md-nav__link">
     split_train_test()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#emotioncf.utils.unflatten_dataframe" class="md-nav__link">
+  <a href="#neighbors.utils.unflatten_dataframe" class="md-nav__link">
     unflatten_dataframe()
   </a>
   
@@ -681,17 +681,17 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/cosanlab/emotionCF/edit/master/docs/api/utils.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/cosanlab/neighbors/edit/master/docs/api/utils.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="emotioncfutils">emotioncf.utils</h1>
+                <h1 id="neighborsutils">neighbors.utils</h1>
 
 
   <div class="doc doc-object doc-module">
 
-<a id="emotioncf.utils"></a>
+<a id="neighbors.utils"></a>
     <div class="doc doc-contents first">
 
       <p>Utility functions and helpers</p>
@@ -712,7 +712,7 @@
 
 
 
-<h4 id="emotioncf.utils.check_random_state" class="doc doc-heading">
+<h4 id="neighbors.utils.check_random_state" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></code>
 
 
@@ -743,7 +743,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turn seed into a np.random.RandomState instance, lifted directly from sklearn to avoid a heavy dependency for one function.</span>
@@ -776,7 +776,7 @@
 
 
 
-<h4 id="emotioncf.utils.create_sparse_mask" class="doc doc-heading">
+<h4 id="neighbors.utils.create_sparse_mask" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_sparse_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -842,7 +842,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_sparse_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.</span>
@@ -894,7 +894,7 @@
 
 
 
-<h4 id="emotioncf.utils.create_user_item_matrix" class="doc doc-heading">
+<h4 id="neighbors.utils.create_user_item_matrix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span></code>
 
 
@@ -957,7 +957,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix</span>
@@ -1008,7 +1008,7 @@
 
 
 
-<h4 id="emotioncf.utils.downsample_dataframe" class="doc doc-heading">
+<h4 id="neighbors.utils.downsample_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
 
 
@@ -1071,7 +1071,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Down sample a dataframe</span>
@@ -1124,7 +1124,7 @@
 
 
 
-<h4 id="emotioncf.utils.estimate_performance" class="doc doc-heading">
+<h4 id="neighbors.utils.estimate_performance" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -1148,7 +1148,7 @@
   <tbody>
       <tr>
         <td><code>algorithm</code></td>
-        <td><code>emotioncf.model</code></td>
+        <td><code>neighbors.model</code></td>
         <td><p>an uninitialized model, e.g. <code>Mean</code></p></td>
         <td><em>required</em></td>
       </tr>
@@ -1242,7 +1242,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">estimate_performance</span><span class="p">(</span>
     <span class="n">algorithm</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
@@ -1264,7 +1264,7 @@
 <span class="sd">    On the other hand, if input data is already sparse, no further masking will be performed and the data will instead be split into `n_folds` training and testing folds. Evaluation will be performed based on how well non-missing values in testing folds are recovered. **Note**: this *increases the sparsity* of the input dataset. The number of folds requested controls the additional sparsity of each train and test split. For example, with the default `n_folds=10`, each training split will contain 9/10 folds = ~90% of *observed values* (additional sparsity of 10%); each test split will contain 1/10 folds (~10% of *observed values*).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`</span>
+<span class="sd">        algorithm (neighbors.model): an uninitialized model, e.g. `Mean`</span>
 <span class="sd">        data (pd.DataFrame): a users x item dataframe</span>
 <span class="sd">        n_iter (int, optional): number of repetitions for dense data. Defaults to 10.</span>
 <span class="sd">        n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.</span>
@@ -1501,7 +1501,7 @@
 
 
 
-<h4 id="emotioncf.utils.flatten_dataframe" class="doc doc-heading">
+<h4 id="neighbors.utils.flatten_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
 
@@ -1546,7 +1546,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value</span>
@@ -1575,7 +1575,7 @@
 
 
 
-<h4 id="emotioncf.utils.get_size_in_mb" class="doc doc-heading">
+<h4 id="neighbors.utils.get_size_in_mb" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
 
 
@@ -1586,7 +1586,7 @@
       <p>Calculates size of ndarray in megabytes</p>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculates size of ndarray in megabytes&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">csr_matrix</span><span class="p">)):</span>
@@ -1605,7 +1605,7 @@
 
 
 
-<h4 id="emotioncf.utils.get_sparsity" class="doc doc-heading">
+<h4 id="neighbors.utils.get_sparsity" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
 
 
@@ -1616,7 +1616,7 @@
       <p>Calculates sparsity of ndarray (0 - 1)</p>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculates sparsity of ndarray (0 - 1)&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -1637,7 +1637,7 @@
 
 
 
-<h4 id="emotioncf.utils.invert_user_item_matrix" class="doc doc-heading">
+<h4 id="neighbors.utils.invert_user_item_matrix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">invert_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
 
 
@@ -1682,7 +1682,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">invert_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reshapes a user x item matrix back into a longform dataframe with &quot;User&quot;, &quot;Item&quot; and &quot;Rating&quot; columns. Convenience function to undo a call to `create_user_item_matrix`. Dataframe must have an index name of &#39;Users&#39; and a columns name of &#39;Items&#39;.</span>
@@ -1711,7 +1711,7 @@
 
 
 
-<h4 id="emotioncf.utils.nanpdist" class="doc doc-heading">
+<h4 id="neighbors.utils.nanpdist" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
@@ -1768,7 +1768,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.</span>
@@ -1820,7 +1820,7 @@
 
 
 
-<h4 id="emotioncf.utils.split_train_test" class="doc doc-heading">
+<h4 id="neighbors.utils.split_train_test" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -1872,7 +1872,7 @@
 </div>
 
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">split_train_test</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
@@ -1933,7 +1933,7 @@
 
 
 
-<h4 id="emotioncf.utils.unflatten_dataframe" class="doc doc-heading">
+<h4 id="neighbors.utils.unflatten_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2014,7 +2014,7 @@
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>emotioncf/utils.py</code></summary>
+          <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">unflatten_dataframe</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
