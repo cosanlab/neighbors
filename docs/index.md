@@ -1,24 +1,49 @@
-# Emotion CF
-[![Build Status](https://github.com/cosanlab/emotionCF/workflows/EmotionCF/badge.svg)](https://github.com/cosanlab/emotionCF/actions?query=workflow%3AEmotionCF)
-[![Coverage Status](https://coveralls.io/repos/github/cosanlab/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/emotionCF?branch=master)
+# Neighbors
+[![Build Status](https://github.com/cosanlab/neighbors/workflows/neighbors/badge.svg)](https://github.com/cosanlab/neighbors/actions?query=workflow%3Aneighbors)
+[![Coverage Status](https://coveralls.io/repos/github/cosanlab/neighbors/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/neighbors?branch=master)
 ![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue)
 ![Platforms](https://img.shields.io/badge/platform-linux%20%7C%20osx%20%7C%20win-blue)
 
-## **A Python package for collaborative filtering on emotion datasets**
+**A Python package for collaborative filtering on social and emotion datasets**
 
 ## Installation
 
-```bash
-pip install git+https://github.com/cosanlab/emotionCF.git
-```  
+1. Pip (official releases): `pip install neighbors`
+2. Github (bleeding edge): `pip install git+https://github.com/cosanlab/neighbors.git`
 
 ## Getting started
 
-Checkout the [quick overview](examples/overview) for examples to help you get started.  
+The best way to learn how to use the package is by checking out the 3 usage tutorials on working with [dense](examples/dense-data), [sparse](examples/sparse-data), and [time-series](examples/timeseries-data). For more detailed usage on specific function arguments and model parameters check out the API reference on the left. 
 
-Or check out the API reference on the left to explore the details of specific models.
+### Quick Demo Usage
 
-A unique feature of this toolbox is its support for [working with time-series data](timeseries.md).
+```python  
+from neighbors.models import NNMF_sgd
+from neighbors.utils create_user_item_matrix, estimate_performance
+
+# Assuming data is 3 column pandas df with 'User', 'Item', 'Rating'
+# convert it to a (possibly sparse) user x item matrix
+mat = create_user_item_matrix(df)
+
+# Initialize a model
+model = NNMF_sgd(mat)
+
+# Fit
+model.fit()
+
+# If data are time-series optionally fit model using dilation
+# to leverage auto-correlation and improve performance
+model.fit(dilate_by_nsamples=60)
+
+# Visualize results
+model.plot_predictions()
+
+# Estimate algorithm performance using
+# Repeated refitting with random masking (dense data)
+# Or cross-validation (sparse data)
+group_results, user_results = estimate_performance(NNMF_sgd, mat)
+```
+
 
 ## Algorithms
 

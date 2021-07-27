@@ -1,12 +1,45 @@
 """
-Define pytest fixtures, i.e. reusable test initializations or parameters that can be used to automatically generated a grid of tests by test functions.
+Define pytest fixtures, i.e. reusable test initializations or parameters that can be used to automatically generated a grid of tests by test functions. Brief explanation on how they work and how to write new fixtures + tests:
+
+Each function below is passed in as a argument to a test function in one of the test_*.py files. The value of that argument == whatever the function definition returns in this file. For example:
+
+# From test_models.py
+test_init_and_dilate(init, mask, n_mask_items) <- These arguments are functions defined in *this* file.
+
+init() <- returns an initialized model or skips a test
+So within test_init_and_dilate(), init == model instance
+
+At the same time, fixtures in this file can make use of *other* fixtures passed in as arguments, e.g.
+mask(request, simulate_wide_data) <- simulate_wide_data() is defined below and returns a dataframe available inside of mask()
+
+Arguments to fixtures that are not other fixtures, such as `request` in mask(), are special arguments that can create test grids based on an iterable of parameter values. These values are defined using the @fixture decorator. So `request` in mask() is defined with 2 parameter values: None and "masked". This means that wherever mask() is invoked in other tests, it will be called 2x: once with None and once with "masked".
+
+This is used for example in init() where for some tests a model instance is created with masking and for other tests without masking. Then whatever tests make use of init(), such as test_init_and_dilate() will be run at least twice because mask() takes a `request` with 2 parameter values.
+
+While a bit complicated at first, this make it easy to create testing grids based on the dependencies between fixtures. Here's a simplified example dependency graph (ignoring other fixtures):
+
+Test 1:
+simulate_wide_data() -> returns df -> mask()
+request.param == None -> mask()
+mask() -> init()
+init() -> test_init_and_dilate() -> tests non-masked model initialization
+
+Test 2:
+simulate_wide_data() -> returns df -> mask()
+request.param == "masked" -> mask()
+mask() -> init()
+init() -> test_init_and_dilate() -> tests masked model initialization
+
+In reality there is an entire grid of tests because init() accepts several other fixtures which also have their own parameterizations, e.g. n_mask_items() creates 4 tests with None, 0.1, 0.5, 0.9. Combining this with the 2 parameterizations for mask() results in *8 unique tests*.
+
+Hopefully this provides a relatively clear example of how to do exhaustive testing by defining parameter grids that are automatically created by pytest based on these definitions.
 """
 
 import pytest
 from pytest import fixture
 import numpy as np
 import pandas as pd
-from emotioncf import (
+from neighbors import (
     Mean,
     KNN,
     NNMF_sgd,

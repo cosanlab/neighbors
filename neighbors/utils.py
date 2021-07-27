@@ -399,7 +399,7 @@ def estimate_performance(
     On the other hand, if input data is already sparse, no further masking will be performed and the data will instead be split into `n_folds` training and testing folds. Evaluation will be performed based on how well non-missing values in testing folds are recovered. **Note**: this *increases the sparsity* of the input dataset. The number of folds requested controls the additional sparsity of each train and test split. For example, with the default `n_folds=10`, each training split will contain 9/10 folds = ~90% of *observed values* (additional sparsity of 10%); each test split will contain 1/10 folds (~10% of *observed values*).
 
     Args:
-        algorithm (emotioncf.model): an uninitialized model, e.g. `Mean`
+        algorithm (neighbors.model): an uninitialized model, e.g. `Mean`
         data (pd.DataFrame): a users x item dataframe
         n_iter (int, optional): number of repetitions for dense data. Defaults to 10.
         n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.

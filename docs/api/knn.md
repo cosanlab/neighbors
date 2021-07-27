@@ -1,3 +1,3 @@
-# emotioncf.models.KNN
+# neighbors.models.KNN
 
-::: emotioncf.models.KNN
+::: neighbors.models.KNN

@@ -1,14 +1,16 @@
-site_name: EmotionCF
-site_description: "A Python package to perform collaborative filtering on emotion datasets"
-site_url: "https://cosanlab.github.io/emotionCF"
-repo_url: "https://github.com/cosanlab/emotionCF"
-repo_name: "cosanlab/emotioncf"
+site_name: neighbors
+site_description: "A Python package to perform collaborative filtering on social and emotion datasets"
+site_url: "https://cosanlab.github.io/neighbors"
+repo_url: "https://github.com/cosanlab/neighbors"
+repo_name: "cosanlab/neighbors"
 theme:
   name: material
 markdown_extensions:
   - admonition
   - codehilite
   - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
 nav:
   - Home: index.md
   - Tutorials:
@@ -18,13 +20,12 @@ nav:
   - Contributing to Development: development.md
   - Release Notes: releasenotes.md
   - API Reference:
-      - emotioncf.utils: api/utils.md
-      - emotioncf.base: api/base.md
-      - emotioncf.models:
+      - neighbors.models:
           - Mean: api/mean.md
           - KNN: api/knn.md
           - NNMF_mult: api/nmf_m.md
           - NNMF_sgd: api/nmf_s.md
+      - neighbors.utils: api/utils.md
 plugins:
   - search
   - mkdocs-jupyter
@@ -44,4 +45,4 @@ plugins:
             show_category_heading: False
             heading_level: 4
       watch:
-        - emotioncf
+        - neighbors

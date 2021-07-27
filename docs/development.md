@@ -10,7 +10,7 @@ To develop this package or its documentation locally you will need to install a 
 
 ## Testing
 
-To run tests just call `pytest` from the root of this repository. New tests can be added in `emotioncf/tests/`. To speed up tests you can optionally `pip install pytest-xdist` to parallelize testing and use it with: `pytest -rs -n auto`.
+To run tests just call `pytest` from the root of this repository. New tests can be added in `neighbors/tests/`. To speed up tests you can optionally `pip install pytest-xdist` to parallelize testing and use it with: `pytest -rs -n auto`.
 
 ## Formatting
 
@@ -45,5 +45,5 @@ To alter the layout of the docs site adjust settings in `mkdocs.yml`. To add or 
 
 ### Deploying
 
-You can use the `mkdocs gh-deploy` command in order to build and push the documentation site to the [github-pages branch](https://github.com/cosanlab/emotionCF/tree/gh-pages) of this repo.
+You can use the `mkdocs gh-deploy` command in order to build and push the documentation site to the [github-pages branch](https://github.com/cosanlab/neighbors/tree/gh-pages) of this repo.
 

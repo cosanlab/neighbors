@@ -1,4 +1,4 @@
-name: EmotionCF
+name: Tests & Docs
 
 on:
   push:
@@ -74,7 +74,7 @@ jobs:
         run: |
           conda activate test
           conda env list
-          pytest --cov=emotioncf -rs -n auto
+          pytest --cov=neighbors -rs -n auto
 
       # Send coverage to coveralls.io but waiting on parallelization to finish
       # Not using the official github action in the marketplace to upload because it requires a .lcov file, which pytest doesn't generate. It's just easier to use the coveralls python library which does the same thing, but works with pytest.
@@ -147,15 +147,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
-
-  # Job (4): Build package and upload to conda/pypi
-  deploy:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-    name: Build & deploy package
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Say Hi
-        shell: bash
-        run: |
-          echo "hello world. I havent been configured for package deployment yet!"
