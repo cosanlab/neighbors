@@ -1,3 +1,3 @@
-# emotioncf.models.Mean
+# neighbors.models.Mean
 
-::: emotioncf.models.Mean
+::: neighbors.models.Mean

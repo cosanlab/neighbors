@@ -2,7 +2,7 @@
 Test data loading
 """
 import pandas as pd
-from emotioncf import load_movielens100k, load_toymat
+from neighbors import load_movielens100k, load_toymat
 
 
 def test_load_movielens100k():

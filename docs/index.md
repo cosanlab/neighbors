@@ -1,15 +1,15 @@
-# Emotion CF
-[![Build Status](https://github.com/cosanlab/emotionCF/workflows/EmotionCF/badge.svg)](https://github.com/cosanlab/emotionCF/actions?query=workflow%3AEmotionCF)
-[![Coverage Status](https://coveralls.io/repos/github/cosanlab/emotionCF/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/emotionCF?branch=master)
+# Neighbors
+[![Build Status](https://github.com/cosanlab/neighbors/workflows/neighbors/badge.svg)](https://github.com/cosanlab/neighbors/actions?query=workflow%3Aneighbors)
+[![Coverage Status](https://coveralls.io/repos/github/cosanlab/neighbors/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/neighbors?branch=master)
 ![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue)
 ![Platforms](https://img.shields.io/badge/platform-linux%20%7C%20osx%20%7C%20win-blue)
 
-**A Python package for collaborative filtering on social datasets**
+**A Python package for collaborative filtering on social and emotion datasets**
 
 ## Installation
 
-1. Pip (official releases): `pip install emotioncf`
-2. Github (bleeding edge): `pip install git+https://github.com/cosanlab/emotionCF.git`
+1. Pip (official releases): `pip install neighbors`
+2. Github (bleeding edge): `pip install git+https://github.com/cosanlab/neighbors.git`
 
 ## Getting started
 
@@ -18,8 +18,8 @@ The best way to learn how to use the package is by checking out the 3 usage tuto
 ### Quick Demo Usage
 
 ```python  
-from emotioncf.models import NNMF_sgd
-from emotioncf.utils create_user_item_matrix, estimate_performance
+from neighbors.models import NNMF_sgd
+from neighbors.utils create_user_item_matrix, estimate_performance
 
 # Assuming data is 3 column pandas df with 'User', 'Item', 'Rating'
 # convert it to a (possibly sparse) user x item matrix

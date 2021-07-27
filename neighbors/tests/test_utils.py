@@ -4,7 +4,7 @@ Test utility functions
 
 import numpy as np
 import pandas as pd
-from emotioncf import (
+from neighbors import (
     create_user_item_matrix,
     invert_user_item_matrix,
     nanpdist,

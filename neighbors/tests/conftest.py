@@ -39,7 +39,7 @@ import pytest
 from pytest import fixture
 import numpy as np
 import pandas as pd
-from emotioncf import (
+from neighbors import (
     Mean,
     KNN,
     NNMF_sgd,

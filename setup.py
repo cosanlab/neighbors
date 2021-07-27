@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 version = {}
-with open("emotioncf/version.py") as f:
+with open("neighbors/version.py") as f:
     exec(f.read(), version)
 
 with open("requirements.txt") as f:
@@ -10,14 +10,14 @@ with open("requirements.txt") as f:
 extra_setuptools_args = dict(tests_require=["pytest"])
 
 setup(
-    name="emotioncf",
+    name="neighbors",
     version=version["__version__"],
-    description="A Python package for performing Collaborative Filtering on sparse emotion ratings",
+    description="A Python package for performing collaborative filtering on social and emotion datasets",
     maintainer="Cosan Lab",
     maintainer_email="eshin.jolly@dartmouth.edu",
-    url="http://github.com/cosanlab/emotionCF",
+    url="http://github.com/cosanlab/neighbors",
     install_requires=requirements,
-    packages=find_packages(exclude=["emotioncf/tests"]),
+    packages=find_packages(exclude=["neighbors/tests"]),
     include_package_data=True,
     package_data={"": ["data/*.csv"]},
     license="MIT",

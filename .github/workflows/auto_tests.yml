@@ -67,4 +67,4 @@ jobs:
         run: |
           conda activate test
           conda env list
-          pytest --cov=emotioncf -rs -n auto
+          pytest --cov=neighbors -rs -n auto

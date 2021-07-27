@@ -8,7 +8,7 @@ For running tests in parallel `pip install pytest-xdist` and for nicer testing o
 Then you can run pytest locally using `pytest -rs -n auto`, to see skip messages at the end of the test session and visually confirm that only intended skipped tests are being skipped. To aid in this, all pytest.skip() messages end with 'OK' for intentionally skipped tests.
 """
 
-from emotioncf import Mean, KNN, NNMF_mult, NNMF_sgd, Base
+from neighbors import Mean, KNN, NNMF_mult, NNMF_sgd, Base
 import pytest
 import pandas as pd
 import numpy as np
