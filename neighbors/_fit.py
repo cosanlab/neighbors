@@ -147,13 +147,13 @@ def mult(X, M, W, H, data_range, eps, tol, n_iterations, verbose):
         # The np.multiply's below have the effect of only using observed (non-missing)
         # ratings when performing the factor matrix updates
 
-        # Update H
+        # Update H (factor x item)
         numer = W.T @ np.multiply(M, X)
         denom = W.T @ np.multiply(M, W @ H) + eps
         H *= numer
         H /= denom
 
-        # Update W
+        # Update W (user x factor)
         numer = np.multiply(M, X) @ H.T
         denom = np.multiply(M, W @ H) @ H.T + eps
         W *= numer
