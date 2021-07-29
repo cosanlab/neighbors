@@ -1204,8 +1204,11 @@ Overlapping data will be averaged. This method computes and stores the dilated m
     <span class="c1"># Whereas in SGD we explity pass in indices of training data for fitting, here we set testing indices to 0 so they have no impact on the multiplicative update. See Zhu, 2016 for more details: https://arxiv.org/pdf/1612.06037.pdf</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dilate_mask</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">dilate_by_nsamples</span><span class="p">)</span>
 
-    <span class="c1"># fillna(0) is equivalent to hadamard (element-wise) product with a binary mask</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="c1"># Generate a binary mask matrix for observed ratings</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1"># mult() will compute hadamard (element-wise) product of the binary mask</span>
+    <span class="c1"># and all data to 0 out NaNs, so we need all data here</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
     <span class="c1"># Run multiplicative updating</span>
     <span class="c1"># Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585</span>
@@ -1213,6 +1216,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
         <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
         <span class="n">error_history</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">norm_rmse</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">mult</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span>
+            <span class="n">M</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_range</span><span class="p">,</span>
