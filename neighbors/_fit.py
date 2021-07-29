@@ -118,8 +118,9 @@ def sgd(
 
 
 @nb.njit(cache=True, nogil=True)
-def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
-    """Lee & Seung (2001) multiplicative update rule"""
+def mult(X, M, W, H, data_range, eps, tol, n_iterations, verbose):
+    """Lee & Seung (2001) multiplicative update rule extended with
+    Zhu (2016) binary 'weight' matrix to handle missing data."""
 
     last_e = 0
     error_history = np.zeros((n_iterations))
@@ -143,20 +144,23 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
                 tol,
             )
 
-        # Update H
-        numer = W.T @ X
-        denom = W.T @ W @ H + eps
+        # The np.multiply's below have the effect of only using observed (non-missing)
+        # ratings when performing the factor matrix updates
+
+        # Update H (factor x item)
+        numer = W.T @ np.multiply(M, X)
+        denom = W.T @ np.multiply(M, W @ H) + eps
         H *= numer
         H /= denom
 
-        # Update W
-        numer = X @ H.T
-        denom = W @ H @ H.T + eps
+        # Update W (user x factor)
+        numer = np.multiply(M, X) @ H.T
+        denom = np.multiply(M, W @ H) @ H.T + eps
         W *= numer
         W /= denom
 
         # Make prediction and get error
-        errors = X - W @ H
+        errors = np.multiply(M, X) - np.multiply(M, W @ H)
         rmse = np.sqrt(np.mean(np.power(errors, 2)))
 
         # Normalize current error with respect to max of dataset
