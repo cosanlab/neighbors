@@ -147,6 +147,8 @@ def mult(X, M, W, H, data_range, eps, tol, n_iterations, verbose):
         # The np.multiply's below have the effect of only using observed (non-missing)
         # ratings when performing the factor matrix updates
 
+        # NOTE: Current issue seems to be that this *dramatically over-fits* compared to just filling in missing values with 0. Training RMSE goes way down < 1%, but testing RMSE increases substantially because some predictions aren't even on the right scale! This seems to be dataset dependent as this binary masking works decently well for other datasets. Triple-checked the implementation, but can't see to figure out why this occurs for some data and not others. All I can see if that for the datasets in which it occurs, the item x factor matrix is usually almost all 0s, with a few exceptionally large values (in the thousands). Try 'BestOfTimes' from the moth dataset as an example
+
         # Update H (factor x item)
         numer = W.T @ np.multiply(M, X)
         denom = W.T @ np.multiply(M, W @ H) + eps
