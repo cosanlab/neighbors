@@ -351,11 +351,8 @@ class NNMF_mult(BaseNMF):
         # Whereas in SGD we explity pass in indices of training data for fitting, here we set testing indices to 0 so they have no impact on the multiplicative update. See Zhu, 2016 for more details: https://arxiv.org/pdf/1612.06037.pdf
         self.dilate_mask(n_samples=dilate_by_nsamples)
 
-        # Generate a binary mask matrix for observed ratings
-        M = self.mask.to_numpy().astype(float)
-        # mult() will compute hadamard (element-wise) product of the binary mask
-        # and all data to 0 out NaNs, so we need all data here
-        X = self.data.to_numpy()
+        # fillna(0) is equivalent to hadamard (element-wise) product with a binary mask
+        X = self.masked_data.fillna(0).to_numpy()
 
         # Run multiplicative updating
         # Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585
@@ -363,7 +360,6 @@ class NNMF_mult(BaseNMF):
             warnings.filterwarnings("ignore", category=NumbaPerformanceWarning)
             error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
                 X,
-                M,
                 self.W,
                 self.H,
                 self.data_range,
