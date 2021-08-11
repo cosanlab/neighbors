@@ -13,7 +13,7 @@
 
 ## Getting started
 
-The best way to learn how to use the package is by checking out the 3 usage tutorials on working with [dense](examples/dense-data), [sparse](examples/sparse-data), and [time-series](examples/timeseries-data). For more detailed usage on specific function arguments and model parameters check out the API reference on the left. 
+The best way to learn how to use the package is by checking out the [ documentation site](https://cosanlab.github.io/neighbors) which contains usage tutorials as well as API documentation for all package functionality.
 
 ### Quick Demo Usage
 
