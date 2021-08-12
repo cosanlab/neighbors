@@ -2,67 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://cosanlab.github.io/neighbors/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/development/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/releasenotes/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/timeseries/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/api/base/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/api/knn/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/api/mean/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/api/nmf_m/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/api/nmf_s/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/api/utils/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/examples/dense-data/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/examples/sparse-data/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://cosanlab.github.io/neighbors/examples/timeseries-data/</loc>
-         <lastmod>2021-08-11</lastmod>
+         <lastmod>2021-08-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
