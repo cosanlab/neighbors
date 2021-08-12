@@ -46,3 +46,7 @@ plugins:
             heading_level: 4
       watch:
         - neighbors
+extra:
+  analytics:
+    provider: google
+    property: G-1N98SJ70M6

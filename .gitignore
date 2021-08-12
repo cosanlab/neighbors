@@ -95,8 +95,11 @@ site/
 environment.yml
 environment-lock.yml
 
-# Development notebookd
+# Development stuffs
 dev
 .environment.yml
 *.pdf
 .ipython_logs
+
+# macOS
+*.DS*

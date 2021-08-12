@@ -140,7 +140,9 @@ jobs:
           python3 -m pip install -r ./requirements-dev.txt
 
       - name: Build docs
-        run: mkdocs build
+        run: |
+          mkdocs build
+          echo 'neighbors.cosanlab.com' > ./site/CNAME
 
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
