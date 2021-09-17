@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://cosanlab.github.io/neighbors/examples/dense-data/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.6">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.f7f47774.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.802231af.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -1349,7 +1349,7 @@ height=636
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To retrieve the matrix containing the model predictions we can use the <code>.transform</code> method. Be default this will return a matrix containing ratings for values that were <em>observed</em> and <em>predictions</em> for values that were missing (i.e. masked out). To return predictions for the observed values as well, i.e. not passing forward these values, set <code>return_only_predictions=True</code>.</p>
+<p>To retrieve the matrix containing the model predictions we can use the <code>.transform</code> method. By default this will return a matrix containing ratings for values that were <em>observed</em> and <em>predictions</em> for values that were missing (i.e. masked out). To return predictions for the observed values as well, i.e. not passing forward these values, set <code>return_only_predictions=True</code>.</p>
 <p>Now the masked out ratings have been replaced with model predictions:</p>
 
 </div>
@@ -1623,8 +1623,8 @@ height=399
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="scoring-a-models-predictions">Scoring a model's predictions<a class="anchor-link" href="#Scoring-a-model's-predictions">&#182;</a></h1><p>Working with dense data affords us a grouth truth that can be used to asses the model's performance. We support a number of different metrics to do this (RMSE and correlation in the plots above are just two). To return a model's performance you can use the <code>.score</code> method. However, the <code>.summary</code> method maybe more convenient as it returns all supported metrics along with separate scoring for both the observed ratings (model training performance) and missing values (model testing performance)</p>
-<p>Additionally, metrics are scored in two different ways. <code>user</code> metrics below score performance separately by each user first and then average these scores. This approach is more commong to the social science where observations are treated as "clustered" by user. <code>all</code> simply scores all ratings ignoring the fact that multiple ratings come from each user. This method is more common in machine-learning where overall model performance is of primary interest.</p>
+<h1 id="scoring-a-models-predictions">Scoring a model's predictions<a class="anchor-link" href="#Scoring-a-model's-predictions">&#182;</a></h1><p>Working with dense data affords us a ground truth that can be used to asses the model's performance. We support a number of different metrics to do this (RMSE and correlation in the plots above are just two). To return a model's performance you can use the <code>.score</code> method. However, the <code>.summary</code> method maybe more convenient as it returns all supported metrics along with separate scoring for both the observed ratings (model training performance) and missing values (model testing performance)</p>
+<p>Additionally, metrics are scored in two different ways. <code>user</code> metrics below score performance separately by each user first and then average these scores. This approach is more common to the social science where observations are treated as "clustered" by user. <code>all</code> simply scores all ratings ignoring the fact that multiple ratings come from each user. This method is more common in machine-learning where overall model performance is of primary interest.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -2120,7 +2120,7 @@ Overall performance results (returned) are accesible using .overall_results
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h1><p>Those are the basics of working with models and dense data. The <a href="https:/cosanlab.github.io/neighbors/examples/sparse-data">next tutorial</a> illustrates the primary use case for the toolbox: working with sparse data.</p>
+<h1 id="summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h1><p>Those are the basics of working with models and dense data. The <a href="https://cosanlab.github.io/neighbors/examples/sparse-data">next tutorial</a> illustrates the primary use case for the toolbox: working with sparse data.</p>
 
 </div>
 </div>
@@ -2162,10 +2162,10 @@ Overall performance results (returned) are accesible using .overall_results
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.709b4209.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.409db549.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.febc23d1.min.js"></script>
+      <script src="../../assets/javascripts/bundle.756773cc.min.js"></script>
       
     
   </body>
