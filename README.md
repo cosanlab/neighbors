@@ -1,4 +1,4 @@
-# Neighbors
+# Neighbor
 [![Build Status](https://github.com/cosanlab/neighbors/actions/workflows/tests_and_docs.yml/badge.svg)](https://github.com/cosanlab/neighbors/actions/workflows/tests_and_docs.yml)
 [![Coverage Status](https://coveralls.io/repos/github/cosanlab/neighbors/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/neighbors?branch=master)
 ![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue)
