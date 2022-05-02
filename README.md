@@ -19,7 +19,7 @@ The best way to learn how to use the package is by checking out the [ documentat
 
 ```python  
 from neighbors.models import NNMF_sgd
-from neighbors.utils create_user_item_matrix, estimate_performance
+from neighbors.utils import create_user_item_matrix, estimate_performance
 
 # Assuming data is 3 column pandas df with 'User', 'Item', 'Rating'
 # convert it to a (possibly sparse) user x item matrix

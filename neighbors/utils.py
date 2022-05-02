@@ -413,7 +413,7 @@ def estimate_performance(
         data (pd.DataFrame): a users x item dataframe
         n_iter (int, optional): number of repetitions for dense data. Defaults to 10.
         n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.
-        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values
+        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. **Ignored if input data is already sparse.**
         return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.
         return_full_performance (bool, optional): return the performance against both "observed" and "missing" or just "missing" values if using dense data and `n_iter`. Likewise return performance of both "train" and "test" or just "test" splits if using sparse data and `n_folds`; Default False
         agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
