@@ -206,7 +206,10 @@ def create_sparse_mask(data, n_mask_items=0.2, random_state=None):
             for _ in range(data.shape[0])
         ]
     )
-    return pd.DataFrame(mask, index=data.index, columns=data.columns)
+    out = pd.DataFrame(mask, index=data.index, columns=data.columns)
+    out.index.name = data.index.name
+    out.columns.name = data.columns.name
+    return out
 
 
 def flatten_dataframe(data: pd.DataFrame) -> list:
@@ -223,7 +226,14 @@ def flatten_dataframe(data: pd.DataFrame) -> list:
     if not isinstance(data, pd.DataFrame):
         raise TypeError("input must be a pandas dataframe")
 
-    out = zip(product(data.index, data.columns), data.to_numpy().ravel())
+    # Force index and columns names to be strings so that unflatten can more reliably
+    # auto-infer index and column names when they aren't passed, i.e doesn't add
+    # additional columns or rows with numeric versions of the same name
+    out = data.copy()
+    out.index = list(map(str, out.index))
+    out.columns = list(map(str, out.columns))
+
+    out = zip(product(out.index, out.columns), out.to_numpy().ravel())
     return np.array([(elem[0][0], elem[0][1], elem[1]) for elem in out])
 
 

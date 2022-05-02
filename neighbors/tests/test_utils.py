@@ -129,17 +129,23 @@ def test_create_sparse_mask(simulate_wide_data):
     expected_items = int(simulate_wide_data.shape[1] * (1 - 0.10))
     assert mask.shape == simulate_wide_data.shape
     assert all(mask.sum(1) == expected_items)
+    assert mask.index.name == simulate_wide_data.index.name
+    assert mask.columns.name == simulate_wide_data.columns.name
 
     mask = create_sparse_mask(simulate_wide_data, n_mask_items=19)
     assert mask.shape == simulate_wide_data.shape
     expected_items = int(simulate_wide_data.shape[1] - 19)
     assert all(mask.sum(1) == expected_items)
+    assert mask.index.name == simulate_wide_data.index.name
+    assert mask.columns.name == simulate_wide_data.columns.name
 
     masked_data = simulate_wide_data[mask]
     assert isinstance(masked_data, pd.DataFrame)
     assert masked_data.shape == simulate_wide_data.shape
     assert ~simulate_wide_data.isnull().any().any()
     assert masked_data.isnull().any().any()
+    assert mask.index.name == simulate_wide_data.index.name
+    assert mask.columns.name == simulate_wide_data.columns.name
 
 
 def test_flatten_dataframe(simulate_wide_data):
