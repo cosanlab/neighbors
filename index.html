@@ -629,7 +629,7 @@
 <p>The best way to learn how to use the package is by checking out the 3 usage tutorials on working with <a href="https://cosanlab.github.io/neighbors/examples/dense-data">dense</a>, <a href="https://cosanlab.github.io/neighbors/examples/sparse-data">sparse</a>, and <a href="https://cosanlab.github.io/neighbors/examples/timeseries-data">time-series</a>. For more detailed usage on specific function arguments and model parameters check out the API reference on the left. </p>
 <h3 id="quick-demo-usage">Quick Demo Usage</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">neighbors.models</span> <span class="kn">import</span> <span class="n">NNMF_sgd</span>
-<span class="kn">from</span> <span class="nn">neighbors.utils</span> <span class="n">create_user_item_matrix</span><span class="p">,</span> <span class="n">estimate_performance</span>
+<span class="kn">from</span> <span class="nn">neighbors.utils</span> <span class="kn">import</span> <span class="n">create_user_item_matrix</span><span class="p">,</span> <span class="n">estimate_performance</span>
 
 <span class="c1"># Assuming data is 3 column pandas df with &#39;User&#39;, &#39;Item&#39;, &#39;Rating&#39;</span>
 <span class="c1"># convert it to a (possibly sparse) user x item matrix</span>

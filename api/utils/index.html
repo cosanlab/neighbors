@@ -1220,7 +1220,7 @@
       <tr>
         <td><code>n_mask_items</code></td>
         <td><code>int/float</code></td>
-        <td><p>how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values</p></td>
+        <td><p>how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. <strong>Ignored if input data is already sparse.</strong></p></td>
         <td><code>0.2</code></td>
       </tr>
       <tr>
@@ -1315,7 +1315,7 @@
 <span class="sd">        data (pd.DataFrame): a users x item dataframe</span>
 <span class="sd">        n_iter (int, optional): number of repetitions for dense data. Defaults to 10.</span>
 <span class="sd">        n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.</span>
-<span class="sd">        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values</span>
+<span class="sd">        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. **Ignored if input data is already sparse.**</span>
 <span class="sd">        return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.</span>
 <span class="sd">        return_full_performance (bool, optional): return the performance against both &quot;observed&quot; and &quot;missing&quot; or just &quot;missing&quot; values if using dense data and `n_iter`. Likewise return performance of both &quot;train&quot; and &quot;test&quot; or just &quot;test&quot; splits if using sparse data and `n_folds`; Default False</span>
 <span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default (&#39;mean&#39;, &#39;std&#39;)</span>
