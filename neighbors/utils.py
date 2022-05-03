@@ -206,10 +206,13 @@ def create_sparse_mask(data, n_mask_items=0.2, random_state=None):
             for _ in range(data.shape[0])
         ]
     )
-    return pd.DataFrame(mask, index=data.index, columns=data.columns)
+    out = pd.DataFrame(mask, index=data.index, columns=data.columns)
+    out.index.name = data.index.name
+    out.columns.name = data.columns.name
+    return out
 
 
-def flatten_dataframe(data: pd.DataFrame) -> list:
+def flatten_dataframe(data: pd.DataFrame) -> np.ndarray:
     """
     Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value
 
@@ -229,24 +232,17 @@ def flatten_dataframe(data: pd.DataFrame) -> list:
 
 def unflatten_dataframe(
     data: np.ndarray,
-    columns=None,
-    index=None,
-    num_rows=None,
-    num_cols=None,
-    index_name=None,
-    columns_name=None,
+    like_dataframe: pd.DataFrame,
 ) -> pd.DataFrame:
     """
     Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe
 
     Args:
         data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.
-        columns (list, optional): column names of new dataframe. Defaults to None.
-        index (list, optional): row names of new dataframe. Defaults to None.
-        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)
-        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)
         index_name (str; optional): Name of rows; Default None
         columns_name (str; optional): Name of columns; Default None
+        column_order (iterable; optional): Order of columns; Default lexiographic order based on input array
+        row_order (iterable; optional): Order of rows; Default lexiographic order based on input array
 
     Returns:
         pd.DataFrame: original unflattened dataframe
@@ -254,35 +250,20 @@ def unflatten_dataframe(
 
     if not isinstance(data, np.ndarray):
         raise TypeError("input should be a numpy array")
-    if index is None and num_rows is None:
-        index = list(dict.fromkeys(data[:, 0]))
-        num_rows = len(index)
-    elif index is not None and num_rows is None:
-        num_rows = len(index)
-    elif index is None and num_rows is not None:
-        index = list(dict.fromkeys(data[:, 0]))
-        if len(index) != num_rows:
-            raise ValueError(
-                "num_rows does not match the number of unique row_idx values in data"
-            )
-    if columns is None and num_cols is None:
-        columns = list(dict.fromkeys(data[:, 1]))
-        num_cols = len(columns)
-    elif columns is not None and num_cols is None:
-        num_cols = len(columns)
-    elif columns is None and num_cols is not None:
-        columns = list(dict.fromkeys(data[:, 1]))
-        if len(columns) != num_cols:
-            raise ValueError(
-                "num_cols does not match the number of unique col_idx values in data"
-            )
-    out = np.empty((num_rows, num_cols))
+    if not isinstance(like_dataframe, pd.DataFrame):
+        raise TypeError("like_dataframe should be a pandas dataframe")
+
+    out = np.empty((like_dataframe.shape[0], like_dataframe.shape[1]))
     out[:] = np.nan
-    out = pd.DataFrame(out, index=index, columns=columns)
+    out = pd.DataFrame(out, index=like_dataframe.index, columns=like_dataframe.columns)
+
     for elem in data:
-        out.loc[elem[0], elem[1]] = np.float(elem[2])
-    out.index.name = index_name
-    out.columns.name = columns_name
+        row = elem[0].astype(type(like_dataframe.index[0]))
+        col = elem[1].astype(type(like_dataframe.columns[0]))
+        out.loc[row, col] = np.float(elem[2])
+    out.index.name = like_dataframe.index.name
+    out.columns.name = like_dataframe.columns.name
+
     return out
 
 
@@ -345,7 +326,6 @@ def split_train_test(
     """
 
     random_state = check_random_state(random_state)
-    num_rows, num_cols = data.shape
     flat = flatten_dataframe(data)
     if shuffle:
         random_state.shuffle(flat)
@@ -359,22 +339,8 @@ def split_train_test(
         train = np.array([elem for elem in chain(flat[:start], flat[stop:])])
         test = np.array([elem for elem in flat[start:stop]])
 
-        yield unflatten_dataframe(
-            train,
-            num_rows=num_rows,
-            num_cols=num_cols,
-            index=data.index,
-            columns=data.columns,
-            index_name=data.index.name,
-            columns_name=data.columns.name,
-        ), unflatten_dataframe(
-            test,
-            num_rows=num_rows,
-            num_cols=num_cols,
-            index=data.index,
-            columns=data.columns,
-            index_name=data.index.name,
-            columns_name=data.columns.name,
+        yield unflatten_dataframe(train, like_dataframe=data), unflatten_dataframe(
+            test, like_dataframe=data
         )
 
 
@@ -403,7 +369,7 @@ def estimate_performance(
         data (pd.DataFrame): a users x item dataframe
         n_iter (int, optional): number of repetitions for dense data. Defaults to 10.
         n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.
-        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values
+        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. **Ignored if input data is already sparse.**
         return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.
         return_full_performance (bool, optional): return the performance against both "observed" and "missing" or just "missing" values if using dense data and `n_iter`. Likewise return performance of both "train" and "test" or just "test" splits if using sparse data and `n_folds`; Default False
         agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')

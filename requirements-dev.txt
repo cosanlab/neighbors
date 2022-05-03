@@ -4,3 +4,7 @@ mkdocs
 mkdocs-material
 mkdocstrings
 mkdocs-jupyter
+pycodestyle
+pytest
+pytest-sugar
+pytest-xdist
