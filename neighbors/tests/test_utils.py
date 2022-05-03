@@ -13,6 +13,7 @@ from neighbors import (
     flatten_dataframe,
     unflatten_dataframe,
     split_train_test,
+    get_sparsity,
     Mean,
 )
 
@@ -157,15 +158,8 @@ def test_flatten_dataframe(simulate_wide_data):
 
 def test_unflatten_dataframe(simulate_wide_data):
     out = flatten_dataframe(simulate_wide_data)
-    new = unflatten_dataframe(
-        out, index=simulate_wide_data.index, columns=simulate_wide_data.columns
-    )
+    new = unflatten_dataframe(out, like_dataframe=simulate_wide_data)
     assert new.equals(simulate_wide_data)
-    new = unflatten_dataframe(out)
-    assert new.equals(simulate_wide_data)
-    new = unflatten_dataframe(
-        out, num_rows=simulate_wide_data.shape[0], num_cols=simulate_wide_data.shape[1]
-    )
 
 
 def test_split_train_test(simulate_wide_data):
@@ -177,7 +171,10 @@ def test_split_train_test(simulate_wide_data):
         assert train.notnull().sum().sum() == int(4 / 5 * simulate_wide_data.size)
         # 4/5 of dense data should be sparse for testing, i.e. 1/5 data folds
         assert test.notnull().sum().sum() == int(1 / 5 * simulate_wide_data.size)
-        assert train.add(test, fill_value=0).equals(simulate_wide_data)
+        # Put them together and there should be no null values
+        full = train.add(test, fill_value=0)
+        assert not full.isnull().any().any()
+        assert full.equals(simulate_wide_data)
 
     # Sparse data
     mask = create_sparse_mask(simulate_wide_data, n_mask_items=0.1)
@@ -190,9 +187,30 @@ def test_split_train_test(simulate_wide_data):
         # Train and test should be more sparse than original
         assert train.isnull().sum().sum() > masked_data.isnull().sum().sum()
         assert test.isnull().sum().sum() > masked_data.isnull().sum().sum()
-        assert train.add(test, fill_value=0).equals(masked_data)
+
+        # Put them together and sparsity should be n_mask_items above
+        full = train.add(test, fill_value=0)
+        # Also testing get_sparsity
+        effective_sparsity = get_sparsity(full)
+        assert np.allclose(effective_sparsity, 0.1)
+        assert full.equals(masked_data)
+
         train_not_null = train.notnull().sum().sum()
         test_not_null = test.notnull().sum().sum()
         # And adhere close the expected train/test split
         assert np.allclose(train_not_null / masked_not_null, 0.8, atol=0.12)
         assert np.allclose(test_not_null / masked_not_null, 0.2, atol=0.12)
+
+    # Numeric column names
+    s = simulate_wide_data.copy()
+    s.columns = range(s.shape[1])
+    splits = split_train_test(s, n_folds=5)
+    shapes = list(map(lambda s: (s[0].shape, s[1].shape), splits))
+    assert all(
+        list(
+            map(
+                lambda sp: sp[0] == sp[1] and sp[0] == s.shape and sp[1] == s.shape,
+                shapes,
+            )
+        )
+    )
