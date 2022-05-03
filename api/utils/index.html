@@ -1594,7 +1594,7 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value</span>
 
@@ -1608,14 +1608,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input must be a pandas dataframe&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Force index and columns names to be strings so that unflatten can more reliably</span>
-    <span class="c1"># auto-infer index and column names when they aren&#39;t passed, i.e doesn&#39;t add</span>
-    <span class="c1"># additional columns or rows with numeric versions of the same name</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
-
-    <span class="n">out</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">out</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">out</span><span class="p">])</span>
 </code></pre></div>
         </details>
@@ -1955,7 +1948,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
-    <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="n">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
         <span class="n">random_state</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
@@ -1969,22 +1961,8 @@
         <span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="n">flat</span><span class="p">[:</span><span class="n">start</span><span class="p">],</span> <span class="n">flat</span><span class="p">[</span><span class="n">stop</span><span class="p">:])])</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">flat</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]])</span>
 
-        <span class="k">yield</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
-            <span class="n">train</span><span class="p">,</span>
-            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
-            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
-            <span class="n">test</span><span class="p">,</span>
-            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
-            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="k">yield</span> <span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="o">=</span><span class="n">data</span><span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
+            <span class="n">test</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="o">=</span><span class="n">data</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1999,7 +1977,7 @@
 
 
 <h4 id="neighbors.utils.unflatten_dataframe" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="p">)</span></code>
 
 
 </h4>
@@ -2026,40 +2004,28 @@
         <td><em>required</em></td>
       </tr>
       <tr>
-        <td><code>columns</code></td>
-        <td><code>list</code></td>
-        <td><p>column names of new dataframe. Defaults to None.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>index</code></td>
-        <td><code>list</code></td>
-        <td><p>row names of new dataframe. Defaults to None.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>num_rows</code></td>
-        <td><code>int</code></td>
-        <td><p>total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>num_cols</code></td>
-        <td><code>int</code></td>
-        <td><p>total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
         <td><code>index_name</code></td>
         <td><code>str; optional</code></td>
         <td><p>Name of rows; Default None</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>columns_name</code></td>
         <td><code>str; optional</code></td>
         <td><p>Name of columns; Default None</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>column_order</code></td>
+        <td><code>iterable; optional</code></td>
+        <td><p>Order of columns; Default lexiographic order based on input array</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>row_order</code></td>
+        <td><code>iterable; optional</code></td>
+        <td><p>Order of rows; Default lexiographic order based on input array</p></td>
+        <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
@@ -2082,24 +2048,17 @@
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">unflatten_dataframe</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">like_dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.</span>
-<span class="sd">        columns (list, optional): column names of new dataframe. Defaults to None.</span>
-<span class="sd">        index (list, optional): row names of new dataframe. Defaults to None.</span>
-<span class="sd">        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</span>
-<span class="sd">        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</span>
 <span class="sd">        index_name (str; optional): Name of rows; Default None</span>
 <span class="sd">        columns_name (str; optional): Name of columns; Default None</span>
+<span class="sd">        column_order (iterable; optional): Order of columns; Default lexiographic order based on input array</span>
+<span class="sd">        row_order (iterable; optional): Order of rows; Default lexiographic order based on input array</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: original unflattened dataframe</span>
@@ -2107,35 +2066,20 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input should be a numpy array&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_rows</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;num_rows does not match the number of unique row_idx values in data&quot;</span>
-            <span class="p">)</span>
-    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
-        <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_cols</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;num_cols does not match the number of unique col_idx values in data&quot;</span>
-            <span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">like_dataframe</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;like_dataframe should be a pandas dataframe&quot;</span><span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">out</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_name</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">columns_name</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span>
+
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
         </details>
