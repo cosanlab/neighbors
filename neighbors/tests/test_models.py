@@ -154,6 +154,48 @@ def test_init_and_dilate(init, mask, n_mask_items):
         assert n_masked > init.masked_data.isnull().sum().sum()
 
 
+def test_dilation_centers_odd_width_kernel_on_observation():
+    ratings = pd.Series(
+        [np.nan, np.nan, np.nan, np.nan, 50, np.nan, np.nan, np.nan, np.nan]
+    )
+
+    dilated = Base._conv_ts_mean_overlap(ratings, n_samples=5)
+
+    expected = np.array([np.nan, np.nan, 50, 50, 50, 50, 50, np.nan, np.nan])
+    np.testing.assert_equal(dilated, expected)
+
+
+def test_dilation_uses_documented_half_sample_alignment_for_even_width_kernel():
+    ratings = pd.Series(
+        [np.nan, np.nan, np.nan, np.nan, 50, np.nan, np.nan, np.nan, np.nan]
+    )
+
+    dilated = Base._conv_ts_mean_overlap(ratings, n_samples=4)
+
+    expected = np.array([np.nan, np.nan, np.nan, 50, 50, 50, 50, np.nan, np.nan])
+    np.testing.assert_equal(dilated, expected)
+
+
+def test_dilation_averages_overlapping_centered_kernels():
+    ratings = pd.Series(
+        [np.nan, np.nan, np.nan, 20, np.nan, 80, np.nan, np.nan, np.nan]
+    )
+
+    dilated = Base._conv_ts_mean_overlap(ratings, n_samples=5)
+
+    expected = np.array([np.nan, 20, 20, 50, 50, 50, 80, 80, np.nan])
+    np.testing.assert_equal(dilated, expected)
+
+
+def test_dilation_does_not_mutate_input_ratings():
+    ratings = pd.Series([np.nan, 25, np.nan])
+    original = ratings.copy()
+
+    Base._conv_ts_mean_overlap(ratings, n_samples=3)
+
+    pd.testing.assert_series_equal(ratings, original)
+
+
 def test_mean(model, dilate_by_nsamples, n_mask_items):
     """Test Mean model"""
     if not isinstance(model, Mean):
