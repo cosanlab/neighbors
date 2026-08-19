@@ -280,7 +280,7 @@ def unflatten_dataframe(
     out[:] = np.nan
     out = pd.DataFrame(out, index=index, columns=columns)
     for elem in data:
-        out.loc[elem[0], elem[1]] = np.float(elem[2])
+        out.loc[elem[0], elem[1]] = float(elem[2])
     out.index.name = index_name
     out.columns.name = columns_name
     return out
