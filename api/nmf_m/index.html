@@ -12,8 +12,18 @@
       
         <link rel="canonical" href="https://cosanlab.github.io/neighbors/api/nmf_m/">
       
+      
+        <link rel="prev" href="../knn/">
+      
+      
+        <link rel="next" href="../nmf_s/">
+      
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -21,13 +31,14 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
-        
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.cc9b2e1e.min.css">
-        
       
+
+
     
+    
+      
     
     
       
@@ -41,7 +52,7 @@
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -50,24 +61,18 @@
   
   
 
-
-  <script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-1N98SJ70M6"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&gtag("event","search",{search_term:this.value})}),"undefined"!=typeof location$&&location$.subscribe(function(e){gtag("config","G-1N98SJ70M6",{page_path:e.pathname})})})</script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1N98SJ70M6"></script>
-
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-1N98SJ70M6"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-1N98SJ70M6",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-1N98SJ70M6",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
 
     
     
   </head>
   
   
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr">
   
-    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -87,16 +92,19 @@
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="neighbors" class="md-header__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -116,46 +124,56 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
   </div>
 </div>
+      
     
     
       <div class="md-header__source">
         <a href="https://github.com/cosanlab/neighbors" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     cosanlab/neighbors
@@ -185,12 +203,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="neighbors" class="md-nav__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     neighbors
@@ -200,7 +219,7 @@
       <a href="https://github.com/cosanlab/neighbors" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     cosanlab/neighbors
@@ -212,14 +231,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Home
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -227,90 +258,164 @@
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Tutorials
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Tutorials
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
           
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../examples/dense-data" class="md-nav__link">
-        1) Working with Dense Data
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1) Working with Dense Data
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../examples/sparse-data" class="md-nav__link">
-        2) Working with Sparse Data
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2) Working with Sparse Data
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../examples/timeseries-data" class="md-nav__link">
-        3) Working with Time-Series
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3) Working with Time-Series
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../development/" class="md-nav__link">
-        Contributing to Development
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing to Development
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -318,14 +423,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../releasenotes/" class="md-nav__link">
-        Release Notes
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -333,112 +450,207 @@
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
 
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
     
   
   
+  
+    
+    
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5">
-          API Reference
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
-          <span class="md-nav__icon md-icon"></span>
-          API Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        
           
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
             
-              
   
   
+  <span class="md-ellipsis">
     
   
+    neighbors.models
   
+
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" checked>
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5_1">
-          neighbors.models
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="neighbors.models" data-md-level="2">
-        <label class="md-nav__title" for="__nav_5_1">
-          <span class="md-nav__icon md-icon"></span>
-          neighbors.models
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    neighbors.models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../mean/" class="md-nav__link">
-        Mean
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mean
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../knn/" class="md-nav__link">
-        KNN
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KNN
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
         
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          NNMF_mult
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NNMF_mult
+  
+
+    
+  </span>
+  
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        NNMF_mult
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NNMF_mult
+  
+
+    
+  </span>
+  
+  
+
       </a>
       
         
@@ -458,91 +670,33 @@
       
         <li class="md-nav__item">
   <a href="#neighbors.models.NNMF_mult" class="md-nav__link">
-    neighbors.models.NNMF_mult
+    <span class="md-ellipsis">
+      
+        neighbors.models.NNMF_mult
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.models.NNMF_mult.__init__" class="md-nav__link">
-    __init__()
-  </a>
-  
-</li>
+    <span class="md-ellipsis">
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.create_masked_data" class="md-nav__link">
-    create_masked_data()
-  </a>
-  
-</li>
+        __init__()
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.dilate_mask" class="md-nav__link">
-    dilate_mask()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.downsample" class="md-nav__link">
-    downsample()
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.models.NNMF_mult.fit" class="md-nav__link">
-    fit()
-  </a>
-  
-</li>
+    <span class="md-ellipsis">
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.plot_factors" class="md-nav__link">
-    plot_factors()
-  </a>
-  
-</li>
+        fit()
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.plot_learning" class="md-nav__link">
-    plot_learning()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.plot_predictions" class="md-nav__link">
-    plot_predictions()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.score" class="md-nav__link">
-    score()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.summary" class="md-nav__link">
-    summary()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.to_long_df" class="md-nav__link">
-    to_long_df()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.transform" class="md-nav__link">
-    transform()
+    </span>
   </a>
   
 </li>
@@ -554,45 +708,75 @@
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../nmf_s/" class="md-nav__link">
-        NNMF_sgd
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NNMF_sgd
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../utils/" class="md-nav__link">
-        neighbors.utils
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    neighbors.utils
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -625,91 +809,33 @@
       
         <li class="md-nav__item">
   <a href="#neighbors.models.NNMF_mult" class="md-nav__link">
-    neighbors.models.NNMF_mult
+    <span class="md-ellipsis">
+      
+        neighbors.models.NNMF_mult
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.models.NNMF_mult.__init__" class="md-nav__link">
-    __init__()
-  </a>
-  
-</li>
+    <span class="md-ellipsis">
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.create_masked_data" class="md-nav__link">
-    create_masked_data()
-  </a>
-  
-</li>
+        __init__()
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.dilate_mask" class="md-nav__link">
-    dilate_mask()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.downsample" class="md-nav__link">
-    downsample()
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.models.NNMF_mult.fit" class="md-nav__link">
-    fit()
-  </a>
-  
-</li>
+    <span class="md-ellipsis">
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.plot_factors" class="md-nav__link">
-    plot_factors()
-  </a>
-  
-</li>
+        fit()
       
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.plot_learning" class="md-nav__link">
-    plot_learning()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.plot_predictions" class="md-nav__link">
-    plot_predictions()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.score" class="md-nav__link">
-    score()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.summary" class="md-nav__link">
-    summary()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.to_long_df" class="md-nav__link">
-    to_long_df()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#neighbors.models.NNMF_mult.transform" class="md-nav__link">
-    transform()
+    </span>
   </a>
   
 </li>
@@ -722,14 +848,16 @@
               </div>
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
+          
+            <div class="md-content" data-md-component="content">
               
+              <article class="md-content__inner md-typeset">
                 
-  <a href="https://github.com/cosanlab/neighbors/edit/master/docs/api/nmf_m.md" title="Edit this page" class="md-content__button md-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+                  
 
+
+  
+  
 
 
 <h1 id="neighborsmodelsnnmf_mult">neighbors.models.NNMF_mult</h1>
@@ -748,8 +876,8 @@
 
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NNMF_mult</span><span class="p">(</span><span class="n">BaseNMF</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NNMF_mult</span><span class="p">(</span><span class="n">BaseNMF</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.</span>
 
 <span class="sd">    Training is performed via multiplicative updating and continues until convergence or the maximum number of training iterations has been reached. Unlike the `NNMF_sgd`, this implementation takes no hyper-parameters and thus is simpler and faster to use, but less flexible, i.e. no regularization.</span>
@@ -761,10 +889,10 @@
 <span class="sd">    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            data (pd.DataFrame): users x items dataframe</span>
 <span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
@@ -781,10 +909,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># user x factors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, n_factors=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
@@ -795,7 +923,7 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
 
 <span class="sd">        Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.</span>
 
@@ -871,13 +999,13 @@
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;Predict subjects&#39; missing items using NNMF with multiplicative updating&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict subjects&#39; missing items using NNMF with multiplicative updating&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
@@ -901,14 +1029,14 @@
 
 
 
-<h4 id="neighbors.models.NNMF_mult.__init__" class="doc doc-heading">
+<h2 id="neighbors.models.NNMF_mult.__init__" class="doc doc-heading">
 <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-special"><code>special</code></small>
   </span>
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -964,10 +1092,10 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
 <span class="sd">        data (pd.DataFrame): users x items dataframe</span>
 <span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
@@ -996,288 +1124,11 @@
 
 
 
-<h4 id="neighbors.models.NNMF_mult.create_masked_data" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Create a mask and apply it to data using number of items or % of items</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>n_items</code></td>
-        <td><code>int/float</code></td>
-        <td><p>if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default 0.1 (10% of the data)</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_masked_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create a mask and apply it to data using number of items or % of items</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        n_items (int/float, optional): if an integer is passed its raw value is used. Otherwise if a float is passed its taken to be a (rounded) percentage of the total items; Default 0.1 (10% of the data)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="p">(</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_mask_items</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="p">(</span><span class="n">n_mask_items</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">n_mask_items</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">)</span>
-    <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_mask_items</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="p">(</span><span class="n">n_mask_items</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">n_mask_items</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;n_items should a float between 0-1 or an integer &lt; the number of items&quot;</span>
-        <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">create_sparse_mask</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
-    <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">n_mask_items</span> <span class="o">=</span> <span class="n">n_mask_items</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.dilate_mask" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Dilate sparse time-series data by n_samples.
-Overlapping data will be averaged. This method computes and stores the dilated mask in <code>.dilated_mask</code> and internally updates the <code>.masked_data</code>. Repeated calls to this method on the same model instance <strong>do not</strong> stack, but rather perform a new dilation on the original masked data. Called this method with <code>None</code> will undo any dilation.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>nsamples</code></td>
-        <td><code>int</code></td>
-        <td><p>Number of samples to dilate data</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">dilate_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Dilate sparse time-series data by n_samples.</span>
-<span class="sd">    Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        nsamples (int):  Number of samples to dilate data</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has no mask and requires one to perform dilation&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span> <span class="ow">and</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Make sure model instance has been masked.&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;nsamples should be an integer &lt; the number of items&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Always reset to the undilated mask first</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># After masking, perform dilation and save as the new masked data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conv_ts_mean_overlap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">),</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">result_type</span><span class="o">=</span><span class="s2">&quot;broadcast&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># Calculate and save dilated mask</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span> <span class="o">=</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_mask_dilated</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dilated_by_nsamples</span> <span class="o">=</span> <span class="n">n_samples</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_mask_dilated</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dilated_by_nsamples</span> <span class="o">=</span> <span class="kc">None</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.downsample" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Downsample a model's rating matrix to a new target frequency or number of samples using averaging. Also downsamples a model's mask and dilated mask if they exist as well as a model's predictions if it's already been fit.</p>
-<p>If target_type = 'samples' and sampling_freq is None, the new user x item matrix will have shape users x items * (1 / n_samples).</p>
-<p>If target_type = 'seconds', the new user x item matrix will have shape users x items * (1 / n_samples * sampling_freq).</p>
-<p>If target_type = 'hz', the new user x item matrix will have shape users x items * (1 / sampling_freq / n_samples).</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>n_samples</code></td>
-        <td><code>int</code></td>
-        <td><p>number of samples</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>sampling_freq</code></td>
-        <td><code>int/float</code></td>
-        <td><p>Sampling frequency of data; Default None</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>target_type</code></td>
-        <td><code>str</code></td>
-        <td><p>how to downsample; must be one of "samples", "seconds" or "hz". Defaults to "samples".</p></td>
-        <td><code>&#39;samples&#39;</code></td>
-      </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Downsample a model&#39;s rating matrix to a new target frequency or number of samples using averaging. Also downsamples a model&#39;s mask and dilated mask if they exist as well as a model&#39;s predictions if it&#39;s already been fit.</span>
-
-<span class="sd">    If target_type = &#39;samples&#39; and sampling_freq is None, the new user x item matrix will have shape users x items * (1 / n_samples).</span>
-
-<span class="sd">    If target_type = &#39;seconds&#39;, the new user x item matrix will have shape users x items * (1 / n_samples * sampling_freq).</span>
-
-<span class="sd">    If target_type = &#39;hz&#39;, the new user x item matrix will have shape users x items * (1 / sampling_freq / n_samples).</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        n_samples (int): number of samples</span>
-<span class="sd">        sampling_freq (int/float):  Sampling frequency of data; Default None</span>
-<span class="sd">        target_type (str, optional): how to downsample; must be one of &quot;samples&quot;, &quot;seconds&quot; or &quot;hz&quot;. Defaults to &quot;samples&quot;.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">downsample_dataframe</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-        <span class="n">sampling_freq</span><span class="o">=</span><span class="n">sampling_freq</span><span class="p">,</span>
-        <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
-        <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
-        <span class="c1"># Also downsample mask</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">downsample_dataframe</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span>
-            <span class="n">sampling_freq</span><span class="o">=</span><span class="n">sampling_freq</span><span class="p">,</span>
-            <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
-            <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># Ensure mask stays boolean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">&gt;</span> <span class="mi">0</span>
-
-        <span class="c1"># Masked data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span> <span class="o">=</span> <span class="n">downsample_dataframe</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="p">,</span>
-            <span class="n">sampling_freq</span><span class="o">=</span><span class="n">sampling_freq</span><span class="p">,</span>
-            <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
-            <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># Dilated mask</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask_dilated</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span> <span class="o">=</span> <span class="n">downsample_dataframe</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span><span class="p">,</span>
-                <span class="n">sampling_freq</span><span class="o">=</span><span class="n">sampling_freq</span><span class="p">,</span>
-                <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
-                <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># Ensure mask stays boolean</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span> <span class="o">&gt;</span> <span class="mi">0</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">downsample_dataframe</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">,</span>
-            <span class="n">sampling_freq</span><span class="o">=</span><span class="n">sampling_freq</span><span class="p">,</span>
-            <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
-            <span class="n">target_type</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
-        <span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.fit" class="doc doc-heading">
+<h2 id="neighbors.models.NNMF_mult.fit" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1335,7 +1186,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
@@ -1346,7 +1197,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
 
 <span class="sd">    Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.</span>
 
@@ -1422,7 +1273,7 @@ Overlapping data will be averaged. This method computes and stores the dilated m
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>
@@ -1433,840 +1284,6 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
 
 
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.plot_factors" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">plot_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Plot user x factor and item x factor matrices</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>save</code></td>
-        <td><code>bool/str/Path</code></td>
-        <td><p>if a string or path is provided will save the figure to that location. Defaults to False.</p></td>
-        <td><code>False</code></td>
-      </tr>
-      <tr>
-        <td><code>kwargs</code></td>
-        <td></td>
-        <td><p>additional arguments to seaborn.heatmap</p></td>
-        <td><code>{}</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>tuple</code></td>
-      <td><p>(figure handle, axes handle)</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot user x factor and item x factor matrices</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        save (bool/str/Path, optional): if a string or path is provided will save the figure to that location. Defaults to False.</span>
-<span class="sd">        kwargs: additional arguments to seaborn.heatmap</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple: (figure handle, axes handle)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">):</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Factor&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;User Factors&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Factor&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Item Factors&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">axs</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has not been fit.&quot;</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.plot_learning" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">plot_learning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Plot training error over iterations for diagnostic purposes</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>save</code></td>
-        <td><code>bool/str/Path</code></td>
-        <td><p>if a string or path is provided will save the figure to that location. Defaults to False.</p></td>
-        <td><code>False</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>tuple</code></td>
-      <td><p>(figure handle, axes handle)</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_learning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot training error over iterations for diagnostic purposes</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        save (bool/str/Path, optional): if a string or path is provided will save the figure to that location. Defaults to False.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple: (figure handle, axes handle)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_history</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Iteration&quot;</span><span class="p">,</span>
-            <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Normalized RMSE&quot;</span><span class="p">,</span>
-            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Final Normalized RMSE: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm_rmse</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">Converged: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">ax</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has not been fit.&quot;</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.plot_predictions" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">plot_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{})</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Create plot of actual vs predicted values.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>dataset</code></td>
-        <td><code>str; optional</code></td>
-        <td><p>one of 'full', 'observed', or 'missing'. Default 'missing'.</p></td>
-        <td><code>&#39;missing&#39;</code></td>
-      </tr>
-      <tr>
-        <td><code>figsize</code></td>
-        <td><code>tuple; optional</code></td>
-        <td><p>matplotlib figure size; Default (16,8)</p></td>
-        <td><code>(16, 8)</code></td>
-      </tr>
-      <tr>
-        <td><code>label_fontsize</code></td>
-        <td><code>int; optional</code></td>
-        <td><p>fontsize for all axis labels and titles; Default 16</p></td>
-        <td><code>16</code></td>
-      </tr>
-      <tr>
-        <td><code>hide_title</code></td>
-        <td><code>bool; optional</code></td>
-        <td><p>hide title containing RMSE and correlation performance if available; Default False</p></td>
-        <td><code>False</code></td>
-      </tr>
-      <tr>
-        <td><code>heatmap_kwargs</code></td>
-        <td><code>dict</code></td>
-        <td><p>addition arguments to seaborn.heatmap.</p></td>
-        <td><code>{}</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>tuple</code></td>
-      <td><p>(figure handle, axis handle)</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_predictions</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span>
-    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
-    <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-    <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{},</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create plot of actual vs predicted values.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        dataset (str; optional): one of &#39;full&#39;, &#39;observed&#39;, or &#39;missing&#39;. Default &#39;missing&#39;.</span>
-<span class="sd">        figsize (tuple; optional): matplotlib figure size; Default (16,8)</span>
-<span class="sd">        label_fontsize (int; optional): fontsize for all axis labels and titles; Default 16</span>
-<span class="sd">        hide_title (bool; optional): hide title containing RMSE and correlation performance if available; Default False</span>
-<span class="sd">        heatmap_kwargs (dict, optional): addition arguments to seaborn.heatmap.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple: (figure handle, axis handle)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has not been fit&quot;</span><span class="p">)</span>
-
-    <span class="n">vmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-    <span class="n">vmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-
-    <span class="n">actual</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_predictions</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ncols</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Cannot score predictions on missing data because true values were never observed!&quot;</span>
-        <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ncols</span> <span class="o">=</span> <span class="mi">3</span>
-
-    <span class="n">heatmap_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;square&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">heatmap_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;xticklabels&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">heatmap_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;yticklabels&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">heatmap_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;vmax&quot;</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
-    <span class="n">heatmap_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;vmin&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="p">)</span>
-
-    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
-
-    <span class="c1"># The original data matrix (potentially masked)</span>
-    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">heatmap_kwargs</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Actual User/Item Ratings&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Items&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Users&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-
-    <span class="c1"># The predicted data matrix</span>
-    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">heatmap_kwargs</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Predicted User/Item Ratings&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Items&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Users&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
-    <span class="c1"># Scatter plot if we can calculate it</span>
-    <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-            <span class="n">actual</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span>
-            <span class="n">pred</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Actual&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Predicted&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Ratings&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
-
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;correlation&quot;</span><span class="p">)</span>
-        <span class="n">rmse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">hide_title</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Mean RMSE: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rmse</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rmse</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">Mean Correlation: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">y</span><span class="o">=</span><span class="mf">1.07</span><span class="p">,</span>
-                <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">ax</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.score" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the <code>.summary()</code> method instead, which scores all metrics.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>metric</code></td>
-        <td><code>str; optional</code></td>
-        <td><p>what metric to compute, one of 'rmse', 'mse', 'mae' or 'correlation'; Default 'rmse'.</p></td>
-        <td><code>&#39;rmse&#39;</code></td>
-      </tr>
-      <tr>
-        <td><code>dataset</code></td>
-        <td><code>str; optional</code></td>
-        <td><p>how to compute scoring, either using 'observed', 'missing' or 'full'. Default 'missing'.</p></td>
-        <td><code>&#39;missing&#39;</code></td>
-      </tr>
-      <tr>
-        <td><code>by_user</code></td>
-        <td><code>bool; optional</code></td>
-        <td><p>whether to return a single score over all data points or a pandas Series of scores per user. Default True.</p></td>
-        <td><code>True</code></td>
-      </tr>
-      <tr>
-        <td><code>actual</code></td>
-        <td><code>pd.DataFrame, None; optional</code></td>
-        <td><p>a dataframe to score against; Default is None which uses the data provided when the model was initialized</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>float/pd.Series</code></td>
-      <td><p>score</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">score</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span>
-    <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the performance of a fitted model by comparing observed and predicted data. This method is primarily useful if you want to calculate a single metric. Otherwise you should prefer the `.summary()` method instead, which scores all metrics.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        metric (str; optional): what metric to compute, one of &#39;rmse&#39;, &#39;mse&#39;, &#39;mae&#39; or &#39;correlation&#39;; Default &#39;rmse&#39;.</span>
-<span class="sd">        dataset (str; optional): how to compute scoring, either using &#39;observed&#39;, &#39;missing&#39; or &#39;full&#39;. Default &#39;missing&#39;.</span>
-<span class="sd">        by_user (bool; optional): whether to return a single score over all data points or a pandas Series of scores per user. Default True.</span>
-<span class="sd">        actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        float/pd.Series: score</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must fit() model first before using this method.&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span> <span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="s2">&quot;mae&quot;</span><span class="p">,</span> <span class="s2">&quot;correlation&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;metric must be one of &#39;rmse&#39;, &#39;mse&#39;, &#39;mae&#39;, or &#39;correlation&#39;&quot;</span>
-        <span class="p">)</span>
-    <span class="c1"># Get dataframes of observed and predicted values</span>
-    <span class="c1"># This will be a dense or sparse matrix the same shape as the input data</span>
-    <span class="n">model_actual</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_predictions</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">actual</span> <span class="o">=</span> <span class="n">model_actual</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">actual</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;actual values dataframe supplied but shape does not match original data&quot;</span>
-            <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Cannot score predictions on missing data because true values were never observed!&quot;</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-        <span class="c1"># Catch &#39;Mean of empty slice&#39; warnings from np.nanmean</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">by_user</span><span class="p">:</span>
-            <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">userid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">actual</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="n">user_actual</span> <span class="o">=</span> <span class="n">actual</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">userid</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">values</span>
-                <span class="n">user_pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">userid</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">values</span>
-                <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;rmse&quot;</span><span class="p">:</span>
-                    <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">((</span><span class="n">user_pred</span> <span class="o">-</span> <span class="n">user_actual</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
-                <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
-                    <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">((</span><span class="n">user_pred</span> <span class="o">-</span> <span class="n">user_actual</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;mae&quot;</span><span class="p">:</span>
-                    <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">user_pred</span> <span class="o">-</span> <span class="n">user_actual</span><span class="p">))</span>
-                <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;correlation&quot;</span><span class="p">:</span>
-                    <span class="n">nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">user_actual</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">user_pred</span><span class="p">))</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_actual</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_pred</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                        <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">score</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">user_actual</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span> <span class="n">user_pred</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">actual</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">actual</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">actual</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">pred</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;rmse&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">((</span><span class="n">pred</span> <span class="o">-</span> <span class="n">actual</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">((</span><span class="n">pred</span> <span class="o">-</span> <span class="n">actual</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;mae&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pred</span> <span class="o">-</span> <span class="n">actual</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;correlation&quot;</span><span class="p">:</span>
-                <span class="n">nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">actual</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">actual</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">actual</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span> <span class="n">pred</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.summary" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>verbose</code></td>
-        <td><code>bool</code></td>
-        <td><p>Print warning messages during scoring. Defaults to False.</p></td>
-        <td><code>False</code></td>
-      </tr>
-      <tr>
-        <td><code>actual</code></td>
-        <td><code>pd.DataFrame, None; optional</code></td>
-        <td><p>a dataframe to score against; Default is None which uses the data provided when the model was initialized</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>dataset</code></td>
-        <td><code>str/None</code></td>
-        <td><p>dataset to score. Must be one of 'full', 'observed','missing' or None to score both 'observed' and 'missing'; Default None</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>pd.DataFrame</code></td>
-      <td><p>long-form dataframe of model performance</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the performance of a model and return a dataframe of results. Computes performance across all, observed, and missing datasets. Scores using rmse, mse, mae, and correlation. Computes scores across all subjects (i.e. ignoring the fact that ratings are clustered by subject) and the mean performance for each metric after calculating per-subject performance.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        verbose (bool, optional): Print warning messages during scoring. Defaults to False.</span>
-<span class="sd">        actual (pd.DataFrame, None; optional): a dataframe to score against; Default is None which uses the data provided when the model was initialized</span>
-<span class="sd">        dataset (str/None): dataset to score. Must be one of &#39;full&#39;, &#39;observed&#39;,&#39;missing&#39; or None to score both &#39;observed&#39; and &#39;missing&#39;; Default None</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame: long-form dataframe of model performance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has not been fit!&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dense</span><span class="p">:</span>
-                <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;observed&quot;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">]</span>
-
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dense</span> <span class="ow">and</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot score predictions on missing values because no ground truth was observed&quot;</span>
-            <span class="p">)</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">]</span>
-
-    <span class="c1"># Compute results for all metrics, all datasets, separately for group and by subject</span>
-    <span class="n">group_results</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">subject_results</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">,</span> <span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="s2">&quot;mae&quot;</span><span class="p">,</span> <span class="s2">&quot;correlation&quot;</span><span class="p">]:</span>
-            <span class="n">this_group_result</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">this_subject_result</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
-                <span class="n">this_group_result</span><span class="p">[</span><span class="n">dat</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
-                    <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="n">actual</span><span class="p">,</span> <span class="n">by_user</span><span class="o">=</span><span class="kc">False</span>
-                <span class="p">)</span>
-                <span class="n">this_subject_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
-                        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
-                        <span class="n">dataset</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span>
-                        <span class="n">by_user</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                        <span class="n">actual</span><span class="o">=</span><span class="n">actual</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-            <span class="c1"># Dict of group results for this metric</span>
-            <span class="n">group_results</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_group_result</span>
-            <span class="c1"># Dataframe of subject results for this metric</span>
-            <span class="n">this_subject_result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">this_subject_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">subject_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_subject_result</span><span class="p">)</span>
-            <span class="n">group_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="nb">zip</span><span class="p">(</span>
-                    <span class="n">dataset</span><span class="p">,</span>
-                    <span class="n">this_subject_result</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-    <span class="c1"># Save final results to longform df</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">user_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">subject_results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">group_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">group_results</span><span class="p">)</span>
-    <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">group_results</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="o">.</span><span class="n">melt</span><span class="p">(</span>
-            <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">],</span>
-            <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span>
-            <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;score&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset&quot;</span><span class="p">})</span>
-        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
-        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
-            <span class="n">group</span><span class="o">=</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span> <span class="k">if</span> <span class="s2">&quot;user&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="s2">&quot;all&quot;</span>
-            <span class="p">),</span>
-            <span class="n">metric</span><span class="o">=</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;correlation_user&quot;</span><span class="p">:</span> <span class="s2">&quot;correlation&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;mse_user&quot;</span><span class="p">:</span> <span class="s2">&quot;mse&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;rmse_user&quot;</span><span class="p">:</span> <span class="s2">&quot;rmse&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;mae_user&quot;</span><span class="p">:</span> <span class="s2">&quot;mae&quot;</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
-        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span>
-            <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">overall_results</span> <span class="o">=</span> <span class="n">group_results</span>
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">w</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;User performance results (not returned) are accessible using .user_results&quot;</span>
-        <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;Overall performance results (returned) are accesible using .overall_results&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">group_results</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.to_long_df" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">to_long_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Create a long format pandas dataframe with observed, predicted, and mask.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">to_long_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Create a long format pandas dataframe with observed, predicted, and mask.&quot;&quot;&quot;</span>
-
-    <span class="n">observed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Condition&quot;</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">observed</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Rating&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Condition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Observed&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mask_dilated</span><span class="p">:</span>
-                <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilated_mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">observed</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="n">predicted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">,</span> <span class="s2">&quot;Condition&quot;</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">predicted</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Rating&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">columns</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Condition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Predicted&quot;</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_masked</span><span class="p">:</span>
-                <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="n">predicted</span> <span class="o">=</span> <span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-        <span class="n">observed</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">observed</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h4 id="neighbors.models.NNMF_mult.transform" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-inherited"><code>inherited</code></small>
-  </span>
-
-</h4>
-
-    <div class="doc doc-contents ">
-
-      <p>Return a user x item matrix of predictions after a model has been fit</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>return_only_predictions</code></td>
-        <td><code>bool</code></td>
-        <td><p>Returns both training and testing predictions rather than simply filling in missing values with predictions. Defaults to False.</p></td>
-        <td><code>False</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>pd.DataFrame</code></td>
-      <td><p>user x item ratings</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>neighbors/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return a user x item matrix of predictions after a model has been fit</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        return_only_predictions (bool, optional): Returns both training and testing predictions rather than simply filling in missing values with predictions. Defaults to False.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame: user x item ratings</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has not been fit!&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">return_only_predictions</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Propagate observed values to return object</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
-        <span class="c1"># Fill in missing values with predictions</span>
-        <span class="n">out</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">out</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
 
 
   </div>
@@ -2275,49 +1292,30 @@ Overlapping data will be averaged. This method computes and stores the dilated m
 
   </div>
 
-              
-            </article>
-          </div>
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
       
         <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        
-        <a href="../knn/" class="md-footer__link md-footer__link--prev" aria-label="Previous: KNN" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              KNN
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../nmf_s/" class="md-footer__link md-footer__link--next" aria-label="Next: NNMF_sgd" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              NNMF_sgd
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -2339,10 +1337,15 @@ Overlapping data will be averaged. This method computes and stores the dilated m
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ed9748b7.min.js"></script>
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

@@ -12,8 +12,16 @@
       
         <link rel="canonical" href="https://cosanlab.github.io/neighbors/api/utils/">
       
+      
+        <link rel="prev" href="../nmf_s/">
+      
+      
+      
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -21,13 +29,14 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
-        
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.cc9b2e1e.min.css">
-        
       
+
+
     
+    
+      
     
     
       
@@ -41,7 +50,7 @@
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -50,24 +59,18 @@
   
   
 
-
-  <script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-1N98SJ70M6"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&gtag("event","search",{search_term:this.value})}),"undefined"!=typeof location$&&location$.subscribe(function(e){gtag("config","G-1N98SJ70M6",{page_path:e.pathname})})})</script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1N98SJ70M6"></script>
-
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-1N98SJ70M6"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-1N98SJ70M6",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-1N98SJ70M6",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
 
     
     
   </head>
   
   
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr">
   
-    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -87,16 +90,19 @@
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="neighbors" class="md-header__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -116,46 +122,56 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
   </div>
 </div>
+      
     
     
       <div class="md-header__source">
         <a href="https://github.com/cosanlab/neighbors" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     cosanlab/neighbors
@@ -185,12 +201,13 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="neighbors" class="md-nav__button md-logo" aria-label="neighbors" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     neighbors
@@ -200,7 +217,7 @@
       <a href="https://github.com/cosanlab/neighbors" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     cosanlab/neighbors
@@ -212,14 +229,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Home
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -227,90 +256,164 @@
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Tutorials
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Tutorials
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
           
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../examples/dense-data" class="md-nav__link">
-        1) Working with Dense Data
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1) Working with Dense Data
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../examples/sparse-data" class="md-nav__link">
-        2) Working with Sparse Data
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2) Working with Sparse Data
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../examples/timeseries-data" class="md-nav__link">
-        3) Working with Time-Series
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3) Working with Time-Series
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../development/" class="md-nav__link">
-        Contributing to Development
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing to Development
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -318,14 +421,26 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../releasenotes/" class="md-nav__link">
-        Release Notes
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -333,145 +448,269 @@
     
       
       
-      
-
   
   
     
   
   
+  
+    
+    
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5">
-          API Reference
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
-          <span class="md-nav__icon md-icon"></span>
-          API Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
           
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     
+    
+    
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5_1">
-          neighbors.models
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="neighbors.models" data-md-level="2">
-        <label class="md-nav__title" for="__nav_5_1">
-          <span class="md-nav__icon md-icon"></span>
-          neighbors.models
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
           
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    neighbors.models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    neighbors.models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../mean/" class="md-nav__link">
-        Mean
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mean
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../knn/" class="md-nav__link">
-        KNN
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KNN
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../nmf_m/" class="md-nav__link">
-        NNMF_mult
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NNMF_mult
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../nmf_s/" class="md-nav__link">
-        NNMF_sgd
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NNMF_sgd
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
         
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          neighbors.utils
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    neighbors.utils
+  
+
+    
+  </span>
+  
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        neighbors.utils
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    neighbors.utils
+  
+
+    
+  </span>
+  
+  
+
       </a>
       
         
@@ -491,91 +730,143 @@
       
         <li class="md-nav__item">
   <a href="#neighbors.utils" class="md-nav__link">
-    neighbors.utils
+    <span class="md-ellipsis">
+      
+        neighbors.utils
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.check_random_state" class="md-nav__link">
-    check_random_state()
+    <span class="md-ellipsis">
+      
+        check_random_state()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.create_sparse_mask" class="md-nav__link">
-    create_sparse_mask()
+    <span class="md-ellipsis">
+      
+        create_sparse_mask()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.create_user_item_matrix" class="md-nav__link">
-    create_user_item_matrix()
+    <span class="md-ellipsis">
+      
+        create_user_item_matrix()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.downsample_dataframe" class="md-nav__link">
-    downsample_dataframe()
+    <span class="md-ellipsis">
+      
+        downsample_dataframe()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.estimate_performance" class="md-nav__link">
-    estimate_performance()
+    <span class="md-ellipsis">
+      
+        estimate_performance()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.flatten_dataframe" class="md-nav__link">
-    flatten_dataframe()
+    <span class="md-ellipsis">
+      
+        flatten_dataframe()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.get_size_in_mb" class="md-nav__link">
-    get_size_in_mb()
+    <span class="md-ellipsis">
+      
+        get_size_in_mb()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.get_sparsity" class="md-nav__link">
-    get_sparsity()
+    <span class="md-ellipsis">
+      
+        get_sparsity()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.invert_user_item_matrix" class="md-nav__link">
-    invert_user_item_matrix()
+    <span class="md-ellipsis">
+      
+        invert_user_item_matrix()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.nanpdist" class="md-nav__link">
-    nanpdist()
+    <span class="md-ellipsis">
+      
+        nanpdist()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.split_train_test" class="md-nav__link">
-    split_train_test()
+    <span class="md-ellipsis">
+      
+        split_train_test()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.unflatten_dataframe" class="md-nav__link">
-    unflatten_dataframe()
+    <span class="md-ellipsis">
+      
+        unflatten_dataframe()
+      
+    </span>
   </a>
   
 </li>
@@ -587,10 +878,11 @@
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -623,91 +915,143 @@
       
         <li class="md-nav__item">
   <a href="#neighbors.utils" class="md-nav__link">
-    neighbors.utils
+    <span class="md-ellipsis">
+      
+        neighbors.utils
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.check_random_state" class="md-nav__link">
-    check_random_state()
+    <span class="md-ellipsis">
+      
+        check_random_state()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.create_sparse_mask" class="md-nav__link">
-    create_sparse_mask()
+    <span class="md-ellipsis">
+      
+        create_sparse_mask()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.create_user_item_matrix" class="md-nav__link">
-    create_user_item_matrix()
+    <span class="md-ellipsis">
+      
+        create_user_item_matrix()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.downsample_dataframe" class="md-nav__link">
-    downsample_dataframe()
+    <span class="md-ellipsis">
+      
+        downsample_dataframe()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.estimate_performance" class="md-nav__link">
-    estimate_performance()
+    <span class="md-ellipsis">
+      
+        estimate_performance()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.flatten_dataframe" class="md-nav__link">
-    flatten_dataframe()
+    <span class="md-ellipsis">
+      
+        flatten_dataframe()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.get_size_in_mb" class="md-nav__link">
-    get_size_in_mb()
+    <span class="md-ellipsis">
+      
+        get_size_in_mb()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.get_sparsity" class="md-nav__link">
-    get_sparsity()
+    <span class="md-ellipsis">
+      
+        get_sparsity()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.invert_user_item_matrix" class="md-nav__link">
-    invert_user_item_matrix()
+    <span class="md-ellipsis">
+      
+        invert_user_item_matrix()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.nanpdist" class="md-nav__link">
-    nanpdist()
+    <span class="md-ellipsis">
+      
+        nanpdist()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.split_train_test" class="md-nav__link">
-    split_train_test()
+    <span class="md-ellipsis">
+      
+        split_train_test()
+      
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#neighbors.utils.unflatten_dataframe" class="md-nav__link">
-    unflatten_dataframe()
+    <span class="md-ellipsis">
+      
+        unflatten_dataframe()
+      
+    </span>
   </a>
   
 </li>
@@ -720,14 +1064,16 @@
               </div>
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
+          
+            <div class="md-content" data-md-component="content">
               
+              <article class="md-content__inner md-typeset">
                 
-  <a href="https://github.com/cosanlab/neighbors/edit/master/docs/api/utils.md" title="Edit this page" class="md-content__button md-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+                  
 
+
+  
+  
 
 
 <h1 id="neighborsutils">neighbors.utils</h1>
@@ -756,11 +1102,11 @@
 
 
 
-<h4 id="neighbors.utils.check_random_state" class="doc doc-heading">
+<h2 id="neighbors.utils.check_random_state" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -788,8 +1134,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turn seed into a np.random.RandomState instance, lifted directly from sklearn to avoid a heavy dependency for one function.</span>
 
 <span class="sd">    Olivier Grisel, Andreas Mueller, Lars, Alexandre Gramfort, Gilles Louppe, Peter Prettenhofer, … Eustache. (2021, January 19). scikit-learn/scikit-learn: scikit-learn 0.24.1 (Version 0.24.1). Zenodo. http://doi.org/10.5281/zenodo.4450597</span>
@@ -820,11 +1166,11 @@
 
 
 
-<h4 id="neighbors.utils.create_sparse_mask" class="doc doc-heading">
+<h2 id="neighbors.utils.create_sparse_mask" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_sparse_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -887,8 +1233,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_sparse_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_sparse_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.</span>
 
 <span class="sd">    Args:</span>
@@ -925,10 +1271,7 @@
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span>
-    <span class="k">return</span> <span class="n">out</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -941,11 +1284,11 @@
 
 
 
-<h4 id="neighbors.utils.create_user_item_matrix" class="doc doc-heading">
+<h2 id="neighbors.utils.create_user_item_matrix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1005,9 +1348,9 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        df (Dataframe): input dataframe</span>
@@ -1055,11 +1398,11 @@
 
 
 
-<h4 id="neighbors.utils.downsample_dataframe" class="doc doc-heading">
+<h2 id="neighbors.utils.downsample_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1119,8 +1462,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Down sample a dataframe</span>
 
 <span class="sd">    Args:</span>
@@ -1171,11 +1514,11 @@
 
 
 
-<h4 id="neighbors.utils.estimate_performance" class="doc doc-heading">
+<h2 id="neighbors.utils.estimate_performance" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1220,7 +1563,7 @@
       <tr>
         <td><code>n_mask_items</code></td>
         <td><code>int/float</code></td>
-        <td><p>how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. <strong>Ignored if input data is already sparse.</strong></p></td>
+        <td><p>how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values</p></td>
         <td><code>0.2</code></td>
       </tr>
       <tr>
@@ -1290,7 +1633,7 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">estimate_performance</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">estimate_performance</span><span class="p">(</span>
     <span class="n">algorithm</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -1305,7 +1648,7 @@
     <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Repeatedly fit a model with data to estimate performance. If input data is dense (contains no missing values) then this function will fit the model `n_iter` times after applying a different random mask each iteration according to `n_mask_items`. This is useful for testing how an algorithm *would have performed* given data of a specified sparsity.</span>
 
 <span class="sd">    On the other hand, if input data is already sparse, no further masking will be performed and the data will instead be split into `n_folds` training and testing folds. Evaluation will be performed based on how well non-missing values in testing folds are recovered. **Note**: this *increases the sparsity* of the input dataset. The number of folds requested controls the additional sparsity of each train and test split. For example, with the default `n_folds=10`, each training split will contain 9/10 folds = ~90% of *observed values* (additional sparsity of 10%); each test split will contain 1/10 folds (~10% of *observed values*).</span>
@@ -1315,7 +1658,7 @@
 <span class="sd">        data (pd.DataFrame): a users x item dataframe</span>
 <span class="sd">        n_iter (int, optional): number of repetitions for dense data. Defaults to 10.</span>
 <span class="sd">        n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.</span>
-<span class="sd">        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. **Ignored if input data is already sparse.**</span>
+<span class="sd">        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values</span>
 <span class="sd">        return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.</span>
 <span class="sd">        return_full_performance (bool, optional): return the performance against both &quot;observed&quot; and &quot;missing&quot; or just &quot;missing&quot; values if using dense data and `n_iter`. Likewise return performance of both &quot;train&quot; and &quot;test&quot; or just &quot;test&quot; splits if using sparse data and `n_folds`; Default False</span>
 <span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default (&#39;mean&#39;, &#39;std&#39;)</span>
@@ -1341,7 +1684,7 @@
 
         <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_iter</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_run_dense</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_run_dense</span><span class="p">(</span>
             <span class="n">i</span><span class="p">,</span>
             <span class="n">algorithm</span><span class="p">,</span>
             <span class="n">data</span><span class="p">,</span>
@@ -1415,7 +1758,7 @@
             <span class="sa">f</span><span class="s2">&quot;Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using cross-validation...&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_run_sparse</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_run_sparse</span><span class="p">(</span>
             <span class="n">i</span><span class="p">,</span>
             <span class="n">train</span><span class="p">,</span>
             <span class="n">test</span><span class="p">,</span>
@@ -1548,11 +1891,11 @@
 
 
 
-<h4 id="neighbors.utils.flatten_dataframe" class="doc doc-heading">
+<h2 id="neighbors.utils.flatten_dataframe" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1594,8 +1937,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value</span>
 
 <span class="sd">    Args:</span>
@@ -1622,11 +1965,11 @@
 
 
 
-<h4 id="neighbors.utils.get_size_in_mb" class="doc doc-heading">
+<h2 id="neighbors.utils.get_size_in_mb" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1634,8 +1977,8 @@
 
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculates size of ndarray in megabytes&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates size of ndarray in megabytes&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">csr_matrix</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">/</span> <span class="mf">1e6</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1652,11 +1995,11 @@
 
 
 
-<h4 id="neighbors.utils.get_sparsity" class="doc doc-heading">
+<h2 id="neighbors.utils.get_sparsity" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1664,8 +2007,8 @@
 
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculates sparsity of ndarray (0 - 1)&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates sparsity of ndarray (0 - 1)&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -1684,11 +2027,11 @@
 
 
 
-<h4 id="neighbors.utils.invert_user_item_matrix" class="doc doc-heading">
+<h2 id="neighbors.utils.invert_user_item_matrix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">invert_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1730,8 +2073,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">invert_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invert_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reshapes a user x item matrix back into a longform dataframe with &quot;User&quot;, &quot;Item&quot; and &quot;Rating&quot; columns. Convenience function to undo a call to `create_user_item_matrix`. Dataframe must have an index name of &#39;Users&#39; and a columns name of &#39;Items&#39;.</span>
 
 <span class="sd">    Args:</span>
@@ -1758,11 +2101,11 @@
 
 
 
-<h4 id="neighbors.utils.nanpdist" class="doc doc-heading">
+<h2 id="neighbors.utils.nanpdist" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1816,8 +2159,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.</span>
 
 <span class="sd">    Args:</span>
@@ -1867,11 +2210,11 @@
 
 
 
-<h4 id="neighbors.utils.split_train_test" class="doc doc-heading">
+<h2 id="neighbors.utils.split_train_test" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">split_train_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -1931,10 +2274,10 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">split_train_test</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">split_train_test</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom train/test split generator for leave-one-fold out cross-validation. Given a user x item dataframe of dense or sparse data, generates n_folds worth of train/test split dataframes that have the same shape as data, but with non-overlapping values. This ensures that no user-item combination appears in both train and test splits. Useful for estimating out-of-sample performance. n_folds controls the train/test split ratio, e.g. n_folds = 5 means train = 4/5 (~80%); test = 1/5 (~20%)</span>
 
 <span class="sd">    Args:</span>
@@ -1948,6 +2291,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+    <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="n">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
         <span class="n">random_state</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
@@ -1961,8 +2305,22 @@
         <span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="n">flat</span><span class="p">[:</span><span class="n">start</span><span class="p">],</span> <span class="n">flat</span><span class="p">[</span><span class="n">stop</span><span class="p">:])])</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">flat</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]])</span>
 
-        <span class="k">yield</span> <span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="o">=</span><span class="n">data</span><span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
-            <span class="n">test</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="o">=</span><span class="n">data</span>
+        <span class="k">yield</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
+            <span class="n">train</span><span class="p">,</span>
+            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
+            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
+            <span class="n">test</span><span class="p">,</span>
+            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
+            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1976,11 +2334,11 @@
 
 
 
-<h4 id="neighbors.utils.unflatten_dataframe" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="p">)</span></code>
+<h2 id="neighbors.utils.unflatten_dataframe" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-</h4>
+</h2>
 
     <div class="doc doc-contents ">
 
@@ -2004,28 +2362,40 @@
         <td><em>required</em></td>
       </tr>
       <tr>
+        <td><code>columns</code></td>
+        <td><code>list</code></td>
+        <td><p>column names of new dataframe. Defaults to None.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>index</code></td>
+        <td><code>list</code></td>
+        <td><p>row names of new dataframe. Defaults to None.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>num_rows</code></td>
+        <td><code>int</code></td>
+        <td><p>total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>num_cols</code></td>
+        <td><code>int</code></td>
+        <td><p>total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
         <td><code>index_name</code></td>
         <td><code>str; optional</code></td>
         <td><p>Name of rows; Default None</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>columns_name</code></td>
         <td><code>str; optional</code></td>
         <td><p>Name of columns; Default None</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>column_order</code></td>
-        <td><code>iterable; optional</code></td>
-        <td><p>Order of columns; Default lexiographic order based on input array</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>row_order</code></td>
-        <td><code>iterable; optional</code></td>
-        <td><p>Order of rows; Default lexiographic order based on input array</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -2046,19 +2416,26 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">unflatten_dataframe</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unflatten_dataframe</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">like_dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.</span>
+<span class="sd">        columns (list, optional): column names of new dataframe. Defaults to None.</span>
+<span class="sd">        index (list, optional): row names of new dataframe. Defaults to None.</span>
+<span class="sd">        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</span>
+<span class="sd">        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</span>
 <span class="sd">        index_name (str; optional): Name of rows; Default None</span>
 <span class="sd">        columns_name (str; optional): Name of columns; Default None</span>
-<span class="sd">        column_order (iterable; optional): Order of columns; Default lexiographic order based on input array</span>
-<span class="sd">        row_order (iterable; optional): Order of rows; Default lexiographic order based on input array</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: original unflattened dataframe</span>
@@ -2066,20 +2443,35 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input should be a numpy array&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">like_dataframe</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;like_dataframe should be a pandas dataframe&quot;</span><span class="p">)</span>
-
-    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_rows</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;num_rows does not match the number of unique row_idx values in data&quot;</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_cols</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;num_cols does not match the number of unique col_idx values in data&quot;</span>
+            <span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">))</span>
     <span class="n">out</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span>
-
+        <span class="n">out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">columns_name</span>
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
         </details>
@@ -2098,34 +2490,30 @@
 
   </div>
 
-              
-            </article>
-          </div>
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
       
         <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        
-        <a href="../nmf_s/" class="md-footer__link md-footer__link--prev" aria-label="Previous: NNMF_sgd" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              NNMF_sgd
-            </div>
-          </div>
-        </a>
-      
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -2147,10 +2535,15 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ed9748b7.min.js"></script>
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
