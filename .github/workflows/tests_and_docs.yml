@@ -17,6 +17,8 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Test
     runs-on: ${{ matrix.os }}
+    env:
+      MPLBACKEND: Agg
     # Determines whether the entire workflow should pass/fail based on parallel jobs
     continue-on-error: ${{ matrix.ok-fail }}
     defaults:
@@ -61,7 +63,7 @@ jobs:
           conda activate test
           conda env list
           conda install -y numpy numba pandas scipy seaborn
-          conda install -y -c conda-forge pytest pytest-cov pytest-xdist pytest-sugar coveralls black
+          conda install -y -c conda-forge pytest pytest-cov pytest-xdist pytest-sugar coveralls black=22.10.0
           pip install . -r requirements.txt
 
       # Check code formatting
@@ -127,7 +129,7 @@ jobs:
         run: echo "::set-output name=dir::$(pip cache dir)"
 
       - name: Cache deps
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
