@@ -35,18 +35,21 @@ In reality there is an entire grid of tests because init() accepts several other
 Hopefully this provides a relatively clear example of how to do exhaustive testing by defining parameter grids that are automatically created by pytest based on these definitions.
 """
 
-import pytest
-from pytest import fixture
+from string import ascii_letters
+
 import numpy as np
 import pandas as pd
+import pytest
+from pytest import fixture
+
 from neighbors import (
-    Mean,
     KNN,
-    NNMF_sgd,
+    Mean,
     NNMF_mult,
+    NNMF_sgd,
     create_sparse_mask,
 )
-from string import ascii_letters
+
 
 ## DATA FIXTURES
 @fixture(scope="module")
@@ -101,7 +104,7 @@ def Model(request):
 def mask(request, simulate_wide_data):
     """Masked or non masked input data"""
     if request.param == "masked":
-        return create_sparse_mask(simulate_wide_data, n_mask_items=0.5)
+        return create_sparse_mask(simulate_wide_data, n_mask_items=0.5, random_state=2)
     else:
         return request.param
 
@@ -122,6 +125,7 @@ def init(Model, mask, n_mask_items, simulate_wide_data):
                 simulate_wide_data,
                 mask=mask,
                 n_mask_items=n_mask_items,
+                random_state=2,
             )
         pytest.skip("Ambigious init fails properly - OK")
     else:
@@ -130,6 +134,7 @@ def init(Model, mask, n_mask_items, simulate_wide_data):
             simulate_wide_data,
             mask=mask,
             n_mask_items=n_mask_items,
+            random_state=2,
         )
 
 
@@ -139,7 +144,7 @@ def model(Model, simulate_wide_data, n_mask_items):
     """Initialized model with masking already performed"""
     if n_mask_items is None:
         pytest.skip("Skip testing model with dense data and no mask - OK")
-    return Model(simulate_wide_data, n_mask_items=n_mask_items)
+    return Model(simulate_wide_data, n_mask_items=n_mask_items, random_state=2)
 
 
 # General

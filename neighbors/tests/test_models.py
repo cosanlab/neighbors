@@ -8,11 +8,12 @@ For running tests in parallel `pip install pytest-xdist` and for nicer testing o
 Then you can run pytest locally using `pytest -rs -n auto`, to see skip messages at the end of the test session and visually confirm that only intended skipped tests are being skipped. To aid in this, all pytest.skip() messages end with 'OK' for intentionally skipped tests.
 """
 
-from neighbors import Mean, KNN, NNMF_mult, NNMF_sgd, Base
-import pytest
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pytest
+
+from neighbors import KNN, Base, Mean, NNMF_mult, NNMF_sgd
 
 
 def verify_fit(fit_kwargs):
@@ -94,7 +95,7 @@ def test_downsample(simulate_wide_data):
     assert cf.data.shape == (n_users, expected_items)
 
     # Make sure downsampling affects fitted model artifacts
-    cf = Mean(simulate_wide_data)
+    cf = Mean(simulate_wide_data, random_state=2)
     cf.create_masked_data(n_mask_items=0.5)
     cf.fit()
     cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
@@ -104,7 +105,7 @@ def test_downsample(simulate_wide_data):
     assert cf.predictions.shape == (n_users, expected_items)
 
     # Make sure downsampling affects fitted model artifactsa including dilation
-    cf = Mean(simulate_wide_data)
+    cf = Mean(simulate_wide_data, random_state=2)
     cf.create_masked_data(n_mask_items=0.5)
     cf.fit(dilate_by_nsamples=5)
     cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
@@ -281,7 +282,7 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
 
 def test_nmf_sgd_nan_divergence(simulate_wide_data):
     """A degenerate learning rate should make SGD diverge to NaN errors, which are caught and flagged rather than silently propagated or raised"""
-    model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=0)
+    model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=2)
     model.fit(n_iterations=100, learning_rate=100)
     assert model.error_is_nan is True
     assert model.converged is False
