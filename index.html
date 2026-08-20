@@ -935,6 +935,7 @@
 <li><code>NNMF_mult</code> - non-negative matrix factorization trained via multiplicative updating</li>
 <li><code>NNMF_sgd</code> - non-negative matrix factorization trained via stochastic gradient descent</li>
 </ul>
+<p>By default both <code>NNMF</code> models clip their predictions to the range of the observed ratings, since matrix factorization (and especially the unconstrained bias terms in <code>NNMF_sgd</code>) can otherwise produce predictions outside that range (e.g. negative values despite all-positive ratings). This is the same approach the <a href="https://surpriselib.com/">Surprise</a> package takes when making predictions, and can be disabled with <code>.fit(clip_predictions=False)</code>.</p>
 
 
 

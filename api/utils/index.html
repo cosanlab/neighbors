@@ -1856,8 +1856,10 @@
     <span class="c1"># Collect results</span>
     <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">]</span>
+    <span class="c1"># Normalize the index name so downstream grouping works regardless of what the</span>
+    <span class="c1"># input data's index was called (or if it was unnamed); see #38</span>
     <span class="n">user_results</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"User"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">})</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span>
+        <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">"user"</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span>
     <span class="p">]</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">group_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

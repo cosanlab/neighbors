@@ -920,6 +920,7 @@
         <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">clip_predictions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
@@ -933,6 +934,7 @@
 <span class="sd">            eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.</span>
 <span class="sd">            verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
+<span class="sd">            clip_predictions (bool, optional): clip predictions to the observed rating range, since factorization alone can produce predictions outside it. This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.</span>
 <span class="sd">        """</span>
 
         <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
@@ -949,6 +951,7 @@
             <span class="n">n_factors</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="n">n_factors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_predictions</span> <span class="o">=</span> <span class="n">clip_predictions</span>
 
         <span class="c1"># Initialize W and H as non-negative scaled random values</span>
         <span class="c1"># We use random initialization scaled by the number of factors not unlike sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334</span>
@@ -1005,8 +1008,15 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Predict subjects' missing items using NNMF with multiplicative updating"""</span>
 
+        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_predictions</span><span class="p">:</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+                <span class="n">predictions</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
+            <span class="n">predictions</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1123,7 +1133,7 @@
 
 
 <h2 id="neighbors.models.NNMF_mult.fit" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_factors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clip_predictions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1180,6 +1190,12 @@
         <td><p>How many items to dilate by prior to training. Defaults to None.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>clip_predictions</code></td>
+        <td><code>bool</code></td>
+        <td><p>clip predictions to the observed rating range, since factorization alone can produce predictions outside it. This is the same approach the <a href="https://surpriselib.com/">Surprise</a> package takes when making predictions. Defaults to True.</p></td>
+        <td><code>True</code></td>
+      </tr>
   </tbody>
 </table>
         <details class="quote">
@@ -1192,6 +1208,7 @@
     <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">clip_predictions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
@@ -1205,6 +1222,7 @@
 <span class="sd">        eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.</span>
 <span class="sd">        verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">        dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
+<span class="sd">        clip_predictions (bool, optional): clip predictions to the observed rating range, since factorization alone can produce predictions outside it. This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.</span>
 <span class="sd">    """</span>
 
     <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
@@ -1221,6 +1239,7 @@
         <span class="n">n_factors</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">])</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="n">n_factors</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">clip_predictions</span> <span class="o">=</span> <span class="n">clip_predictions</span>
 
     <span class="c1"># Initialize W and H as non-negative scaled random values</span>
     <span class="c1"># We use random initialization scaled by the number of factors not unlike sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334</span>
