@@ -2,8 +2,8 @@
 Module that holds functions supporting various model methods. Not designed to be user-facing
 """
 
-import numpy as np
 import numba as nb
+import numpy as np
 
 
 @nb.njit(cache=True, nogil=True)
@@ -29,7 +29,7 @@ def sgd(
 ):
     """SGD Update. This implementation is nearly identitical the the SVD implementation used by Simon Funk in the Netflix challenge and implemented in Surprise with a few small differences. We currently only support a single learning rate for all parameters (Surprise supports independent learning rates, but doesn't use them by default), we don't train in batched epochs but rather over *all* training data in each iteration, and we force user and item factor values to be >=0 after each pass over the training data."""
 
-    error_history = np.zeros((n_iterations))
+    error_history = np.zeros(n_iterations)
     converged = False
     last_e = 0
     e = 0
@@ -38,7 +38,6 @@ def sgd(
     delta = np.inf
     np.random.seed(seed)
     for this_iter in range(n_iterations):
-
         # Generate shuffled order to loop over training data
         # Recall that row_indices and col_indices need to be looped over simultaneously to properly index each training value at [row, col]
         training_indices = np.arange(len(row_indices))
@@ -96,7 +95,7 @@ def sgd(
         if error_is_nan:
             converged = False
             break
-        
+
         # Force non-negativity. Surprise does this per-epoch via re-initialization. We do this per sweep over all training data, e.g. see: https://github.com/NicolasHug/Surprise/blob/master/surprise/prediction_algorithms/matrix_factorization.pyx#L671
         user_vecs = np.maximum(user_vecs, 0)
         item_vecs = np.maximum(item_vecs, 0)
@@ -135,13 +134,12 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
     """Lee & Seung (2001) multiplicative update rule"""
 
     last_e = 0
-    error_history = np.zeros((n_iterations))
+    error_history = np.zeros(n_iterations)
     converged = False
     norm_rmse = np.inf
     delta = np.inf
 
     for this_iter in range(n_iterations):
-
         if verbose and this_iter > 0 and this_iter % 10 == 0:
             disp_norm_error = np.round(100 * norm_rmse, 2)
             # Numba doesn't like f-strings

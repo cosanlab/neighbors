@@ -103,3 +103,6 @@ dev
 
 # macOS
 *.DS*
+
+# uv
+.venv/

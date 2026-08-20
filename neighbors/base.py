@@ -1,15 +1,17 @@
-import pandas as pd
-import numpy as np
-from scipy.stats import pearsonr
-import matplotlib.pyplot as plt
-from .utils import create_sparse_mask, downsample_dataframe, check_random_state
 import warnings
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
+from scipy.stats import pearsonr
+
+from .utils import check_random_state, create_sparse_mask, downsample_dataframe
 
 __all__ = ["Base", "BaseNMF"]
 
 
-class Base(object):
+class Base:
     """
     This is the base class for all model types.
     """
@@ -140,7 +142,8 @@ class Base(object):
 
         if actual is None:
             warnings.warn(
-                "Cannot score predictions on missing data because true values were never observed!"
+                "Cannot score predictions on missing data because true values were never observed!",
+                stacklevel=2,
             )
             return None
 
@@ -213,7 +216,7 @@ class Base(object):
         figsize=(16, 8),
         label_fontsize=16,
         hide_title=False,
-        heatmap_kwargs={},
+        heatmap_kwargs=None,
     ):
         """Create plot of actual vs predicted values.
 
@@ -240,11 +243,13 @@ class Base(object):
         if actual is None:
             ncols = 2
             warnings.warn(
-                "Cannot score predictions on missing data because true values were never observed!"
+                "Cannot score predictions on missing data because true values were never observed!",
+                stacklevel=2,
             )
         else:
             ncols = 3
 
+        heatmap_kwargs = {} if heatmap_kwargs is None else heatmap_kwargs
         heatmap_kwargs.setdefault("square", False)
         heatmap_kwargs.setdefault("xticklabels", False)
         heatmap_kwargs.setdefault("yticklabels", False)
@@ -282,7 +287,7 @@ class Base(object):
             rmse = self.score(dataset=dataset, by_user=True, metric="rmse")
             if not hide_title:
                 plt.suptitle(
-                    f"Mean RMSE: {np.round(rmse.mean(),3)} +/- {np.round(rmse.std(), 3)}\nMean Correlation: {np.round(r.mean(), 3)} +/- {np.round(r.std(), 3)}",
+                    f"Mean RMSE: {np.round(rmse.mean(), 3)} +/- {np.round(rmse.std(), 3)}\nMean Correlation: {np.round(r.mean(), 3)} +/- {np.round(r.std(), 3)}",
                     y=1.07,
                     fontsize=label_fontsize + 2,
                 )
@@ -494,7 +499,8 @@ class Base(object):
             )
         if kwargs.get("dilate_by_nsamples", None) and self.is_mask_dilated:
             warnings.warn(
-                ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
+                ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()",
+                stacklevel=2,
             )
 
     def summary(self, verbose=False, actual=None, dataset=None):
@@ -561,6 +567,7 @@ class Base(object):
                     zip(
                         dataset,
                         this_subject_result.mean().values,
+                        strict=False,
                     )
                 )
         # Save final results to longform df

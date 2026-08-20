@@ -1,0 +1,89 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "neighbors"
+dynamic = ["version"]
+description = "A Python package for performing collaborative filtering on social and emotion datasets"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+maintainers = [{ name = "Cosan Lab", email = "eshin.jolly@dartmouth.edu" }]
+keywords = ["emotion", "collaborative filtering", "recommender", "machine-learning"]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "numba>=0.59",
+]
+
+[project.urls]
+Homepage = "https://github.com/cosanlab/neighbors"
+Documentation = "https://cosanlab.github.io/neighbors"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12",
+    "pytest>=8",
+    "pytest-cov",
+    "pytest-xdist",
+    "pytest-sugar",
+    "coveralls",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python-legacy]",
+    "mkdocs-jupyter",
+]
+
+[tool.hatch.version]
+path = "neighbors/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["neighbors"]
+
+[tool.pytest.ini_options]
+addopts = "-rs"
+
+[tool.ruff]
+extend-exclude = ["docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# E501: prose-heavy docstrings/comments intentionally exceed the line limit; ruff-format handles code lines
+ignore = ["E501"]
+
+[tool.coverage.run]
+relative_files = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise",
+    "except",
+    "print",
+    "if __name__ == .__main__.:",
+]
+omit = [
+    "**/__init__*",
+    "**/_fit.py",
+    "**/tests/*",
+    "**/version.*",
+    "**/data/*",
+    "**/data.*",
+]

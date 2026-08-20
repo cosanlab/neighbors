@@ -1,5 +1,13 @@
 # Release Notes
 
+## 0.2.0
+- Center temporal dilation kernels on each observed sample and average (rather than sum) overlapping dilations ([#41](https://github.com/cosanlab/neighbors/issues/41)). **Note:** models fit with `dilate_by_nsamples` will produce numerically different (more accurate) results than previous versions
+- Detect and halt SGD training when predictions diverge to NaN, exposed via a new `.error_is_nan` model attribute ([#42](https://github.com/cosanlab/neighbors/issues/42))
+- Fix splitting/combining datasets with mixed or non-string column and index names ([#34](https://github.com/cosanlab/neighbors/issues/34), [#36](https://github.com/cosanlab/neighbors/issues/36))
+- Support modern numpy (>=1.26) and pandas (>=2.1, including 3.x)
+- **Drop support for Python < 3.11**; tested on Python 3.11-3.14
+- Modernized tooling: `uv` + `pyproject.toml` for packaging and environments (replacing `setup.py` and requirements files) and `ruff` for linting/formatting (replacing `black` and `pycodestyle`)
+
 ## 0.1.0
 - **Official pypi public release**
 - Package rename

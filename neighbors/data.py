@@ -2,9 +2,11 @@
 Included datasets
 """
 
-import pandas as pd
-import numpy as np
 from importlib.resources import files
+
+import numpy as np
+import pandas as pd
+
 from .utils import check_random_state
 
 __all__ = ["load_movielens100k", "load_toymat"]

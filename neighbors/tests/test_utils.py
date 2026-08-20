@@ -4,17 +4,18 @@ Test utility functions
 
 import numpy as np
 import pandas as pd
+
 from neighbors import (
-    create_user_item_matrix,
-    invert_user_item_matrix,
-    nanpdist,
+    Mean,
     create_sparse_mask,
+    create_user_item_matrix,
     estimate_performance,
     flatten_dataframe,
-    unflatten_dataframe,
-    split_train_test,
     get_sparsity,
-    Mean,
+    invert_user_item_matrix,
+    nanpdist,
+    split_train_test,
+    unflatten_dataframe,
 )
 
 
@@ -37,7 +38,7 @@ def test_estimate_performance(simulate_wide_data):
     missing = group_out.query("dataset == 'missing' and group =='all'")["mean"]
     observed = group_out.query("dataset == 'observed' and group =='all'")["mean"]
     # Make sure all missing scores are worse than observed
-    for i, (o, m) in enumerate(zip(observed, missing)):
+    for i, (o, m) in enumerate(zip(observed, missing, strict=False)):
         if i == 0:
             assert o > m
         else:
@@ -69,7 +70,7 @@ def test_estimate_performance(simulate_wide_data):
     test = group_out.query("dataset == 'test' and group =='all'")["mean"]
     train = group_out.query("dataset == 'train' and group =='all'")["mean"]
     # Make sure all test scores are worse than train
-    for i, (o, m) in enumerate(zip(train, test)):
+    for i, (o, m) in enumerate(zip(train, test, strict=False)):
         if i == 0:
             assert o > m
         else:

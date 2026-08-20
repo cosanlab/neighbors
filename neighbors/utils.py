@@ -2,16 +2,16 @@
 Utility functions and helpers
 """
 
+import numbers
+import os
+import time
+from concurrent.futures import ThreadPoolExecutor
+from itertools import chain, product
+
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.spatial.distance import pdist, squareform
-import numbers
-from itertools import product, chain
-from typing import Union
-from concurrent.futures import ThreadPoolExecutor
-import os
-import time
 
 __all__ = [
     "create_user_item_matrix",
@@ -46,7 +46,7 @@ def check_random_state(seed):
     if isinstance(seed, np.random.RandomState):
         return seed
     raise ValueError(
-        "%r cannot be used to seed a numpy.random.RandomState" " instance" % seed
+        f"{seed!r} cannot be used to seed a numpy.random.RandomState instance"
     )
 
 
@@ -69,7 +69,6 @@ def invert_user_item_matrix(df):
 
 
 def create_user_item_matrix(df, columns=None, force_float=True, errors="raise"):
-
     """Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix
 
     Args:
@@ -228,7 +227,7 @@ def flatten_dataframe(data: pd.DataFrame) -> np.ndarray:
     if not isinstance(data, pd.DataFrame):
         raise TypeError("input must be a pandas dataframe")
 
-    out = zip(product(data.index, data.columns), data.to_numpy().ravel())
+    out = zip(product(data.index, data.columns), data.to_numpy().ravel(), strict=False)
     return np.array([(elem[0][0], elem[0][1], elem[1]) for elem in out])
 
 
@@ -341,8 +340,9 @@ def split_train_test(
         train = np.array([elem for elem in chain(flat[:start], flat[stop:])])
         test = np.array([elem for elem in flat[start:stop]])
 
-        yield unflatten_dataframe(train, like_dataframe=data), unflatten_dataframe(
-            test, like_dataframe=data
+        yield (
+            unflatten_dataframe(train, like_dataframe=data),
+            unflatten_dataframe(test, like_dataframe=data),
         )
 
 
@@ -351,11 +351,11 @@ def estimate_performance(
     data: pd.DataFrame,
     n_iter: int = 10,
     n_folds: int = 10,
-    n_mask_items: Union[int, np.floating] = 0.2,
+    n_mask_items: int | np.floating = 0.2,
     return_agg: bool = True,
     return_full_performance: bool = False,
-    agg_stats: tuple = ["mean", "std"],
-    fit_kwargs: dict = {},
+    agg_stats: tuple = ("mean", "std"),
+    fit_kwargs: dict | None = None,
     random_state=None,
     parallelize=False,
     timeit=True,
@@ -386,6 +386,7 @@ def estimate_performance(
         pd.DataFrame: aggregated or non-aggregated summary statistics
     """
 
+    fit_kwargs = {} if fit_kwargs is None else fit_kwargs
     sparsity = get_sparsity(data)
     random_state = check_random_state(random_state)
     # Set max threads to the new default in Python 3.8
@@ -393,7 +394,9 @@ def estimate_performance(
 
     if sparsity == 0.0:
         # DENSE DATA so re-mask each iteration
-        print(f"Data sparsity is {np.round(sparsity*100,2)}%. Using random masking...")
+        print(
+            f"Data sparsity is {np.round(sparsity * 100, 2)}%. Using random masking..."
+        )
 
         seeds = random_state.randint(np.iinfo(np.int32).max, size=n_iter)
 
@@ -468,7 +471,7 @@ def estimate_performance(
     else:
         # SPARSE DATA so split observed values according to n_folds
         print(
-            f"Data sparsity is {np.round(sparsity*100,2)}%. Using cross-validation..."
+            f"Data sparsity is {np.round(sparsity * 100, 2)}%. Using cross-validation..."
         )
 
         def _run_sparse(
@@ -576,7 +579,7 @@ def estimate_performance(
 
     # Handle aggregation
     if return_agg:
-        col_order = ["algorithm", "dataset", "group", "metric"] + agg_stats
+        col_order = ["algorithm", "dataset", "group", "metric"] + list(agg_stats)
         group_results = (
             group_results.groupby(["algorithm", "dataset", "group", "metric"])
             .score.agg(agg_stats)

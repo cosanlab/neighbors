@@ -8,22 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-
-      - name: Pypi build
-        run: |
-          python3 -m pip install build --user
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Wheel and source build
-        run: |
-          python3 -m build --sdist --wheel --outdir dist/
+        run: uv build
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
