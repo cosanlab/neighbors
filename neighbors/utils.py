@@ -260,7 +260,7 @@ def unflatten_dataframe(
     for elem in data:
         row = elem[0].astype(type(like_dataframe.index[0]))
         col = elem[1].astype(type(like_dataframe.columns[0]))
-        out.loc[row, col] = np.float(elem[2])
+        out.loc[row, col] = float(elem[2])
     out.index.name = like_dataframe.index.name
     out.columns.name = like_dataframe.columns.name
 

@@ -10,6 +10,8 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: Test
     runs-on: ${{ matrix.os }}
+    env:
+      MPLBACKEND: Agg
     # Determines whether the entire workflow should pass/fail based on parallel jobs
     continue-on-error: ${{ matrix.ok-fail }}
     defaults:
@@ -54,7 +56,7 @@ jobs:
           conda activate test
           conda env list
           conda install -y numpy numba pandas scipy seaborn
-          conda install -y -c conda-forge pytest pytest-cov pytest-xdist pytest-sugar coveralls black
+          conda install -y -c conda-forge pytest pytest-cov pytest-xdist pytest-sugar coveralls black=22.10.0
           pip install . -r requirements.txt
 
       # Check code formatting
