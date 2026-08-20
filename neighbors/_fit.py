@@ -32,6 +32,8 @@ def sgd(
     error_history = np.zeros((n_iterations))
     converged = False
     last_e = 0
+    e = 0
+    error_is_nan = False
     norm_rmse = np.inf
     delta = np.inf
     np.random.seed(seed)
@@ -69,6 +71,11 @@ def sgd(
 
             # Use changes in e to determine tolerance
             e = data[u, i] - prediction  # error
+            # Check if predictions have exploded resulting in NaN errors
+            # and prevent propagation but breaking early
+            if np.isnan(e):
+                error_is_nan = True
+                break
 
             # Update biases
             user_bias[u] += learning_rate * (e - user_bias_reg * user_bias[u])
@@ -85,6 +92,11 @@ def sgd(
             # Keep track of total squared error
             total_error += np.power(e, 2)
 
+        # Check if error was nan
+        if error_is_nan:
+            converged = False
+            break
+        
         # Force non-negativity. Surprise does this per-epoch via re-initialization. We do this per sweep over all training data, e.g. see: https://github.com/NicolasHug/Surprise/blob/master/surprise/prediction_algorithms/matrix_factorization.pyx#L671
         user_vecs = np.maximum(user_vecs, 0)
         item_vecs = np.maximum(item_vecs, 0)
@@ -107,6 +119,7 @@ def sgd(
     return (
         error_history,
         converged,
+        error_is_nan,
         this_iter,
         delta,
         norm_rmse,

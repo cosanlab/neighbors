@@ -523,6 +523,7 @@ class NNMF_sgd(BaseNMF):
             (
                 error_history,
                 converged,
+                error_is_nan,
                 n_iter,
                 delta,
                 norm_rmse,
@@ -569,11 +570,15 @@ class NNMF_sgd(BaseNMF):
         self._delta = delta
         self._norm_rmse = norm_rmse
         self.converged = converged
+        self.error_is_nan = error_is_nan
         if verbose:
             if self.converged:
                 print("\n\tCONVERGED!")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
                 print(f"\tFinal Delta: {np.round(self._delta)}")
+            elif self.error_is_nan:
+                print("\tFAILED TO CONVERGE (predictions are NaN)")
+                print(f"\n\tFinal Iteration: {self._n_iter}")
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
