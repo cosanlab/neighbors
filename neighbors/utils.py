@@ -567,8 +567,10 @@ def estimate_performance(
     # Collect results
     all_results = list(all_results)
     group_results = [elem[0] for elem in all_results]
+    # Normalize the index name so downstream grouping works regardless of what the
+    # input data's index was called (or if it was unnamed); see #38
     user_results = [
-        elem[1].reset_index().rename(columns={"User": "user"}) for elem in all_results
+        elem[1].rename_axis(index="user").reset_index() for elem in all_results
     ]
     group_results = (
         pd.concat(group_results, ignore_index=True)

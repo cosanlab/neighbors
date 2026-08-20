@@ -4,6 +4,7 @@ Test utility functions
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from neighbors import (
     Mean,
@@ -81,6 +82,28 @@ def test_estimate_performance(simulate_wide_data):
     )
     assert group_out.shape == (4 * 2 * 10, 6)
     assert user_out.shape == (50 * 10, 6)
+
+
+@pytest.mark.parametrize("index_name", [None, "User", "subject"])
+def test_estimate_performance_any_index_name(simulate_wide_data, index_name):
+    """estimate_performance should not require the input index to be named 'User' (issue #38)"""
+    df = simulate_wide_data.rename_axis(index=index_name)
+
+    # Dense path (random masking)
+    group_out, user_out = estimate_performance(
+        Mean, df, n_iter=2, verbose=False, timeit=False
+    )
+    assert user_out.shape[0] == df.shape[0]
+    assert user_out.index.name == "user"
+
+    # Sparse path (cross-validation)
+    mask = create_sparse_mask(df, random_state=2)
+    masked = df[mask]
+    group_out, user_out = estimate_performance(
+        Mean, masked, n_folds=2, verbose=False, timeit=False
+    )
+    assert user_out.shape[0] == df.shape[0]
+    assert user_out.index.name == "user"
 
 
 # TODO: Update this test to handle commented out lines. This is a pandas issue where going from long -> wide -> long leads pandas to sort columns rather than preserving the original column order
