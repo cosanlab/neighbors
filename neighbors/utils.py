@@ -156,7 +156,9 @@ def nanpdist(arr, metric="euclidean", return_square=True):
                     arr[row1_idx][vec_mask],
                     arr[row2_idx][vec_mask],
                 )
-                out[k] = pdist(np.vstack([masked_row1, masked_row2]), metric=metric)
+                out[k] = pdist(
+                    np.vstack([masked_row1, masked_row2]), metric=metric
+                ).item()
                 k += 1
 
     if return_square:

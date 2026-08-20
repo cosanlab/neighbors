@@ -323,7 +323,7 @@ class Base(object):
                 target_type=target_type,
             )
             # Ensure mask stays boolean
-            self.mask.loc[:, :] = self.mask > 0
+            self.mask = self.mask > 0
 
             # Masked data
             self.masked_data = downsample_dataframe(
@@ -341,7 +341,7 @@ class Base(object):
                     target_type=target_type,
                 )
                 # Ensure mask stays boolean
-                self.dilated_mask.loc[:, :] = self.dilated_mask > 0
+                self.dilated_mask = self.dilated_mask > 0
 
         if self.is_fit:
             self.predictions = downsample_dataframe(

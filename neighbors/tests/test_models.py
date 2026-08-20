@@ -131,7 +131,7 @@ def test_init_and_dilate(init, mask, n_mask_items):
             n_false_items = int(total_items * n_mask_items)
         else:
             n_false_items = n_mask_items
-        calculated_n_false_items = init.masked_data.isnull().sum(1)[0]
+        calculated_n_false_items = init.masked_data.isnull().sum(1).iloc[0]
         assert n_false_items == calculated_n_false_items
 
     # Test no accidental masking
