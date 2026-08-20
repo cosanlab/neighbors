@@ -1,6 +1,9 @@
 name: (Auto-On-Release) PyPI Deploy
 
-on: [release, workflow_dispatch]
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   deploy:
