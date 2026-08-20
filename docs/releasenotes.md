@@ -1,6 +1,8 @@
 # Release Notes
 
 ## 0.2.0
+- `NNMF_mult` and `NNMF_sgd` now clip predictions to the observed rating range by default (disable with `fit(clip_predictions=False)`), preventing out-of-range predictions such as negative values caused by unconstrained bias terms ([#47](https://github.com/cosanlab/neighbors/issues/47)). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions
+- Fix `estimate_performance` failing with `KeyError: 'user'` when the input dataframe's index was not named exactly "User" ([#38](https://github.com/cosanlab/neighbors/issues/38))
 - Center temporal dilation kernels on each observed sample and average (rather than sum) overlapping dilations ([#41](https://github.com/cosanlab/neighbors/issues/41)). **Note:** models fit with `dilate_by_nsamples` will produce numerically different (more accurate) results than previous versions
 - Detect and halt SGD training when predictions diverge to NaN, exposed via a new `.error_is_nan` model attribute ([#42](https://github.com/cosanlab/neighbors/issues/42))
 - Fix splitting/combining datasets with mixed or non-string column and index names ([#34](https://github.com/cosanlab/neighbors/issues/34), [#36](https://github.com/cosanlab/neighbors/issues/36))

@@ -280,6 +280,24 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
     plt.close("all")
 
 
+def test_nmf_predictions_clipped_to_observed_range(simulate_wide_data):
+    """By default NNMF predictions are clipped to the observed rating range, since unconstrained bias terms can otherwise push predictions outside it (issue #47)"""
+    for cls in [NNMF_mult, NNMF_sgd]:
+        clipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        clipped.fit(n_iterations=50)
+        unclipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        unclipped.fit(n_iterations=50, clip_predictions=False)
+        vmin = unclipped.masked_data.min().min()
+        vmax = unclipped.masked_data.max().max()
+        assert (clipped.predictions >= vmin).all().all()
+        assert (clipped.predictions <= vmax).all().all()
+        # Clipping should be the only difference between the two fits
+        np.testing.assert_allclose(
+            clipped.predictions.to_numpy(),
+            unclipped.predictions.clip(vmin, vmax).to_numpy(),
+        )
+
+
 def test_nmf_sgd_nan_divergence(simulate_wide_data):
     """A degenerate learning rate should make SGD diverge to NaN errors, which are caught and flagged rather than silently propagated or raised"""
     model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=2)

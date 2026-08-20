@@ -53,3 +53,5 @@ Currently supported algorithms include:
 - `KNN` - k-nearest neighbors
 - `NNMF_mult` - non-negative matrix factorization trained via multiplicative updating
 - `NNMF_sgd` - non-negative matrix factorization trained via stochastic gradient descent
+
+By default both `NNMF` models clip their predictions to the range of the observed ratings, since matrix factorization (and especially the unconstrained bias terms in `NNMF_sgd`) can otherwise produce predictions outside that range (e.g. negative values despite all-positive ratings). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions, and can be disabled with `.fit(clip_predictions=False)`.
