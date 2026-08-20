@@ -877,7 +877,7 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NNMF_mult</span><span class="p">(</span><span class="n">BaseNMF</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.</span>
 
 <span class="sd">    Training is performed via multiplicative updating and continues until convergence or the maximum number of training iterations has been reached. Unlike the `NNMF_sgd`, this implementation takes no hyper-parameters and thus is simpler and faster to use, but less flexible, i.e. no regularization.</span>
@@ -887,21 +887,21 @@
 <span class="sd">    The implementation here follows closely that of Lee &amp; Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf</span>
 
 <span class="sd">    *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">            verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
         <span class="p">)</span>
@@ -910,7 +910,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, n_factors=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, n_factors=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -922,8 +922,7 @@
         <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
+<span class="w">        </span><span class="sd">"""Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
 
 <span class="sd">        Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.</span>
 
@@ -934,7 +933,7 @@
 <span class="sd">            eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.</span>
 <span class="sd">            verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -944,7 +943,7 @@
         <span class="k">if</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_items</span> <span class="ow">and</span> <span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_users</span><span class="p">)</span>
         <span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_factors must be an integer &lt; number of items and users&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"n_factors must be an integer &lt; number of items and users"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_factors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n_factors</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">])</span>
@@ -969,7 +968,7 @@
         <span class="c1"># Run multiplicative updating</span>
         <span class="c1"># Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585</span>
         <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
             <span class="n">error_history</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">norm_rmse</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">mult</span><span class="p">(</span>
                 <span class="n">X</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
@@ -991,21 +990,20 @@
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">CONVERGED!&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">CONVERGED!"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict subjects&#39; missing items using NNMF with multiplicative updating&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Predict subjects' missing items using NNMF with multiplicative updating"""</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
@@ -1095,16 +1093,16 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Args:</span>
 <span class="sd">        data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">        n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">        data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">        verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
     <span class="p">)</span>
@@ -1196,8 +1194,7 @@
     <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
+<span class="w">    </span><span class="sd">"""Fit NNMF collaborative filtering model to train data using multiplicative updating.</span>
 
 <span class="sd">    Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.</span>
 
@@ -1208,7 +1205,7 @@
 <span class="sd">        eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.</span>
 <span class="sd">        verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">        dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -1218,7 +1215,7 @@
     <span class="k">if</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_items</span> <span class="ow">and</span> <span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_users</span><span class="p">)</span>
     <span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_factors must be an integer &lt; number of items and users&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"n_factors must be an integer &lt; number of items and users"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">n_factors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">n_factors</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">])</span>
@@ -1243,7 +1240,7 @@
     <span class="c1"># Run multiplicative updating</span>
     <span class="c1"># Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585</span>
     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
         <span class="n">error_history</span><span class="p">,</span> <span class="n">converged</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">norm_rmse</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">mult</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span>
@@ -1265,15 +1262,15 @@
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">CONVERGED!&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">CONVERGED!"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>

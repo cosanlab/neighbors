@@ -488,6 +488,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#020" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#010" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -826,6 +837,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#020" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.2.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#010" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -901,6 +923,15 @@
 
 
 <h1 id="release-notes">Release Notes</h1>
+<h2 id="020">0.2.0</h2>
+<ul>
+<li>Center temporal dilation kernels on each observed sample and average (rather than sum) overlapping dilations (<a href="https://github.com/cosanlab/neighbors/issues/41">#41</a>). <strong>Note:</strong> models fit with <code>dilate_by_nsamples</code> will produce numerically different (more accurate) results than previous versions</li>
+<li>Detect and halt SGD training when predictions diverge to NaN, exposed via a new <code>.error_is_nan</code> model attribute (<a href="https://github.com/cosanlab/neighbors/issues/42">#42</a>)</li>
+<li>Fix splitting/combining datasets with mixed or non-string column and index names (<a href="https://github.com/cosanlab/neighbors/issues/34">#34</a>, <a href="https://github.com/cosanlab/neighbors/issues/36">#36</a>)</li>
+<li>Support modern numpy (&gt;=1.26) and pandas (&gt;=2.1, including 3.x)</li>
+<li><strong>Drop support for Python &lt; 3.11</strong>; tested on Python 3.11-3.14</li>
+<li>Modernized tooling: <code>uv</code> + <code>pyproject.toml</code> for packaging and environments (replacing <code>setup.py</code> and requirements files) and <code>ruff</code> for linting/formatting (replacing <code>black</code> and <code>pycodestyle</code>)</li>
+</ul>
 <h2 id="010">0.1.0</h2>
 <ul>
 <li><strong>Official pypi public release</strong></li>

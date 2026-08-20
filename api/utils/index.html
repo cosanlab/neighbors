@@ -1135,7 +1135,7 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Turn seed into a np.random.RandomState instance, lifted directly from sklearn to avoid a heavy dependency for one function.</span>
 
 <span class="sd">    Olivier Grisel, Andreas Mueller, Lars, Alexandre Gramfort, Gilles Louppe, Peter Prettenhofer, … Eustache. (2021, January 19). scikit-learn/scikit-learn: scikit-learn 0.24.1 (Version 0.24.1). Zenodo. http://doi.org/10.5281/zenodo.4450597</span>
@@ -1143,7 +1143,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        seed (None, int, RandomState): If seed is None, return the RandomState singleton used by np.random. If seed is an int, return a new RandomState instance seeded with seed. If seed is already a RandomState instance, return it.</span>
 <span class="sd">        Otherwise raise ValueError.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">seed</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">mtrand</span><span class="o">.</span><span class="n">_rand</span>
@@ -1152,7 +1152,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">seed</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> cannot be used to seed a numpy.random.RandomState&quot;</span> <span class="s2">&quot; instance&quot;</span> <span class="o">%</span> <span class="n">seed</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">seed</span><span class="si">!r}</span><span class="s2"> cannot be used to seed a numpy.random.RandomState instance"</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -1234,7 +1234,7 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_sparse_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Given a pandas dataframe create a boolean mask such that n_mask_items columns are `False` and the rest are `True`. Critically, each row is masked independently. This function does not alter the input dataframe.</span>
 
 <span class="sd">    Args:</span>
@@ -1246,10 +1246,10 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: boolean dataframe of same shape as data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;data already contains NaNs and further masking is ambiguous!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"data already contains NaNs and further masking is ambiguous!"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_mask_items</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">))</span> <span class="ow">and</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="n">n_mask_items</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">n_false_items</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_mask_items</span><span class="p">))</span>
@@ -1259,7 +1259,7 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;n_train_items must be an integer or a float between 0-1, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">n_mask_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">n_mask_items</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"n_train_items must be an integer or a float between 0-1, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">n_mask_items</span><span class="p">)</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">n_mask_items</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="n">random</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
@@ -1271,7 +1271,10 @@
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
         </details>
     </div>
@@ -1285,7 +1288,7 @@
 
 
 <h2 id="neighbors.utils.create_user_item_matrix" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'raise'</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1348,28 +1351,27 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">):</span>
-
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_float</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        df (Dataframe): input dataframe</span>
-<span class="sd">        columns (list): list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier (&quot;User&quot;), the second a unique item identifier (e.g. &quot;Item&quot;), and the last the rating made by the individual on that item (&quot;Rating&quot;). Defaults to [&quot;User&quot;, &quot;Item&quot;, &quot;Rating&quot;]</span>
+<span class="sd">        columns (list): list of length 3 with dataframe columns to use for reshaping. The first value should reflect unique individual identifier ("User"), the second a unique item identifier (e.g. "Item"), and the last the rating made by the individual on that item ("Rating"). Defaults to ["User", "Item", "Rating"]</span>
 <span class="sd">        force_float (bool): force the resulting output to be float data types with errors being set to NaN; Default True</span>
-<span class="sd">        errors (string): how to handle errors in pd.to_numeric; Default &#39;raise&#39;</span>
+<span class="sd">        errors (string): how to handle errors in pd.to_numeric; Default 'raise'</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        pd.DataFrame: user x item rating Dataframe</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;df must be pandas instance&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"df must be pandas instance"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="s2">&quot;Item&quot;</span><span class="p">,</span> <span class="s2">&quot;Rating&quot;</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"User"</span><span class="p">,</span> <span class="s2">"Item"</span><span class="p">,</span> <span class="s2">"Rating"</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;df is missing some or all of the following columns: </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"df is missing some or all of the following columns: </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="n">ratings</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
@@ -1379,11 +1381,11 @@
             <span class="n">ratings</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;Auto-converting data to floats failed, probably because you have non-numeric data in some rows. You can set errors = &#39;coerce&#39; to set these failures to NaN&quot;</span>
+            <span class="s2">"Auto-converting data to floats failed, probably because you have non-numeric data in some rows. You can set errors = 'coerce' to set these failures to NaN"</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span>
-    <span class="n">ratings</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;User&quot;</span>
-    <span class="n">ratings</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Item&quot;</span>
+    <span class="n">ratings</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"User"</span>
+    <span class="n">ratings</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"Item"</span>
 
     <span class="k">return</span> <span class="n">ratings</span>
 </code></pre></div>
@@ -1399,7 +1401,7 @@
 
 
 <h2 id="neighbors.utils.downsample_dataframe" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">'samples'</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1462,37 +1464,37 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">downsample_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">"samples"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Down sample a dataframe</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (pd.DataFrame): input data</span>
 <span class="sd">        n_samples (int): number of samples.</span>
 <span class="sd">        sampling_freq (int/float, optional): sampling frequency of data in hz. Defaults to None.</span>
-<span class="sd">        target_type (str, optional): how to downsample; must be one of &quot;samples&quot;, &quot;seconds&quot; or &quot;hz&quot;. Defaults to &quot;samples&quot;.</span>
+<span class="sd">        target_type (str, optional): how to downsample; must be one of "samples", "seconds" or "hz". Defaults to "samples".</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: downsampled input data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data must be a pandas dataframe&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"data must be a pandas dataframe"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_samples must be an integer&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;target_type must be &#39;samples&#39;, &#39;seconds&#39;, or &#39;hz&#39;&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"n_samples must be an integer"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"samples"</span><span class="p">,</span> <span class="s2">"seconds"</span><span class="p">,</span> <span class="s2">"hz"</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"target_type must be 'samples', 'seconds', or 'hz'"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="p">(</span>
+    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"seconds"</span><span class="p">,</span> <span class="s2">"hz"</span><span class="p">]</span> <span class="ow">and</span> <span class="p">(</span>
         <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">sampling_freq</span> <span class="ow">is</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;if target_type = </span><span class="si">{target_type}</span><span class="s2">, both sampling_freq and target must be provided&quot;</span>
+            <span class="s2">"if target_type = </span><span class="si">{target_type}</span><span class="s2">, both sampling_freq and target must be provided"</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">target_type</span> <span class="o">==</span> <span class="s2">&quot;seconds&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">target_type</span> <span class="o">==</span> <span class="s2">"seconds"</span><span class="p">:</span>
         <span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">*</span> <span class="n">sampling_freq</span>
-    <span class="k">elif</span> <span class="n">target_type</span> <span class="o">==</span> <span class="s2">&quot;hz&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">target_type</span> <span class="o">==</span> <span class="s2">"hz"</span><span class="p">:</span>
         <span class="n">n_samples</span> <span class="o">=</span> <span class="n">sampling_freq</span> <span class="o">/</span> <span class="n">n_samples</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples</span>
@@ -1515,7 +1517,7 @@
 
 
 <h2 id="neighbors.utils.estimate_performance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">],</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">estimate_performance</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_full_performance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agg_stats</span><span class="o">=</span><span class="p">(</span><span class="s1">'mean'</span><span class="p">,</span> <span class="s1">'std'</span><span class="p">),</span> <span class="n">fit_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1563,7 +1565,7 @@
       <tr>
         <td><code>n_mask_items</code></td>
         <td><code>int/float</code></td>
-        <td><p>how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values</p></td>
+        <td><p>how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. <strong>Ignored if input data is already sparse.</strong></p></td>
         <td><code>0.2</code></td>
       </tr>
       <tr>
@@ -1582,13 +1584,13 @@
         <td><code>agg_stats</code></td>
         <td><code>list</code></td>
         <td><p>string names of statistics to compute over repetitions. Must be accepted by <code>pd.DataFrame.agg</code>; Default ('mean', 'std')</p></td>
-        <td><code>[&#39;mean&#39;, &#39;std&#39;]</code></td>
+        <td><code>(&#39;mean&#39;, &#39;std&#39;)</code></td>
       </tr>
       <tr>
         <td><code>fit_kwargs</code></td>
         <td><code>dict</code></td>
         <td><p>A dictionary of arguments passed to the <code>.fit()</code> method of the model. Defaults to {}.</p></td>
-        <td><code>{}</code></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>random_state</code></td>
@@ -1638,17 +1640,17 @@
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">n_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="n">n_mask_items</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">n_mask_items</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
     <span class="n">return_agg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">return_full_performance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">agg_stats</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">],</span>
-    <span class="n">fit_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">agg_stats</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"mean"</span><span class="p">,</span> <span class="s2">"std"</span><span class="p">),</span>
+    <span class="n">fit_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">parallelize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">timeit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Repeatedly fit a model with data to estimate performance. If input data is dense (contains no missing values) then this function will fit the model `n_iter` times after applying a different random mask each iteration according to `n_mask_items`. This is useful for testing how an algorithm *would have performed* given data of a specified sparsity.</span>
 
 <span class="sd">    On the other hand, if input data is already sparse, no further masking will be performed and the data will instead be split into `n_folds` training and testing folds. Evaluation will be performed based on how well non-missing values in testing folds are recovered. **Note**: this *increases the sparsity* of the input dataset. The number of folds requested controls the additional sparsity of each train and test split. For example, with the default `n_folds=10`, each training split will contain 9/10 folds = ~90% of *observed values* (additional sparsity of 10%); each test split will contain 1/10 folds (~10% of *observed values*).</span>
@@ -1658,10 +1660,10 @@
 <span class="sd">        data (pd.DataFrame): a users x item dataframe</span>
 <span class="sd">        n_iter (int, optional): number of repetitions for dense data. Defaults to 10.</span>
 <span class="sd">        n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.</span>
-<span class="sd">        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values</span>
+<span class="sd">        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. **Ignored if input data is already sparse.**</span>
 <span class="sd">        return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.</span>
-<span class="sd">        return_full_performance (bool, optional): return the performance against both &quot;observed&quot; and &quot;missing&quot; or just &quot;missing&quot; values if using dense data and `n_iter`. Likewise return performance of both &quot;train&quot; and &quot;test&quot; or just &quot;test&quot; splits if using sparse data and `n_folds`; Default False</span>
-<span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default (&#39;mean&#39;, &#39;std&#39;)</span>
+<span class="sd">        return_full_performance (bool, optional): return the performance against both "observed" and "missing" or just "missing" values if using dense data and `n_iter`. Likewise return performance of both "train" and "test" or just "test" splits if using sparse data and `n_folds`; Default False</span>
+<span class="sd">        agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')</span>
 <span class="sd">        fit_kwargs (dict, optional): A dictionary of arguments passed to the `.fit()` method of the model. Defaults to {}.</span>
 <span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. random masking, cv splitting, etc). Passing None will generate a new random seed; Default None.</span>
 <span class="sd">        parallelize (bool, optional): Use multiple *threads* to run n_iter or n_folds in parallel. To save memory and prevent data duplication, this does not use multiple *processes* like joblib. Some algorithms like `NNMF_sgd` can see significant speed-ups (2-3x) when `True`. Others, like `NNMF_mult` do not not gain much benefit or may even slow down. Default False.</span>
@@ -1671,8 +1673,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: aggregated or non-aggregated summary statistics</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
+    <span class="n">fit_kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">fit_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">fit_kwargs</span>
     <span class="n">sparsity</span> <span class="o">=</span> <span class="n">get_sparsity</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
     <span class="c1"># Set max threads to the new default in Python 3.8</span>
@@ -1680,7 +1683,9 @@
 
     <span class="k">if</span> <span class="n">sparsity</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="c1"># DENSE DATA so re-mask each iteration</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using random masking...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using random masking..."</span>
+        <span class="p">)</span>
 
         <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_iter</span><span class="p">)</span>
 
@@ -1705,25 +1710,25 @@
             <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
             <span class="c1"># observed + missing</span>
             <span class="k">if</span> <span class="n">return_full_performance</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">])</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="p">[</span><span class="s2">"missing"</span><span class="p">,</span> <span class="s2">"observed"</span><span class="p">])</span>
             <span class="c1"># only missing</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;missing&quot;</span><span class="p">)</span>
-            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">"missing"</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">"iter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 
             <span class="c1"># Individual user results</span>
             <span class="n">user_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">user_results</span>
-            <span class="n">user_results</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">user_results</span><span class="p">[</span><span class="s2">"iter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 
             <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
                 <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                 <span class="n">duration</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span>
-                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">"duration"</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
             <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">user_results</span>
 
         <span class="k">if</span> <span class="n">parallelize</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parallelizing across threads...&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Parallelizing across threads..."</span><span class="p">)</span>
 
             <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">threads</span><span class="p">:</span>
                 <span class="n">all_results</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
@@ -1750,12 +1755,12 @@
                 <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_iter</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;iter&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
-        <span class="n">user_agg_drop_col</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]</span>
+        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"iter"</span><span class="p">,</span> <span class="s2">"group"</span><span class="p">,</span> <span class="s2">"metric"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">]</span>
+        <span class="n">user_agg_drop_col</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"iter"</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># SPARSE DATA so split observed values according to n_folds</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using cross-validation...&quot;</span>
+            <span class="sa">f</span><span class="s2">"Data sparsity is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sparsity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%. Using cross-validation..."</span>
         <span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_run_sparse</span><span class="p">(</span>
@@ -1772,34 +1777,34 @@
                 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">**</span><span class="n">fit_kwargs</span><span class="p">)</span>
-            <span class="n">test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">actual</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
-            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_results</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">})</span>
+            <span class="n">test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">actual</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">"full"</span><span class="p">)</span>
+            <span class="n">test_results</span><span class="p">[</span><span class="s2">"cv_fold"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">test_results</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_results</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">"full"</span><span class="p">:</span> <span class="s2">"test"</span><span class="p">})</span>
 
             <span class="n">user_test_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">user_results</span>
-            <span class="n">user_test_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">user_test_results</span><span class="p">[</span><span class="s2">"cv_fold"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">user_test_results</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;rmse_test&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;mse_test&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;mae_test&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;correlation_test&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;cv_fold&quot;</span><span class="p">,</span>
+                <span class="s2">"rmse_test"</span><span class="p">,</span>
+                <span class="s2">"mse_test"</span><span class="p">,</span>
+                <span class="s2">"mae_test"</span><span class="p">,</span>
+                <span class="s2">"correlation_test"</span><span class="p">,</span>
+                <span class="s2">"cv_fold"</span><span class="p">,</span>
             <span class="p">]</span>
 
             <span class="k">if</span> <span class="n">return_full_performance</span><span class="p">:</span>
-                <span class="n">train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
-                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="n">train_results</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_results</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">})</span>
+                <span class="n">train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">"full"</span><span class="p">)</span>
+                <span class="n">train_results</span><span class="p">[</span><span class="s2">"cv_fold"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">train_results</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_results</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s2">"full"</span><span class="p">:</span> <span class="s2">"train"</span><span class="p">})</span>
                 <span class="n">test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">test_results</span><span class="p">,</span> <span class="n">train_results</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
                 <span class="p">)</span>
 
                 <span class="n">user_train_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">user_results</span>
                 <span class="n">user_train_results</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="s2">&quot;rmse_train&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;mse_train&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;mae_train&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;correlation_train&quot;</span><span class="p">,</span>
+                    <span class="s2">"rmse_train"</span><span class="p">,</span>
+                    <span class="s2">"mse_train"</span><span class="p">,</span>
+                    <span class="s2">"mae_train"</span><span class="p">,</span>
+                    <span class="s2">"correlation_train"</span><span class="p">,</span>
                 <span class="p">]</span>
                 <span class="n">user_test_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">user_train_results</span><span class="p">,</span> <span class="n">user_test_results</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
@@ -1808,7 +1813,7 @@
             <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
                 <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                 <span class="n">duration</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span>
-                <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+                <span class="n">test_results</span><span class="p">[</span><span class="s2">"duration"</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
             <span class="k">return</span> <span class="n">test_results</span><span class="p">,</span> <span class="n">user_test_results</span>
 
         <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_folds</span><span class="p">)</span>
@@ -1818,7 +1823,7 @@
 
         <span class="k">if</span> <span class="n">parallelize</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parallelizing across threads...&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Parallelizing across threads..."</span><span class="p">)</span>
 
             <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">threads</span><span class="p">:</span>
                 <span class="n">all_results</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
@@ -1845,39 +1850,39 @@
                 <span class="p">[</span><span class="n">fit_kwargs</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_folds</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;cv_fold&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
-        <span class="n">user_agg_drop_col</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cv_fold&quot;</span><span class="p">]</span>
+        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"cv_fold"</span><span class="p">,</span> <span class="s2">"group"</span><span class="p">,</span> <span class="s2">"metric"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">]</span>
+        <span class="n">user_agg_drop_col</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"cv_fold"</span><span class="p">]</span>
 
     <span class="c1"># Collect results</span>
     <span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">]</span>
     <span class="n">user_results</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span>
+        <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"User"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">})</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">all_results</span>
     <span class="p">]</span>
     <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">group_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">"group"</span><span class="p">,</span> <span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"metric"</span><span class="p">])</span>
         <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">user_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">user_results</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Handle aggregation</span>
     <span class="k">if</span> <span class="n">return_agg</span><span class="p">:</span>
-        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">agg_stats</span>
+        <span class="n">col_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"group"</span><span class="p">,</span> <span class="s2">"metric"</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">agg_stats</span><span class="p">)</span>
         <span class="n">group_results</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">group_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+            <span class="n">group_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"group"</span><span class="p">,</span> <span class="s2">"metric"</span><span class="p">])</span>
             <span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_stats</span><span class="p">)</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="s2">&quot;metric&quot;</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"group"</span><span class="p">,</span> <span class="s2">"metric"</span><span class="p">])</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">col_order</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">user_results</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">user_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">user_agg_drop_col</span><span class="p">)</span>
+            <span class="n">user_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"user"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">user_agg_drop_col</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">group_results</span><span class="p">,</span> <span class="n">user_results</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
-            <span class="n">col_order</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span>
+            <span class="n">col_order</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"duration"</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">group_results</span><span class="p">[</span><span class="n">col_order</span><span class="p">],</span> <span class="n">user_results</span>
 </code></pre></div>
         </details>
@@ -1937,8 +1942,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value</span>
 
 <span class="sd">    Args:</span>
@@ -1946,12 +1951,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: arrayo of row, column, value triplets</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input must be a pandas dataframe&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"input must be a pandas dataframe"</span><span class="p">)</span>
 
-    <span class="n">out</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">out</span><span class="p">])</span>
 </code></pre></div>
         </details>
@@ -1978,11 +1983,11 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_size_in_mb</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates size of ndarray in megabytes&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Calculates size of ndarray in megabytes"""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">csr_matrix</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">/</span> <span class="mf">1e6</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input must by a numpy array or scipy csr sparse matrix&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"input must by a numpy array or scipy csr sparse matrix"</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2008,13 +2013,13 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_sparsity</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates sparsity of ndarray (0 - 1)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Calculates sparsity of ndarray (0 - 1)"""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input must be a numpy array&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"input must be a numpy array"</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2074,21 +2079,21 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invert_user_item_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reshapes a user x item matrix back into a longform dataframe with &quot;User&quot;, &quot;Item&quot; and &quot;Rating&quot; columns. Convenience function to undo a call to `create_user_item_matrix`. Dataframe must have an index name of &#39;Users&#39; and a columns name of &#39;Items&#39;.</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Reshapes a user x item matrix back into a longform dataframe with "User", "Item" and "Rating" columns. Convenience function to undo a call to `create_user_item_matrix`. Dataframe must have an index name of 'Users' and a columns name of 'Items'.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        df (pd.DataFrame): user x item dataframe, e.g. the output of a call to `create_user_by_item_matrix`</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame: longform dataframe with &quot;User&quot;, &quot;Item&quot;, &quot;Rating&quot; columns</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        pd.DataFrame: longform dataframe with "User", "Item", "Rating" columns</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;User&quot;</span> <span class="ow">or</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;Item&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"User"</span> <span class="ow">or</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"Item"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;input should be a user x item matrix with appropriately named columns and rows&quot;</span>
+            <span class="s2">"input should be a user x item matrix with appropriately named columns and rows"</span>
         <span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;Rating&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="s2">"User"</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s2">"Rating"</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2102,7 +2107,7 @@
 
 
 <h2 id="neighbors.utils.nanpdist" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">'euclidean'</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 </h2>
@@ -2159,8 +2164,8 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>neighbors/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">nanpdist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">"euclidean"</span><span class="p">,</span> <span class="n">return_square</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Just like scipy.spatial.distance.pdist or sklearn.metrics.pairwise_distances, but respects NaNs by only comparing the overlapping values from pairs of rows.</span>
 
 <span class="sd">    Args:</span>
@@ -2170,7 +2175,7 @@
 
 <span class="sd">    Return:</span>
 <span class="sd">        np.ndarray: symmetric 2d array of distances</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">has_nans</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_nans</span><span class="p">:</span>
@@ -2188,7 +2193,9 @@
                     <span class="n">arr</span><span class="p">[</span><span class="n">row1_idx</span><span class="p">][</span><span class="n">vec_mask</span><span class="p">],</span>
                     <span class="n">arr</span><span class="p">[</span><span class="n">row2_idx</span><span class="p">][</span><span class="n">vec_mask</span><span class="p">],</span>
                 <span class="p">)</span>
-                <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">masked_row1</span><span class="p">,</span> <span class="n">masked_row2</span><span class="p">]),</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">masked_row1</span><span class="p">,</span> <span class="n">masked_row2</span><span class="p">]),</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                 <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">return_square</span><span class="p">:</span>
@@ -2277,7 +2284,7 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">split_train_test</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Custom train/test split generator for leave-one-fold out cross-validation. Given a user x item dataframe of dense or sparse data, generates n_folds worth of train/test split dataframes that have the same shape as data, but with non-overlapping values. This ensures that no user-item combination appears in both train and test splits. Useful for estimating out-of-sample performance. n_folds controls the train/test split ratio, e.g. n_folds = 5 means train = 4/5 (~80%); test = 1/5 (~20%)</span>
 
 <span class="sd">    Args:</span>
@@ -2288,10 +2295,9 @@
 
 <span class="sd">    Yields:</span>
 <span class="sd">        (tuple): train, test dataframes for each fold with same shape as data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
-    <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="n">flatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
         <span class="n">random_state</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
@@ -2305,22 +2311,9 @@
         <span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="n">flat</span><span class="p">[:</span><span class="n">start</span><span class="p">],</span> <span class="n">flat</span><span class="p">[</span><span class="n">stop</span><span class="p">:])])</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">elem</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">flat</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]])</span>
 
-        <span class="k">yield</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
-            <span class="n">train</span><span class="p">,</span>
-            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
-            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="p">),</span> <span class="n">unflatten_dataframe</span><span class="p">(</span>
-            <span class="n">test</span><span class="p">,</span>
-            <span class="n">num_rows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span>
-            <span class="n">num_cols</span><span class="o">=</span><span class="n">num_cols</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-            <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-            <span class="n">index_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">columns_name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="k">yield</span> <span class="p">(</span>
+            <span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="o">=</span><span class="n">data</span><span class="p">),</span>
+            <span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="o">=</span><span class="n">data</span><span class="p">),</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2335,7 +2328,7 @@
 
 
 <h2 id="neighbors.utils.unflatten_dataframe" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">unflatten_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">like_dataframe</span><span class="p">)</span></code>
 
 
 </h2>
@@ -2362,40 +2355,28 @@
         <td><em>required</em></td>
       </tr>
       <tr>
-        <td><code>columns</code></td>
-        <td><code>list</code></td>
-        <td><p>column names of new dataframe. Defaults to None.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>index</code></td>
-        <td><code>list</code></td>
-        <td><p>row names of new dataframe. Defaults to None.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>num_rows</code></td>
-        <td><code>int</code></td>
-        <td><p>total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>num_cols</code></td>
-        <td><code>int</code></td>
-        <td><p>total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
         <td><code>index_name</code></td>
         <td><code>str; optional</code></td>
         <td><p>Name of rows; Default None</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>columns_name</code></td>
         <td><code>str; optional</code></td>
         <td><p>Name of columns; Default None</p></td>
-        <td><code>None</code></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>column_order</code></td>
+        <td><code>iterable; optional</code></td>
+        <td><p>Order of columns; Default lexiographic order based on input array</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>row_order</code></td>
+        <td><code>iterable; optional</code></td>
+        <td><p>Order of rows; Default lexiographic order based on input array</p></td>
+        <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
@@ -2418,60 +2399,38 @@
           <summary>Source code in <code>neighbors/utils.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unflatten_dataframe</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">index_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">columns_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">like_dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.</span>
-<span class="sd">        columns (list, optional): column names of new dataframe. Defaults to None.</span>
-<span class="sd">        index (list, optional): row names of new dataframe. Defaults to None.</span>
-<span class="sd">        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)</span>
-<span class="sd">        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)</span>
 <span class="sd">        index_name (str; optional): Name of rows; Default None</span>
 <span class="sd">        columns_name (str; optional): Name of columns; Default None</span>
+<span class="sd">        column_order (iterable; optional): Order of columns; Default lexiographic order based on input array</span>
+<span class="sd">        row_order (iterable; optional): Order of rows; Default lexiographic order based on input array</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: original unflattened dataframe</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input should be a numpy array&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_rows</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;num_rows does not match the number of unique row_idx values in data&quot;</span>
-            <span class="p">)</span>
-    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
-        <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_cols</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;num_cols does not match the number of unique col_idx values in data&quot;</span>
-            <span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"input should be a numpy array"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">like_dataframe</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"like_dataframe should be a pandas dataframe"</span><span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">out</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">index_name</span>
-    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">columns_name</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">like_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span>
+
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div>
         </details>

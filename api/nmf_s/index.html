@@ -877,7 +877,7 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NNMF_sgd</span><span class="p">(</span><span class="n">BaseNMF</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The non-negative matrix factorization algorithm tries to decompose a users x items matrix into two additional matrices: users x factors and factors x items.</span>
 
 <span class="sd">    Training is performed via stochastic-gradient-descent and continues until convergence or the maximum number of iterations has been reached. Unlike `NNMF_mult` errors during training are used to update latent factors *separately* for each user/item combination. Additionally this implementation is more flexible as it supports hyperparameters for various kinds of regularization at the cost of increased computation time.</span>
@@ -888,28 +888,28 @@
 
 <span class="sd">    **Important Note**: model fitting can be highly sensitive to the regularization hyper-parameters passed to `.fit`. These hyper-parameters control the amount of regularization used when learning user and item factors and biases. By default *no regularization* is performed. For some combinations of hyper-parameters (e.g. large `user_fact_reg` and small `item_fact_reg`) latent vectors can blow up to infinity producing `NaNs` in model estimates. Model fitting will not fail in these cases so **caution** should be taken when making use of hyper-parameters.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">            verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, n_factors=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, n_factors=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_factors</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -925,8 +925,8 @@
         <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fit NNMF collaborative filtering model using stochastic-gradient-descent. **Note:** Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it&#39;s likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use `verbose=True` to help determine at what iteration these degenerate fits occur.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Fit NNMF collaborative filtering model using stochastic-gradient-descent. **Note:** Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it's likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use `verbose=True` to help determine at what iteration these degenerate fits occur.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.</span>
@@ -939,7 +939,7 @@
 <span class="sd">            tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training &lt; tol. Defaults to 0.001.</span>
 <span class="sd">            verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">            dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -950,7 +950,7 @@
         <span class="k">if</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_items</span> <span class="ow">and</span> <span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_users</span><span class="p">)</span>
         <span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_factors must be an integer &lt; number of items and users&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"n_factors must be an integer &lt; number of items and users"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_factors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n_factors</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">])</span>
@@ -995,10 +995,11 @@
         <span class="c1"># Run SGD</span>
         <span class="c1"># Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585</span>
         <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
             <span class="p">(</span>
                 <span class="n">error_history</span><span class="p">,</span>
                 <span class="n">converged</span><span class="p">,</span>
+                <span class="n">error_is_nan</span><span class="p">,</span>
                 <span class="n">n_iter</span><span class="p">,</span>
                 <span class="n">delta</span><span class="p">,</span>
                 <span class="n">norm_rmse</span><span class="p">,</span>
@@ -1045,24 +1046,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_norm_rmse</span> <span class="o">=</span> <span class="n">norm_rmse</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">converged</span> <span class="o">=</span> <span class="n">converged</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_is_nan</span> <span class="o">=</span> <span class="n">error_is_nan</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">CONVERGED!&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">CONVERGED!"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_is_nan</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (predictions are NaN)"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict User&#39;s missing items using NNMF with stochastic gradient descent&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Predict User's missing items using NNMF with stochastic gradient descent"""</span>
 
         <span class="c1"># user x factor * factor item + biases</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_vecs</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_vecs</span>
@@ -1157,16 +1161,16 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Args:</span>
 <span class="sd">        data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">        n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">        data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">        verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
     <span class="p">)</span>
@@ -1283,8 +1287,8 @@
     <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Fit NNMF collaborative filtering model using stochastic-gradient-descent. **Note:** Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it&#39;s likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use `verbose=True` to help determine at what iteration these degenerate fits occur.</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Fit NNMF collaborative filtering model using stochastic-gradient-descent. **Note:** Some combinations of fit parameters may lead to degenerate fits due to use and item vectors converging to infinity. Because no constraints are imposed on the values these parameters can take, please adjust them with caution. If you encounter NaNs in your predictions it's likely because of the specific combination of parameters you chose and you can try refitting with the default settings (i.e. no regularization and learning rate = 0.001). Use `verbose=True` to help determine at what iteration these degenerate fits occur.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n_factors (int, optional): number of factors to learn. Defaults to None which includes all factors.</span>
@@ -1297,7 +1301,7 @@
 <span class="sd">        tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training &lt; tol. Defaults to 0.001.</span>
 <span class="sd">        verbose (bool, optional): print information about training. Defaults to False.</span>
 <span class="sd">        dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -1308,7 +1312,7 @@
     <span class="k">if</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_items</span> <span class="ow">and</span> <span class="n">n_factors</span> <span class="o">&gt;</span> <span class="n">n_users</span><span class="p">)</span>
     <span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_factors</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_factors must be an integer &lt; number of items and users&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"n_factors must be an integer &lt; number of items and users"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">n_factors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">n_factors</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">])</span>
@@ -1353,10 +1357,11 @@
     <span class="c1"># Run SGD</span>
     <span class="c1"># Silence numba warning until this issue gets fixed: https://github.com/numba/numba/issues/4585</span>
     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">NumbaPerformanceWarning</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">error_history</span><span class="p">,</span>
             <span class="n">converged</span><span class="p">,</span>
+            <span class="n">error_is_nan</span><span class="p">,</span>
             <span class="n">n_iter</span><span class="p">,</span>
             <span class="n">delta</span><span class="p">,</span>
             <span class="n">norm_rmse</span><span class="p">,</span>
@@ -1403,17 +1408,21 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_norm_rmse</span> <span class="o">=</span> <span class="n">norm_rmse</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">converged</span> <span class="o">=</span> <span class="n">converged</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">error_is_nan</span> <span class="o">=</span> <span class="n">error_is_nan</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">CONVERGED!&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">CONVERGED!"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Delta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_is_nan</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (predictions are NaN)"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">FAILED TO CONVERGE (n_iter reached)"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n\t</span><span class="s2">Final Iteration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final delta exceeds tol: </span><span class="si">{</span><span class="n">tol</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Final Norm Error: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">norm_rmse</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>

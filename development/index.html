@@ -483,10 +483,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#formatting" class="md-nav__link">
+  <a href="#linting-and-formatting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Formatting
+        Linting and formatting
       
     </span>
   </a>
@@ -876,10 +876,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#formatting" class="md-nav__link">
+  <a href="#linting-and-formatting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Formatting
+        Linting and formatting
       
     </span>
   </a>
@@ -958,33 +958,37 @@
 
 <h1 id="contributing-to-development">Contributing to development</h1>
 <p>Each new push or pull-request to the code base for this toolbox will automatically be run through testing and documentation building via github actions.</p>
-<p>To develop this package or its documentation locally you will need to install a few extra dependencies.</p>
+<p>Development uses <a href="https://docs.astral.sh/uv/">uv</a> to manage the project environment, dependencies, and builds. All project metadata, dependencies, and tool configuration live in <code>pyproject.toml</code>.</p>
 <h2 id="installation">Installation</h2>
-<p><code>pip install -r requirements-dev.txt</code></p>
+<p><code>uv sync --group dev</code> creates a virtual environment at <code>.venv/</code> with the package installed in editable mode along with all development dependencies. Add <code>--group docs</code> if you also want to build the documentation locally.</p>
 <h2 id="testing">Testing</h2>
-<p>To run tests just call <code>pytest</code> from the root of this repository. New tests can be added in <code>neighbors/tests/</code>. To speed up tests you can optionally <code>pip install pytest-xdist</code> to parallelize testing and use it with: <code>pytest -rs -n auto</code>.</p>
-<h2 id="formatting">Formatting</h2>
-<p>Please format your code using black. If you've installed the development dependencies, then you can configure <code>git</code> to tell if you any new changes are not formatted by setting up a <strong>pre-commit hook:</strong>  </p>
+<p>To run tests just call <code>uv run pytest</code> from the root of this repository. New tests can be added in <code>neighbors/tests/</code>. Tests can be parallelized with <code>uv run pytest -rs -n auto</code>.</p>
+<h2 id="linting-and-formatting">Linting and formatting</h2>
+<p>Code is linted and formatted with <a href="https://docs.astral.sh/ruff/">ruff</a>. Before committing, run:</p>
+<div class="highlight"><pre><span></span><code>uv run ruff check .
+uv run ruff format .
+</code></pre></div>
+<p>You can configure <code>git</code> to warn you about unlinted or unformatted changes by setting up a <strong>pre-commit hook:</strong></p>
 <ul>
 <li><code>cd .git/hooks</code></li>
 <li>
 <p>Create a new file called <code>pre-commit</code> with the following contents:</p>
 <p><div class="highlight"><pre><span></span><code>#!/bin/sh
-black --check .
+uv run ruff check . &amp;&amp; uv run ruff format --check .
 </code></pre></div>
 - Make sure the file is executable <code>chmod 775 pre-commit</code></p>
 </li>
 </ul>
-<p>Now anytime you try to commit new changes, git will automatically run black before the commit and warn you if certain files need to be formatted.</p>
+<p>Now anytime you try to commit new changes, git will automatically run ruff before the commit and warn you if certain files need attention.</p>
 <h2 id="editing-continuous-integration">Editing continuous integration</h2>
-<p>To change how the automatic workflow builds are specified, make the relevant edits in <code>.github/workflows/conda_ci.yml</code>.</p>
+<p>To change how the automatic workflow builds are specified, make the relevant edits in the files within <code>.github/workflows/</code>.</p>
 <h2 id="documentation">Documentation</h2>
-<p>Documentation is built with <a href="https://www.mkdocs.org/">mkdocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs material theme</a>, <a href="https://pawamoy.github.io/mkdocstrings/">mkdocstrings</a>, and <a href="https://github.com/danielfrg/mkdocs-jupyter">mkdocs-jupyter</a> plugins. </p>
+<p>Documentation is built with <a href="https://www.mkdocs.org/">mkdocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs material theme</a>, <a href="https://pawamoy.github.io/mkdocstrings/">mkdocstrings</a>, and <a href="https://github.com/danielfrg/mkdocs-jupyter">mkdocs-jupyter</a> plugins.</p>
 <h3 id="live-server">Live server</h3>
-<p>After installation above, simply run <code>mkdocs serve</code> this the project root to start a hot-reloading server of the documentation at <code>http://localhost:8000</code>.  </p>
+<p>After installation above, simply run <code>uv run mkdocs serve</code> from the project root to start a hot-reloading server of the documentation at <code>http://localhost:8000</code>.</p>
 <p>To alter the layout of the docs site adjust settings in <code>mkdocs.yml</code>. To add or edit pages simply create markdown files within the <code>docs/</code> folder.</p>
 <h3 id="deploying">Deploying</h3>
-<p>You can use the <code>mkdocs gh-deploy</code> command in order to build and push the documentation site to the <a href="https://github.com/cosanlab/neighbors/tree/gh-pages">github-pages branch</a> of this repo.</p>
+<p>You can use the <code>uv run mkdocs gh-deploy</code> command in order to build and push the documentation site to the <a href="https://github.com/cosanlab/neighbors/tree/gh-pages">github-pages branch</a> of this repo.</p>
 
 
 

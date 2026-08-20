@@ -895,23 +895,23 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">KNN</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The K-Nearest Neighbors algorithm makes predictions using a weighted mean of a subset of similar users. Similarity can be controlled via the `metric` argument to the `.fit` method, and the number of other users can be controlled with the `k` argument to the `.predict` method. NOTE: If user similiarity cannot be computed or no observed ratings have been made by the top k simililar users, this algorithm will fallback to the global mean on observed data for prediction (i.e. like the `Mean` model).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">            verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
         <span class="p">)</span>
@@ -919,35 +919,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, similarity_metric=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, similarity_metric=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;correlation&quot;</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">"correlation"</span><span class="p">,</span>
         <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">skip_refit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.</span>
+<span class="w">        </span><span class="sd">"""Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            k (int): maximum number of other users to use when making a prediction for a single user. If set to None will use all users. Default 10. Note: it&#39;s possible for predictions to come from fewer than k other users if a particular user has fewer similar neighbors with positive similarity scores.</span>
-<span class="sd">            metric (str; optional): type of similarity. One of &#39;correlation&#39;, &#39;spearman&#39;, &#39;kendall&#39;, &#39;cosine&#39;, or &#39;pearson&#39;. &#39;pearson&#39; is just an alias for &#39;correlation&#39;. Default &#39;correlation&#39;.</span>
+<span class="sd">            k (int): maximum number of other users to use when making a prediction for a single user. If set to None will use all users. Default 10. Note: it's possible for predictions to come from fewer than k other users if a particular user has fewer similar neighbors with positive similarity scores.</span>
+<span class="sd">            metric (str; optional): type of similarity. One of 'correlation', 'spearman', 'kendall', 'cosine', or 'pearson'. 'pearson' is just an alias for 'correlation'. Default 'correlation'.</span>
 <span class="sd">            axis (int): dimension along which to compute mean, 0 = mean across users separately by item, 1 = mean across items separately by user; Default 0</span>
 <span class="sd">            skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">,</span> <span class="s2">&quot;kendall&quot;</span><span class="p">,</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="s2">&quot;correlation&quot;</span><span class="p">]</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">,</span> <span class="s2">"kendall"</span><span class="p">,</span> <span class="s2">"cosine"</span><span class="p">,</span> <span class="s2">"correlation"</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metric must be one of </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"metric must be one of </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
 
-        <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;correlation&quot;</span><span class="p">:</span>
-            <span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;pearson&quot;</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">"correlation"</span><span class="p">:</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="s2">"pearson"</span>
 
         <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -956,10 +955,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_refit</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dilate_mask</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">dilate_by_nsamples</span><span class="p">)</span>
 
-            <span class="c1"># Store the mean because we&#39;ll use it in cases we can&#39;t make a prediction</span>
+            <span class="c1"># Store the mean because we'll use it in cases we can't make a prediction</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;kendall&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"kendall"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">]:</span>
                 <span class="c1"># Fall back to pandas</span>
                 <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -975,32 +974,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make predictions using computed user similarities.</span>
+<span class="w">        </span><span class="sd">"""Make predictions using computed user similarities.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            k (int): number of closest neighbors to use</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-
             <span class="n">user_prediction_error</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="c1"># Get the similarity of this user to all other users, ignoring self-similarity</span>
             <span class="n">top_user_sims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_similarity</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row_idx</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">row_idx</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">top_user_sims</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2"> has no variance in their ratings. Impossible to compute similarity with other users. Falling back to global mean for all predictions&quot;</span>
+                    <span class="sa">f</span><span class="s2">"User </span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2"> has no variance in their ratings. Impossible to compute similarity with other users. Falling back to global mean for all predictions"</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">user_prediction_error</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># can&#39;t predict</span>
+                <span class="n">user_prediction_error</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># can't predict</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Remove nan users and sort</span>
                 <span class="n">top_user_sims</span> <span class="o">=</span> <span class="n">top_user_sims</span><span class="p">[</span><span class="o">~</span><span class="n">top_user_sims</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
                     <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">top_user_sims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">user_prediction_error</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># can&#39;t predict</span>
+                    <span class="n">user_prediction_error</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># can't predict</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># Get top k if requested</span>
                     <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1014,7 +1013,7 @@
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">top_user_sims</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">user_prediction_error</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="c1"># NOTE: this code block is just a vectorized version of looping over every item for the current user and seeing whether we have observed ratings for each of the k other users to make a prediction with. We do this because for each item the *actual* number of other users&#39; data availble for prediction will vary between 0-k based the pattern of sparsity</span>
+                        <span class="c1"># NOTE: this code block is just a vectorized version of looping over every item for the current user and seeing whether we have observed ratings for each of the k other users to make a prediction with. We do this because for each item the *actual* number of other users' data availble for prediction will vary between 0-k based the pattern of sparsity</span>
 
                         <span class="c1"># Get the observed ratings from top users</span>
                         <span class="n">top_user_ratings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top_user_sims</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
@@ -1036,7 +1035,7 @@
                         <span class="c1"># Finally get the predictions by dividing the sum of ratings by sum of similarities we ended up using. This is how Surprise does it too: https://github.com/NicolasHug/Surprise/blob/master/surprise/prediction_algorithms/knns.py#L124</span>
                         <span class="n">preds</span> <span class="o">=</span> <span class="n">rating_sums</span> <span class="o">/</span> <span class="n">sim_sums</span>
 
-                        <span class="c1"># For items we can&#39;t predict because we never observed any ratings from the top k users for that item, fill in with the global mean for that item</span>
+                        <span class="c1"># For items we can't predict because we never observed any ratings from the top k users for that item, fill in with the global mean for that item</span>
                         <span class="k">if</span> <span class="n">preds</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                             <span class="n">preds</span><span class="p">[</span><span class="n">preds</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="n">preds</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
 
@@ -1045,16 +1044,17 @@
             <span class="c1"># Handle cases where we were unable to make any predictions for this user</span>
             <span class="k">if</span> <span class="n">user_prediction_error</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Not enough similar users with data to make any predictions for user </span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2">. Falling back to global mean for all predictions&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Not enough similar users with data to make any predictions for user </span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2">. Falling back to global mean for all predictions"</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">predictions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_user_similarity</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{}</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot a heatmap of user x user similarities learned on the observed data</span>
 
 <span class="sd">        Args:</span>
@@ -1065,12 +1065,12 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ax: matplotib axis handle</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model as not been fit&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;correlation&quot;</span><span class="p">,</span> <span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Model as not been fit"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"correlation"</span><span class="p">,</span> <span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">]:</span>
             <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
-            <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;RdBu_r&quot;</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="s2">"RdBu_r"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
             <span class="n">cmap</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1085,10 +1085,10 @@
             <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
             <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">heatmap_kwargs</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">(</span><span class="n">heatmap_kwargs</span> <span class="ow">or</span> <span class="p">{}),</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">hide_title</span><span class="p">:</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metric: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Metric: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax</span>
 </code></pre></div>
         </details>
@@ -1175,16 +1175,16 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Args:</span>
 <span class="sd">        data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">        n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">        data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">        verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
     <span class="p">)</span>
@@ -1204,7 +1204,7 @@
 
 
 <h2 id="neighbors.models.KNN.fit" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;correlation&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_refit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">'correlation'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_refit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1255,30 +1255,29 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;correlation&quot;</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">"correlation"</span><span class="p">,</span>
     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">skip_refit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.</span>
+<span class="w">    </span><span class="sd">"""Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        k (int): maximum number of other users to use when making a prediction for a single user. If set to None will use all users. Default 10. Note: it&#39;s possible for predictions to come from fewer than k other users if a particular user has fewer similar neighbors with positive similarity scores.</span>
-<span class="sd">        metric (str; optional): type of similarity. One of &#39;correlation&#39;, &#39;spearman&#39;, &#39;kendall&#39;, &#39;cosine&#39;, or &#39;pearson&#39;. &#39;pearson&#39; is just an alias for &#39;correlation&#39;. Default &#39;correlation&#39;.</span>
+<span class="sd">        k (int): maximum number of other users to use when making a prediction for a single user. If set to None will use all users. Default 10. Note: it's possible for predictions to come from fewer than k other users if a particular user has fewer similar neighbors with positive similarity scores.</span>
+<span class="sd">        metric (str; optional): type of similarity. One of 'correlation', 'spearman', 'kendall', 'cosine', or 'pearson'. 'pearson' is just an alias for 'correlation'. Default 'correlation'.</span>
 <span class="sd">        axis (int): dimension along which to compute mean, 0 = mean across users separately by item, 1 = mean across items separately by user; Default 0</span>
 <span class="sd">        skip_refit (bool; optional): skip re-estimation of user x user similarity matrix. Faster if only exploring different k and no other model parameters or masks are changing. Default False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">,</span> <span class="s2">&quot;kendall&quot;</span><span class="p">,</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="s2">&quot;correlation&quot;</span><span class="p">]</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">,</span> <span class="s2">"kendall"</span><span class="p">,</span> <span class="s2">"cosine"</span><span class="p">,</span> <span class="s2">"correlation"</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metric must be one of </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"metric must be one of </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
 
-    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;correlation&quot;</span><span class="p">:</span>
-        <span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;pearson&quot;</span>
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">"correlation"</span><span class="p">:</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="s2">"pearson"</span>
 
     <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -1287,10 +1286,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_refit</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dilate_mask</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">dilate_by_nsamples</span><span class="p">)</span>
 
-        <span class="c1"># Store the mean because we&#39;ll use it in cases we can&#39;t make a prediction</span>
+        <span class="c1"># Store the mean because we'll use it in cases we can't make a prediction</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;kendall&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"kendall"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">]:</span>
             <span class="c1"># Fall back to pandas</span>
             <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_data</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1317,7 +1316,7 @@
 
 
 <h2 id="neighbors.models.KNN.plot_user_similarity" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">plot_user_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{})</span></code>
+<code class="highlight language-python"><span class="n">plot_user_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h2>
@@ -1359,7 +1358,7 @@
         <td><code>heatmap_kwargs</code></td>
         <td><code>dict</code></td>
         <td><p>addition arguments to seaborn.heatmap.</p></td>
-        <td><code>{}</code></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -1381,9 +1380,9 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plot_user_similarity</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="p">{}</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">label_fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">hide_title</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">heatmap_kwargs</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Plot a heatmap of user x user similarities learned on the observed data</span>
 
 <span class="sd">    Args:</span>
@@ -1394,12 +1393,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ax: matplotib axis handle</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model as not been fit&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;correlation&quot;</span><span class="p">,</span> <span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Model as not been fit"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"correlation"</span><span class="p">,</span> <span class="s2">"pearson"</span><span class="p">,</span> <span class="s2">"spearman"</span><span class="p">]:</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
-        <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;RdBu_r&quot;</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="s2">"RdBu_r"</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1414,10 +1413,10 @@
         <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
         <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">heatmap_kwargs</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">(</span><span class="n">heatmap_kwargs</span> <span class="ow">or</span> <span class="p">{}),</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">hide_title</span><span class="p">:</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metric: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Metric: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_fontsize</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ax</span>
 </code></pre></div>
         </details>

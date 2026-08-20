@@ -873,37 +873,36 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Mean</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The Mean algorithm simply uses the mean of other users to make predictions about items. It&#39;s primarily useful as a good baseline model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The Mean algorithm simply uses the mean of other users to make predictions about items. It's primarily useful as a good baseline model.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">            mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">            n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">            data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">            random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">            verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.</span>
+<span class="w">        </span><span class="sd">"""Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</span>
 <span class="sd">            axis (int): dimension along which to compute mean, 0 = mean across users separately by item, 1 = mean across items separately by user; Default 0</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -914,8 +913,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict missing items using other subject&#39;s item means.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Predict missing items using other subject's item means."""</span>
 
         <span class="c1"># Always predict mean (learned on observed values) for observed and missing values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
@@ -1006,16 +1004,16 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Args:</span>
 <span class="sd">        data (pd.DataFrame): users x items dataframe</span>
-<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into &#39;observed&#39; and &#39;missing&#39; datasets. Defaults to None.</span>
+<span class="sd">        mask (pd.DataFrame, optional): A boolean dataframe used to split the data into 'observed' and 'missing' datasets. Defaults to None.</span>
 <span class="sd">        n_mask_items (int/float, optional): number of items to mask out, while the rest are treated as observed; Defaults to None.</span>
 <span class="sd">        data_range (int/float, optional): max - min of the data; Default computed from the input data. This is useful to set manually in case the input data do not span the full range of possible values</span>
 <span class="sd">        random_state (None, int, RandomState): a seed or random state used for all internal random operations (e.g. randomly mask half the data given n_mask_item = .05). Passing None will generate a new random seed. Default None.</span>
 <span class="sd">        verbose (bool; optional): print any initialization warnings; Default True</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">n_mask_items</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
     <span class="p">)</span>
@@ -1070,14 +1068,13 @@
         <details class="quote">
           <summary>Source code in <code>neighbors/models.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dilate_by_nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.</span>
+<span class="w">    </span><span class="sd">"""Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dilate_ts_n_samples (int): will dilate masked samples by n_samples to leverage auto-correlation in estimating time-series data</span>
 <span class="sd">        axis (int): dimension along which to compute mean, 0 = mean across users separately by item, 1 = mean across items separately by user; Default 0</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Call parent fit which acts as a guard for non-masked data</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
