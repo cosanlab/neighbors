@@ -2,9 +2,11 @@
 Included datasets
 """
 
-import pandas as pd
+from importlib.resources import files
+
 import numpy as np
-import pkg_resources
+import pandas as pd
+
 from .utils import check_random_state
 
 __all__ = ["load_movielens100k", "load_toymat"]
@@ -17,8 +19,8 @@ def load_movielens100k():
     Returns:
         pd.DataFrame: long-form dataframe user, item, rating, timestamp columns
     """
-    stream = pkg_resources.resource_stream(__name__, "data/movielens100k.csv")
-    return pd.read_csv(stream)
+    with files(__package__).joinpath("data/movielens100k.csv").open("rb") as stream:
+        return pd.read_csv(stream)
 
 
 def load_toymat(users=50, items=100, random_state=None):

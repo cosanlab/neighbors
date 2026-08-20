@@ -1,16 +1,17 @@
-import pandas as pd
-import numpy as np
-from scipy.stats import pearsonr
-from copy import deepcopy
-import matplotlib.pyplot as plt
-from .utils import create_sparse_mask, downsample_dataframe, check_random_state
 import warnings
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
+from scipy.stats import pearsonr
+
+from .utils import check_random_state, create_sparse_mask, downsample_dataframe
 
 __all__ = ["Base", "BaseNMF"]
 
 
-class Base(object):
+class Base:
     """
     This is the base class for all model types.
     """
@@ -141,7 +142,8 @@ class Base(object):
 
         if actual is None:
             warnings.warn(
-                "Cannot score predictions on missing data because true values were never observed!"
+                "Cannot score predictions on missing data because true values were never observed!",
+                stacklevel=2,
             )
             return None
 
@@ -214,7 +216,7 @@ class Base(object):
         figsize=(16, 8),
         label_fontsize=16,
         hide_title=False,
-        heatmap_kwargs={},
+        heatmap_kwargs=None,
     ):
         """Create plot of actual vs predicted values.
 
@@ -241,11 +243,13 @@ class Base(object):
         if actual is None:
             ncols = 2
             warnings.warn(
-                "Cannot score predictions on missing data because true values were never observed!"
+                "Cannot score predictions on missing data because true values were never observed!",
+                stacklevel=2,
             )
         else:
             ncols = 3
 
+        heatmap_kwargs = {} if heatmap_kwargs is None else heatmap_kwargs
         heatmap_kwargs.setdefault("square", False)
         heatmap_kwargs.setdefault("xticklabels", False)
         heatmap_kwargs.setdefault("yticklabels", False)
@@ -283,7 +287,7 @@ class Base(object):
             rmse = self.score(dataset=dataset, by_user=True, metric="rmse")
             if not hide_title:
                 plt.suptitle(
-                    f"Mean RMSE: {np.round(rmse.mean(),3)} +/- {np.round(rmse.std(), 3)}\nMean Correlation: {np.round(r.mean(), 3)} +/- {np.round(r.std(), 3)}",
+                    f"Mean RMSE: {np.round(rmse.mean(), 3)} +/- {np.round(rmse.std(), 3)}\nMean Correlation: {np.round(r.mean(), 3)} +/- {np.round(r.std(), 3)}",
                     y=1.07,
                     fontsize=label_fontsize + 2,
                 )
@@ -292,7 +296,6 @@ class Base(object):
         return f, ax
 
     def downsample(self, n_samples, sampling_freq=None, target_type="samples"):
-
         """
         Downsample a model's rating matrix to a new target frequency or number of samples using averaging. Also downsamples a model's mask and dilated mask if they exist as well as a model's predictions if it's already been fit.
 
@@ -325,7 +328,7 @@ class Base(object):
                 target_type=target_type,
             )
             # Ensure mask stays boolean
-            self.mask.loc[:, :] = self.mask > 0
+            self.mask = self.mask > 0
 
             # Masked data
             self.masked_data = downsample_dataframe(
@@ -343,7 +346,7 @@ class Base(object):
                     target_type=target_type,
                 )
                 # Ensure mask stays boolean
-                self.dilated_mask.loc[:, :] = self.dilated_mask > 0
+                self.dilated_mask = self.dilated_mask > 0
 
         if self.is_fit:
             self.predictions = downsample_dataframe(
@@ -354,7 +357,6 @@ class Base(object):
             )
 
     def to_long_df(self):
-
         """Create a long format pandas dataframe with observed, predicted, and mask."""
 
         observed = pd.DataFrame(columns=["User", "Item", "Rating", "Condition"])
@@ -420,41 +422,43 @@ class Base(object):
 
     @staticmethod
     def _conv_ts_mean_overlap(sub_rating, n_samples=5):
+        """Dilate each rating by n samples using a centered boxcar kernel.
 
-        """Dilate each rating by n samples (centered).  If dilated samples are overlapping they will be averaged.
+        Values covered by overlapping kernels are averaged. Odd-width kernels
+        center exactly on an observation. Even-width kernels center between
+        samples using NumPy's ``same`` convolution alignment.
 
         Args:
             sub_rating (array): vector of data for subject
             n_samples (int):  number of samples to dilate each rating
 
         Returns:
-            sub_rating_conv_mn (array): subject rating vector with each rating dilated n_samples (centered) with mean of overlapping
+            sub_rating_conv_mn (array): subject rating vector with each rating
+                dilated n_samples (centered) with mean of overlapping values
 
         """
 
-        # Notes:  Could add custom filter input
-        bin_sub_rating = ~sub_rating.isnull()
-        if np.any(sub_rating.isnull()):
-            sub_rating.fillna(0, inplace=True)
+        # Notes: Could add custom filter input
+        observed = ~sub_rating.isnull()
+        ratings = sub_rating.fillna(0)
         filt = np.ones(n_samples)
-        bin_sub_rating_conv = np.convolve(bin_sub_rating, filt)[: len(bin_sub_rating)]
-        sub_rating_conv = np.convolve(sub_rating, filt)[: len(sub_rating)]
-        sub_rating_conv_mn = deepcopy(sub_rating_conv)
-        sub_rating_conv_mn[bin_sub_rating_conv >= 1] = (
-            sub_rating_conv_mn[bin_sub_rating_conv >= 1]
-            / bin_sub_rating_conv[bin_sub_rating_conv >= 1]
-        )
-        new_mask = bin_sub_rating_conv == 0
-        sub_rating_conv_mn[new_mask] = np.nan
-        return sub_rating_conv_mn
+        observed_conv = np.convolve(observed, filt, mode="same")
+        ratings_conv = np.convolve(ratings, filt, mode="same")
+        dilated = np.full_like(ratings_conv, np.nan, dtype=float)
+        np.divide(ratings_conv, observed_conv, out=dilated, where=observed_conv > 0)
+        return dilated
 
     def dilate_mask(self, n_samples=None):
-
         """Dilate sparse time-series data by n_samples.
-        Overlapping data will be averaged. This method computes and stores the dilated mask in `.dilated_mask` and internally updates the `.masked_data`. Repeated calls to this method on the same model instance **do not** stack, but rather perform a new dilation on the original masked data. Called this method with `None` will undo any dilation.
+        Values covered by overlapping kernels will be averaged. This method
+        computes and stores the dilated mask in `.dilated_mask` and internally
+        updates the `.masked_data`. Repeated calls to this method on the same model
+        instance **do not** stack, but rather perform a new dilation on the
+        original masked data. Calling this method with `None` will undo any
+        dilation.
 
         Args:
-            nsamples (int):  Number of samples to dilate data
+            n_samples (int): Number of samples to dilate data
 
         """
 
@@ -495,7 +499,8 @@ class Base(object):
             )
         if kwargs.get("dilate_by_nsamples", None) and self.is_mask_dilated:
             warnings.warn(
-                ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()"
+                ".fit() was called with dilate_by_nsamples=None, but model mask is already dilated! This will undo dilation and then fit a model. Instead pass dilate_by_nsamples, directly to .fit()",
+                stacklevel=2,
             )
 
     def summary(self, verbose=False, actual=None, dataset=None):
@@ -562,6 +567,7 @@ class Base(object):
                     zip(
                         dataset,
                         this_subject_result.mean().values,
+                        strict=False,
                     )
                 )
         # Save final results to longform df

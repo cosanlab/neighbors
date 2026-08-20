@@ -1,7 +1,7 @@
 # Neighbors
 [![Build Status](https://github.com/cosanlab/neighbors/actions/workflows/tests_and_docs.yml/badge.svg)](https://github.com/cosanlab/neighbors/actions/workflows/tests_and_docs.yml)
 [![Coverage Status](https://coveralls.io/repos/github/cosanlab/neighbors/badge.svg?branch=master)](https://coveralls.io/github/cosanlab/neighbors?branch=master)
-![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue)
+![Python Versions](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)
 ![Platforms](https://img.shields.io/badge/platform-linux%20%7C%20osx%20%7C%20win-blue)  
 
 **A Python package for collaborative filtering on social and emotion datasets**
@@ -19,7 +19,7 @@ The best way to learn how to use the package is by checking out the 3 usage tuto
 
 ```python  
 from neighbors.models import NNMF_sgd
-from neighbors.utils create_user_item_matrix, estimate_performance
+from neighbors.utils import create_user_item_matrix, estimate_performance
 
 # Assuming data is 3 column pandas df with 'User', 'Item', 'Rating'
 # convert it to a (possibly sparse) user x item matrix
@@ -53,3 +53,5 @@ Currently supported algorithms include:
 - `KNN` - k-nearest neighbors
 - `NNMF_mult` - non-negative matrix factorization trained via multiplicative updating
 - `NNMF_sgd` - non-negative matrix factorization trained via stochastic gradient descent
+
+By default both `NNMF` models clip their predictions to the range of the observed ratings, since matrix factorization (and especially the unconstrained bias terms in `NNMF_sgd`) can otherwise produce predictions outside that range (e.g. negative values despite all-positive ratings). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions, and can be disabled with `.fit(clip_predictions=False)`.

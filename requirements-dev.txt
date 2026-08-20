@@ -1,6 +1,0 @@
--r requirements.txt
-black
-mkdocs
-mkdocs-material
-mkdocstrings
-mkdocs-jupyter

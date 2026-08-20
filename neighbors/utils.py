@@ -2,16 +2,16 @@
 Utility functions and helpers
 """
 
+import numbers
+import os
+import time
+from concurrent.futures import ThreadPoolExecutor
+from itertools import chain, product
+
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.spatial.distance import pdist, squareform
-import numbers
-from itertools import product, chain
-from typing import Union
-from concurrent.futures import ThreadPoolExecutor
-import os
-import time
 
 __all__ = [
     "create_user_item_matrix",
@@ -46,7 +46,7 @@ def check_random_state(seed):
     if isinstance(seed, np.random.RandomState):
         return seed
     raise ValueError(
-        "%r cannot be used to seed a numpy.random.RandomState" " instance" % seed
+        f"{seed!r} cannot be used to seed a numpy.random.RandomState instance"
     )
 
 
@@ -69,7 +69,6 @@ def invert_user_item_matrix(df):
 
 
 def create_user_item_matrix(df, columns=None, force_float=True, errors="raise"):
-
     """Convert a longform dataframe containing columns with unique user ids, item ids, and ratings into a user x item wide matrix
 
     Args:
@@ -156,7 +155,9 @@ def nanpdist(arr, metric="euclidean", return_square=True):
                     arr[row1_idx][vec_mask],
                     arr[row2_idx][vec_mask],
                 )
-                out[k] = pdist(np.vstack([masked_row1, masked_row2]), metric=metric)
+                out[k] = pdist(
+                    np.vstack([masked_row1, masked_row2]), metric=metric
+                ).item()
                 k += 1
 
     if return_square:
@@ -206,10 +207,13 @@ def create_sparse_mask(data, n_mask_items=0.2, random_state=None):
             for _ in range(data.shape[0])
         ]
     )
-    return pd.DataFrame(mask, index=data.index, columns=data.columns)
+    out = pd.DataFrame(mask, index=data.index, columns=data.columns)
+    out.index.name = data.index.name
+    out.columns.name = data.columns.name
+    return out
 
 
-def flatten_dataframe(data: pd.DataFrame) -> list:
+def flatten_dataframe(data: pd.DataFrame) -> np.ndarray:
     """
     Given a 2d dataframe return a numpy array of arrays organized as (row_idx, col_idx, val). This function is analgous to numpy.ravel or numpy.flatten for arrays, with the addition of the row and column indices for each value
 
@@ -223,30 +227,23 @@ def flatten_dataframe(data: pd.DataFrame) -> list:
     if not isinstance(data, pd.DataFrame):
         raise TypeError("input must be a pandas dataframe")
 
-    out = zip(product(data.index, data.columns), data.to_numpy().ravel())
+    out = zip(product(data.index, data.columns), data.to_numpy().ravel(), strict=False)
     return np.array([(elem[0][0], elem[0][1], elem[1]) for elem in out])
 
 
 def unflatten_dataframe(
     data: np.ndarray,
-    columns=None,
-    index=None,
-    num_rows=None,
-    num_cols=None,
-    index_name=None,
-    columns_name=None,
+    like_dataframe: pd.DataFrame,
 ) -> pd.DataFrame:
     """
     Reverse a flatten_dataframe operation to reconstruct the original unflattened dataframe
 
     Args:
         data (np.ndarray): n_items x 3 numpy array where columns represent row_idx, col_idx, and val at the location.
-        columns (list, optional): column names of new dataframe. Defaults to None.
-        index (list, optional): row names of new dataframe. Defaults to None.
-        num_rows (int, optional): total number of rows. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(row_idx)
-        num_cols (int, optional): total number of cols. Useful if the flattened dataframe had a non-numerical non-ordered index. Default None which uses the max(col_idx)
         index_name (str; optional): Name of rows; Default None
         columns_name (str; optional): Name of columns; Default None
+        column_order (iterable; optional): Order of columns; Default lexiographic order based on input array
+        row_order (iterable; optional): Order of rows; Default lexiographic order based on input array
 
     Returns:
         pd.DataFrame: original unflattened dataframe
@@ -254,35 +251,20 @@ def unflatten_dataframe(
 
     if not isinstance(data, np.ndarray):
         raise TypeError("input should be a numpy array")
-    if index is None and num_rows is None:
-        index = list(dict.fromkeys(data[:, 0]))
-        num_rows = len(index)
-    elif index is not None and num_rows is None:
-        num_rows = len(index)
-    elif index is None and num_rows is not None:
-        index = list(dict.fromkeys(data[:, 0]))
-        if len(index) != num_rows:
-            raise ValueError(
-                "num_rows does not match the number of unique row_idx values in data"
-            )
-    if columns is None and num_cols is None:
-        columns = list(dict.fromkeys(data[:, 1]))
-        num_cols = len(columns)
-    elif columns is not None and num_cols is None:
-        num_cols = len(columns)
-    elif columns is None and num_cols is not None:
-        columns = list(dict.fromkeys(data[:, 1]))
-        if len(columns) != num_cols:
-            raise ValueError(
-                "num_cols does not match the number of unique col_idx values in data"
-            )
-    out = np.empty((num_rows, num_cols))
+    if not isinstance(like_dataframe, pd.DataFrame):
+        raise TypeError("like_dataframe should be a pandas dataframe")
+
+    out = np.empty((like_dataframe.shape[0], like_dataframe.shape[1]))
     out[:] = np.nan
-    out = pd.DataFrame(out, index=index, columns=columns)
+    out = pd.DataFrame(out, index=like_dataframe.index, columns=like_dataframe.columns)
+
     for elem in data:
-        out.loc[elem[0], elem[1]] = np.float(elem[2])
-    out.index.name = index_name
-    out.columns.name = columns_name
+        row = elem[0].astype(type(like_dataframe.index[0]))
+        col = elem[1].astype(type(like_dataframe.columns[0]))
+        out.loc[row, col] = float(elem[2])
+    out.index.name = like_dataframe.index.name
+    out.columns.name = like_dataframe.columns.name
+
     return out
 
 
@@ -345,7 +327,6 @@ def split_train_test(
     """
 
     random_state = check_random_state(random_state)
-    num_rows, num_cols = data.shape
     flat = flatten_dataframe(data)
     if shuffle:
         random_state.shuffle(flat)
@@ -359,22 +340,9 @@ def split_train_test(
         train = np.array([elem for elem in chain(flat[:start], flat[stop:])])
         test = np.array([elem for elem in flat[start:stop]])
 
-        yield unflatten_dataframe(
-            train,
-            num_rows=num_rows,
-            num_cols=num_cols,
-            index=data.index,
-            columns=data.columns,
-            index_name=data.index.name,
-            columns_name=data.columns.name,
-        ), unflatten_dataframe(
-            test,
-            num_rows=num_rows,
-            num_cols=num_cols,
-            index=data.index,
-            columns=data.columns,
-            index_name=data.index.name,
-            columns_name=data.columns.name,
+        yield (
+            unflatten_dataframe(train, like_dataframe=data),
+            unflatten_dataframe(test, like_dataframe=data),
         )
 
 
@@ -383,11 +351,11 @@ def estimate_performance(
     data: pd.DataFrame,
     n_iter: int = 10,
     n_folds: int = 10,
-    n_mask_items: Union[int, np.floating] = 0.2,
+    n_mask_items: int | np.floating = 0.2,
     return_agg: bool = True,
     return_full_performance: bool = False,
-    agg_stats: tuple = ["mean", "std"],
-    fit_kwargs: dict = {},
+    agg_stats: tuple = ("mean", "std"),
+    fit_kwargs: dict | None = None,
     random_state=None,
     parallelize=False,
     timeit=True,
@@ -403,7 +371,7 @@ def estimate_performance(
         data (pd.DataFrame): a users x item dataframe
         n_iter (int, optional): number of repetitions for dense data. Defaults to 10.
         n_folds (int, optional): number of folds for CV on sparse data. Defaults to 10.
-        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration; Defaults to masking out 20% of observed values
+        n_mask_items (int/float, optional): how much randomly sparsify dense data each iteration. Defaults to masking out 20% of observed values. **Ignored if input data is already sparse.**
         return_agg (bool, optional): Return mean and std over repetitions rather than the reptitions themselves Defaults to True.
         return_full_performance (bool, optional): return the performance against both "observed" and "missing" or just "missing" values if using dense data and `n_iter`. Likewise return performance of both "train" and "test" or just "test" splits if using sparse data and `n_folds`; Default False
         agg_stats (list): string names of statistics to compute over repetitions. Must be accepted by `pd.DataFrame.agg`; Default ('mean', 'std')
@@ -418,6 +386,7 @@ def estimate_performance(
         pd.DataFrame: aggregated or non-aggregated summary statistics
     """
 
+    fit_kwargs = {} if fit_kwargs is None else fit_kwargs
     sparsity = get_sparsity(data)
     random_state = check_random_state(random_state)
     # Set max threads to the new default in Python 3.8
@@ -425,7 +394,9 @@ def estimate_performance(
 
     if sparsity == 0.0:
         # DENSE DATA so re-mask each iteration
-        print(f"Data sparsity is {np.round(sparsity*100,2)}%. Using random masking...")
+        print(
+            f"Data sparsity is {np.round(sparsity * 100, 2)}%. Using random masking..."
+        )
 
         seeds = random_state.randint(np.iinfo(np.int32).max, size=n_iter)
 
@@ -500,7 +471,7 @@ def estimate_performance(
     else:
         # SPARSE DATA so split observed values according to n_folds
         print(
-            f"Data sparsity is {np.round(sparsity*100,2)}%. Using cross-validation..."
+            f"Data sparsity is {np.round(sparsity * 100, 2)}%. Using cross-validation..."
         )
 
         def _run_sparse(
@@ -596,8 +567,10 @@ def estimate_performance(
     # Collect results
     all_results = list(all_results)
     group_results = [elem[0] for elem in all_results]
+    # Normalize the index name so downstream grouping works regardless of what the
+    # input data's index was called (or if it was unnamed); see #38
     user_results = [
-        elem[1].reset_index().rename(columns={"User": "user"}) for elem in all_results
+        elem[1].rename_axis(index="user").reset_index() for elem in all_results
     ]
     group_results = (
         pd.concat(group_results, ignore_index=True)
@@ -608,7 +581,7 @@ def estimate_performance(
 
     # Handle aggregation
     if return_agg:
-        col_order = ["algorithm", "dataset", "group", "metric"] + agg_stats
+        col_order = ["algorithm", "dataset", "group", "metric"] + list(agg_stats)
         group_results = (
             group_results.groupby(["algorithm", "dataset", "group", "metric"])
             .score.agg(agg_stats)

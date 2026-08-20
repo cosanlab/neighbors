@@ -2,15 +2,17 @@
 Core algorithms for collaborative filtering
 """
 
-import pandas as pd
-import numpy as np
-from .base import Base, BaseNMF
-from .utils import nanpdist
-from ._fit import sgd, mult
 import warnings
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
 from numba.core.errors import NumbaPerformanceWarning
+
+from ._fit import mult, sgd
+from .base import Base, BaseNMF
+from .utils import nanpdist
 
 __all__ = ["Mean", "KNN", "NNMF_mult", "NNMF_sgd"]
 
@@ -39,7 +41,6 @@ class Mean(Base):
         self.mean = None
 
     def fit(self, dilate_by_nsamples=None, axis=0, **kwargs):
-
         """Fit model to train data. Simply learns item-wise mean using observed (non-missing) values.
 
         Args:
@@ -57,7 +58,6 @@ class Mean(Base):
         self.is_fit = True
 
     def _predict(self):
-
         """Predict missing items using other subject's item means."""
 
         # Always predict mean (learned on observed values) for observed and missing values
@@ -102,7 +102,6 @@ class KNN(Base):
         skip_refit=False,
         **kwargs,
     ):
-
         """Fit collaborative model to train data.  Calculate similarity between subjects across items. Repeated called to fit with different k, but the same previous arguments will re-use the computed user x user similarity matrix.
 
         Args:
@@ -157,13 +156,13 @@ class KNN(Base):
         predictions = self.masked_data.copy()
 
         for row_idx, _ in self.masked_data.iterrows():
-
             user_prediction_error = False
             # Get the similarity of this user to all other users, ignoring self-similarity
             top_user_sims = self.user_similarity.loc[row_idx].drop(row_idx)
             if top_user_sims.isnull().all():
                 warnings.warn(
-                    f"User {row_idx} has no variance in their ratings. Impossible to compute similarity with other users. Falling back to global mean for all predictions"
+                    f"User {row_idx} has no variance in their ratings. Impossible to compute similarity with other users. Falling back to global mean for all predictions",
+                    stacklevel=2,
                 )
                 user_prediction_error = True  # can't predict
             else:
@@ -217,14 +216,15 @@ class KNN(Base):
             # Handle cases where we were unable to make any predictions for this user
             if user_prediction_error:
                 warnings.warn(
-                    f"Not enough similar users with data to make any predictions for user {row_idx}. Falling back to global mean for all predictions"
+                    f"Not enough similar users with data to make any predictions for user {row_idx}. Falling back to global mean for all predictions",
+                    stacklevel=2,
                 )
                 predictions.loc[row_idx, :] = self.mean.to_numpy()
 
         self.predictions = predictions
 
     def plot_user_similarity(
-        self, figsize=(8, 8), label_fontsize=16, hide_title=False, heatmap_kwargs={}
+        self, figsize=(8, 8), label_fontsize=16, hide_title=False, heatmap_kwargs=None
     ):
         """
         Plot a heatmap of user x user similarities learned on the observed data
@@ -257,7 +257,7 @@ class KNN(Base):
             cmap=cmap,
             square=True,
             ax=ax,
-            **heatmap_kwargs,
+            **(heatmap_kwargs or {}),
         )
         if not hide_title:
             _ = ax.set_title(f"Metric: {self.metric}", fontsize=label_fontsize)
@@ -308,9 +308,9 @@ class NNMF_mult(BaseNMF):
         eps=1e-6,
         verbose=False,
         dilate_by_nsamples=None,
+        clip_predictions=True,
         **kwargs,
     ):
-
         """Fit NNMF collaborative filtering model to train data using multiplicative updating.
 
         Given non-negative matrix `V` find non-negative factors `W` and `H` by minimizing `||V - WH||^2`.
@@ -322,6 +322,7 @@ class NNMF_mult(BaseNMF):
             eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.
             verbose (bool, optional): print information about training. Defaults to False.
             dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
+            clip_predictions (bool, optional): clip predictions to the observed rating range, since factorization alone can produce predictions outside it. This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.
         """
 
         # Call parent fit which acts as a guard for non-masked data
@@ -338,6 +339,7 @@ class NNMF_mult(BaseNMF):
             n_factors = min([n_users, n_items])
 
         self.n_factors = n_factors
+        self.clip_predictions = clip_predictions
 
         # Initialize W and H as non-negative scaled random values
         # We use random initialization scaled by the number of factors not unlike sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
@@ -387,16 +389,22 @@ class NNMF_mult(BaseNMF):
                 print(f"\n\tFinal Iteration: {self._n_iter}")
                 print(f"\tFinal delta exceeds tol: {tol} <= {self._delta}")
 
-            print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
+            print(f"\tFinal Norm Error: {np.round(100 * norm_rmse, 2)}%")
         self._predict()
         self.is_fit = True
 
     def _predict(self):
-
         """Predict subjects' missing items using NNMF with multiplicative updating"""
 
+        predictions = self.W @ self.H
+        if self.clip_predictions:
+            predictions = np.clip(
+                predictions,
+                self.masked_data.min().min(),
+                self.masked_data.max().max(),
+            )
         self.predictions = pd.DataFrame(
-            self.W @ self.H, index=self.data.index, columns=self.data.columns
+            predictions, index=self.data.index, columns=self.data.columns
         )
 
 
@@ -447,6 +455,7 @@ class NNMF_sgd(BaseNMF):
         tol=1e-6,
         verbose=False,
         dilate_by_nsamples=None,
+        clip_predictions=True,
         **kwargs,
     ):
         """
@@ -463,6 +472,7 @@ class NNMF_sgd(BaseNMF):
             tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
             verbose (bool, optional): print information about training. Defaults to False.
             dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
+            clip_predictions (bool, optional): clip predictions to the observed rating range, since the unconstrained bias terms can otherwise push predictions outside it (e.g. negative values despite all-positive ratings). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.
         """
 
         # Call parent fit which acts as a guard for non-masked data
@@ -480,6 +490,7 @@ class NNMF_sgd(BaseNMF):
             n_factors = min([n_users, n_items])
 
         self.n_factors = n_factors
+        self.clip_predictions = clip_predictions
         self.item_fact_reg = item_fact_reg
         self.user_fact_reg = user_fact_reg
         self.item_bias_reg = item_bias_reg
@@ -523,6 +534,7 @@ class NNMF_sgd(BaseNMF):
             (
                 error_history,
                 converged,
+                error_is_nan,
                 n_iter,
                 delta,
                 norm_rmse,
@@ -569,23 +581,26 @@ class NNMF_sgd(BaseNMF):
         self._delta = delta
         self._norm_rmse = norm_rmse
         self.converged = converged
+        self.error_is_nan = error_is_nan
         if verbose:
             if self.converged:
                 print("\n\tCONVERGED!")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
                 print(f"\tFinal Delta: {np.round(self._delta)}")
+            elif self.error_is_nan:
+                print("\tFAILED TO CONVERGE (predictions are NaN)")
+                print(f"\n\tFinal Iteration: {self._n_iter}")
             else:
                 print("\tFAILED TO CONVERGE (n_iter reached)")
                 print(f"\n\tFinal Iteration: {self._n_iter}")
                 print(f"\tFinal delta exceeds tol: {tol} <= {self._delta}")
 
-            print(f"\tFinal Norm Error: {np.round(100*norm_rmse, 2)}%")
+            print(f"\tFinal Norm Error: {np.round(100 * norm_rmse, 2)}%")
 
         self._predict()
         self.is_fit = True
 
     def _predict(self):
-
         """Predict User's missing items using NNMF with stochastic gradient descent"""
 
         # user x factor * factor item + biases
@@ -593,6 +608,12 @@ class NNMF_sgd(BaseNMF):
         predictions = (
             (predictions.T + self.user_bias).T + self.item_bias + self.global_bias
         )
+        if self.clip_predictions:
+            predictions = np.clip(
+                predictions,
+                self.masked_data.min().min(),
+                self.masked_data.max().max(),
+            )
         self.predictions = pd.DataFrame(
             predictions, index=self.data.index, columns=self.data.columns
         )

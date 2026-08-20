@@ -4,16 +4,19 @@ Test utility functions
 
 import numpy as np
 import pandas as pd
+import pytest
+
 from neighbors import (
-    create_user_item_matrix,
-    invert_user_item_matrix,
-    nanpdist,
+    Mean,
     create_sparse_mask,
+    create_user_item_matrix,
     estimate_performance,
     flatten_dataframe,
-    unflatten_dataframe,
+    get_sparsity,
+    invert_user_item_matrix,
+    nanpdist,
     split_train_test,
-    Mean,
+    unflatten_dataframe,
 )
 
 
@@ -36,7 +39,7 @@ def test_estimate_performance(simulate_wide_data):
     missing = group_out.query("dataset == 'missing' and group =='all'")["mean"]
     observed = group_out.query("dataset == 'observed' and group =='all'")["mean"]
     # Make sure all missing scores are worse than observed
-    for i, (o, m) in enumerate(zip(observed, missing)):
+    for i, (o, m) in enumerate(zip(observed, missing, strict=False)):
         if i == 0:
             assert o > m
         else:
@@ -68,7 +71,7 @@ def test_estimate_performance(simulate_wide_data):
     test = group_out.query("dataset == 'test' and group =='all'")["mean"]
     train = group_out.query("dataset == 'train' and group =='all'")["mean"]
     # Make sure all test scores are worse than train
-    for i, (o, m) in enumerate(zip(train, test)):
+    for i, (o, m) in enumerate(zip(train, test, strict=False)):
         if i == 0:
             assert o > m
         else:
@@ -79,6 +82,28 @@ def test_estimate_performance(simulate_wide_data):
     )
     assert group_out.shape == (4 * 2 * 10, 6)
     assert user_out.shape == (50 * 10, 6)
+
+
+@pytest.mark.parametrize("index_name", [None, "User", "subject"])
+def test_estimate_performance_any_index_name(simulate_wide_data, index_name):
+    """estimate_performance should not require the input index to be named 'User' (issue #38)"""
+    df = simulate_wide_data.rename_axis(index=index_name)
+
+    # Dense path (random masking)
+    group_out, user_out = estimate_performance(
+        Mean, df, n_iter=2, verbose=False, timeit=False
+    )
+    assert user_out.shape[0] == df.shape[0]
+    assert user_out.index.name == "user"
+
+    # Sparse path (cross-validation)
+    mask = create_sparse_mask(df, random_state=2)
+    masked = df[mask]
+    group_out, user_out = estimate_performance(
+        Mean, masked, n_folds=2, verbose=False, timeit=False
+    )
+    assert user_out.shape[0] == df.shape[0]
+    assert user_out.index.name == "user"
 
 
 # TODO: Update this test to handle commented out lines. This is a pandas issue where going from long -> wide -> long leads pandas to sort columns rather than preserving the original column order
@@ -129,17 +154,23 @@ def test_create_sparse_mask(simulate_wide_data):
     expected_items = int(simulate_wide_data.shape[1] * (1 - 0.10))
     assert mask.shape == simulate_wide_data.shape
     assert all(mask.sum(1) == expected_items)
+    assert mask.index.name == simulate_wide_data.index.name
+    assert mask.columns.name == simulate_wide_data.columns.name
 
     mask = create_sparse_mask(simulate_wide_data, n_mask_items=19)
     assert mask.shape == simulate_wide_data.shape
     expected_items = int(simulate_wide_data.shape[1] - 19)
     assert all(mask.sum(1) == expected_items)
+    assert mask.index.name == simulate_wide_data.index.name
+    assert mask.columns.name == simulate_wide_data.columns.name
 
     masked_data = simulate_wide_data[mask]
     assert isinstance(masked_data, pd.DataFrame)
     assert masked_data.shape == simulate_wide_data.shape
     assert ~simulate_wide_data.isnull().any().any()
     assert masked_data.isnull().any().any()
+    assert mask.index.name == simulate_wide_data.index.name
+    assert mask.columns.name == simulate_wide_data.columns.name
 
 
 def test_flatten_dataframe(simulate_wide_data):
@@ -151,15 +182,8 @@ def test_flatten_dataframe(simulate_wide_data):
 
 def test_unflatten_dataframe(simulate_wide_data):
     out = flatten_dataframe(simulate_wide_data)
-    new = unflatten_dataframe(
-        out, index=simulate_wide_data.index, columns=simulate_wide_data.columns
-    )
+    new = unflatten_dataframe(out, like_dataframe=simulate_wide_data)
     assert new.equals(simulate_wide_data)
-    new = unflatten_dataframe(out)
-    assert new.equals(simulate_wide_data)
-    new = unflatten_dataframe(
-        out, num_rows=simulate_wide_data.shape[0], num_cols=simulate_wide_data.shape[1]
-    )
 
 
 def test_split_train_test(simulate_wide_data):
@@ -171,7 +195,10 @@ def test_split_train_test(simulate_wide_data):
         assert train.notnull().sum().sum() == int(4 / 5 * simulate_wide_data.size)
         # 4/5 of dense data should be sparse for testing, i.e. 1/5 data folds
         assert test.notnull().sum().sum() == int(1 / 5 * simulate_wide_data.size)
-        assert train.add(test, fill_value=0).equals(simulate_wide_data)
+        # Put them together and there should be no null values
+        full = train.add(test, fill_value=0)
+        assert not full.isnull().any().any()
+        assert full.equals(simulate_wide_data)
 
     # Sparse data
     mask = create_sparse_mask(simulate_wide_data, n_mask_items=0.1)
@@ -184,9 +211,30 @@ def test_split_train_test(simulate_wide_data):
         # Train and test should be more sparse than original
         assert train.isnull().sum().sum() > masked_data.isnull().sum().sum()
         assert test.isnull().sum().sum() > masked_data.isnull().sum().sum()
-        assert train.add(test, fill_value=0).equals(masked_data)
+
+        # Put them together and sparsity should be n_mask_items above
+        full = train.add(test, fill_value=0)
+        # Also testing get_sparsity
+        effective_sparsity = get_sparsity(full)
+        assert np.allclose(effective_sparsity, 0.1)
+        assert full.equals(masked_data)
+
         train_not_null = train.notnull().sum().sum()
         test_not_null = test.notnull().sum().sum()
         # And adhere close the expected train/test split
         assert np.allclose(train_not_null / masked_not_null, 0.8, atol=0.12)
         assert np.allclose(test_not_null / masked_not_null, 0.2, atol=0.12)
+
+    # Numeric column names
+    s = simulate_wide_data.copy()
+    s.columns = range(s.shape[1])
+    splits = split_train_test(s, n_folds=5)
+    shapes = list(map(lambda s: (s[0].shape, s[1].shape), splits))
+    assert all(
+        list(
+            map(
+                lambda sp: sp[0] == sp[1] and sp[0] == s.shape and sp[1] == s.shape,
+                shapes,
+            )
+        )
+    )

@@ -1,7 +1,9 @@
 """
 Test data loading
 """
+
 import pandas as pd
+
 from neighbors import load_movielens100k, load_toymat
 
 

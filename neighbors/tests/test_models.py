@@ -8,11 +8,12 @@ For running tests in parallel `pip install pytest-xdist` and for nicer testing o
 Then you can run pytest locally using `pytest -rs -n auto`, to see skip messages at the end of the test session and visually confirm that only intended skipped tests are being skipped. To aid in this, all pytest.skip() messages end with 'OK' for intentionally skipped tests.
 """
 
-from neighbors import Mean, KNN, NNMF_mult, NNMF_sgd, Base
-import pytest
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pytest
+
+from neighbors import KNN, Base, Mean, NNMF_mult, NNMF_sgd
 
 
 def verify_fit(fit_kwargs):
@@ -94,7 +95,7 @@ def test_downsample(simulate_wide_data):
     assert cf.data.shape == (n_users, expected_items)
 
     # Make sure downsampling affects fitted model artifacts
-    cf = Mean(simulate_wide_data)
+    cf = Mean(simulate_wide_data, random_state=2)
     cf.create_masked_data(n_mask_items=0.5)
     cf.fit()
     cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
@@ -104,7 +105,7 @@ def test_downsample(simulate_wide_data):
     assert cf.predictions.shape == (n_users, expected_items)
 
     # Make sure downsampling affects fitted model artifactsa including dilation
-    cf = Mean(simulate_wide_data)
+    cf = Mean(simulate_wide_data, random_state=2)
     cf.create_masked_data(n_mask_items=0.5)
     cf.fit(dilate_by_nsamples=5)
     cf.downsample(sampling_freq=sampling_freq, n_samples=target, target_type="hz")
@@ -131,7 +132,7 @@ def test_init_and_dilate(init, mask, n_mask_items):
             n_false_items = int(total_items * n_mask_items)
         else:
             n_false_items = n_mask_items
-        calculated_n_false_items = init.masked_data.isnull().sum(1)[0]
+        calculated_n_false_items = init.masked_data.isnull().sum(1).iloc[0]
         assert n_false_items == calculated_n_false_items
 
     # Test no accidental masking
@@ -152,6 +153,48 @@ def test_init_and_dilate(init, mask, n_mask_items):
         assert init.dilated_mask.sum().sum() > init.mask.sum().sum()
         # Fewer masked values after we dilate the mask
         assert n_masked > init.masked_data.isnull().sum().sum()
+
+
+def test_dilation_centers_odd_width_kernel_on_observation():
+    ratings = pd.Series(
+        [np.nan, np.nan, np.nan, np.nan, 50, np.nan, np.nan, np.nan, np.nan]
+    )
+
+    dilated = Base._conv_ts_mean_overlap(ratings, n_samples=5)
+
+    expected = np.array([np.nan, np.nan, 50, 50, 50, 50, 50, np.nan, np.nan])
+    np.testing.assert_equal(dilated, expected)
+
+
+def test_dilation_uses_documented_half_sample_alignment_for_even_width_kernel():
+    ratings = pd.Series(
+        [np.nan, np.nan, np.nan, np.nan, 50, np.nan, np.nan, np.nan, np.nan]
+    )
+
+    dilated = Base._conv_ts_mean_overlap(ratings, n_samples=4)
+
+    expected = np.array([np.nan, np.nan, np.nan, 50, 50, 50, 50, np.nan, np.nan])
+    np.testing.assert_equal(dilated, expected)
+
+
+def test_dilation_averages_overlapping_centered_kernels():
+    ratings = pd.Series(
+        [np.nan, np.nan, np.nan, 20, np.nan, 80, np.nan, np.nan, np.nan]
+    )
+
+    dilated = Base._conv_ts_mean_overlap(ratings, n_samples=5)
+
+    expected = np.array([np.nan, 20, 20, 50, 50, 50, 80, 80, np.nan])
+    np.testing.assert_equal(dilated, expected)
+
+
+def test_dilation_does_not_mutate_input_ratings():
+    ratings = pd.Series([np.nan, 25, np.nan])
+    original = ratings.copy()
+
+    Base._conv_ts_mean_overlap(ratings, n_samples=3)
+
+    pd.testing.assert_series_equal(ratings, original)
 
 
 def test_mean(model, dilate_by_nsamples, n_mask_items):
@@ -235,6 +278,32 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
     # Smoke test for plotting learning curves
     model.plot_learning()
     plt.close("all")
+
+
+def test_nmf_predictions_clipped_to_observed_range(simulate_wide_data):
+    """By default NNMF predictions are clipped to the observed rating range, since unconstrained bias terms can otherwise push predictions outside it (issue #47)"""
+    for cls in [NNMF_mult, NNMF_sgd]:
+        clipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        clipped.fit(n_iterations=50)
+        unclipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        unclipped.fit(n_iterations=50, clip_predictions=False)
+        vmin = unclipped.masked_data.min().min()
+        vmax = unclipped.masked_data.max().max()
+        assert (clipped.predictions >= vmin).all().all()
+        assert (clipped.predictions <= vmax).all().all()
+        # Clipping should be the only difference between the two fits
+        np.testing.assert_allclose(
+            clipped.predictions.to_numpy(),
+            unclipped.predictions.clip(vmin, vmax).to_numpy(),
+        )
+
+
+def test_nmf_sgd_nan_divergence(simulate_wide_data):
+    """A degenerate learning rate should make SGD diverge to NaN errors, which are caught and flagged rather than silently propagated or raised"""
+    model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=2)
+    model.fit(n_iterations=100, learning_rate=100)
+    assert model.error_is_nan is True
+    assert model.converged is False
 
 
 def test_nmf_sgd(model, dilate_by_nsamples, n_mask_items, n_factors, n_iterations):
