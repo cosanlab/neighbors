@@ -237,6 +237,14 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
     plt.close("all")
 
 
+def test_nmf_sgd_nan_divergence(simulate_wide_data):
+    """A degenerate learning rate should make SGD diverge to NaN errors, which are caught and flagged rather than silently propagated or raised"""
+    model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=0)
+    model.fit(n_iterations=100, learning_rate=100)
+    assert model.error_is_nan is True
+    assert model.converged is False
+
+
 def test_nmf_sgd(model, dilate_by_nsamples, n_mask_items, n_factors, n_iterations):
     """Test NNMF_sgd model"""
     if not isinstance(model, NNMF_sgd):
