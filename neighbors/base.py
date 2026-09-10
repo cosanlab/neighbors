@@ -650,6 +650,20 @@ class BaseNMF(Base):
         )
         self.error_history = []
 
+    def _clip_to_observed(self, predictions):
+        """Clip predictions to the range of the raw observed (training) ratings.
+
+        Bounds are taken from `self.data[self.mask]` rather than `self.masked_data`. The two are identical unless the mask has been dilated, in which case `self.masked_data` holds a moving average of the observed ratings. Averaging pulls the extremes inward, so clipping to that range would truncate legitimate predictions near the ends of the rating scale.
+
+        Args:
+            predictions (np.ndarray): users x items array of predictions
+
+        Returns:
+            np.ndarray: clipped predictions
+        """
+        observed = self.data[self.mask]
+        return np.clip(predictions, observed.min().min(), observed.max().max())
+
     def plot_learning(self, save=False):
         """
         Plot training error over iterations for diagnostic purposes
