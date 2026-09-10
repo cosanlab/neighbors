@@ -947,6 +947,7 @@
 <h1 id="release-notes">Release Notes</h1>
 <h2 id="021">0.2.1</h2>
 <ul>
+<li><code>NNMF_mult</code> and <code>NNMF_sgd</code> <code>.fit()</code> accept a new <code>clip_range=(min, max)</code> argument to clip predictions to an explicit rating scale instead of the observed min/max, which matters when the observed ratings don't span the full scale</li>
 <li>Fix <code>NNMF_mult</code> treating missing (held-out) entries as observed zeros during multiplicative updating. Only the numerators of the update were masked; the denominators used the full reconstruction, so the model was also fitting the zeros in place of missing values and dragging held-out predictions toward zero. Both denominators now use the masked reconstruction following <a href="https://arxiv.org/pdf/1612.06037.pdf">Zhu (2016)</a>, and the training error is computed over observed entries only. <strong>Note:</strong> <code>NNMF_mult</code> results will differ (substantially more accurate on held-out data) from previous versions</li>
 <li>Fix <code>NNMF_mult</code> and <code>NNMF_sgd</code> prediction clipping using the <em>dilated</em> training data to compute the rating range when fit with <code>dilate_by_nsamples</code>. Dilation averages neighbouring ratings, which shrinks the range and truncated legitimate predictions near the ends of the rating scale. Clip bounds now always come from the raw observed ratings</li>
 </ul>
