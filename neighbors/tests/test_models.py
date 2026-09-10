@@ -298,6 +298,28 @@ def test_nmf_predictions_clipped_to_observed_range(simulate_wide_data):
         )
 
 
+def test_nmf_clip_bounds_ignore_dilation(simulate_wide_data):
+    """Clip bounds come from the raw observed ratings, not the dilated training data. Dilation replaces masked_data with a moving average whose range is narrower than the observed ratings, so clipping to it would truncate legitimate predictions"""
+    for cls in [NNMF_mult, NNMF_sgd]:
+        clipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        clipped.fit(n_iterations=50, dilate_by_nsamples=5)
+        observed = clipped.data[clipped.mask]
+        vmin, vmax = observed.min().min(), observed.max().max()
+        # Premise: dilation shrinks the range of masked_data
+        assert clipped.masked_data.min().min() > vmin
+        assert clipped.masked_data.max().max() < vmax
+        # Predictions are bounded by the observed range...
+        assert (clipped.predictions >= vmin).all().all()
+        assert (clipped.predictions <= vmax).all().all()
+        # ...and not by the narrower dilated range
+        unclipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        unclipped.fit(n_iterations=50, dilate_by_nsamples=5, clip_predictions=False)
+        np.testing.assert_allclose(
+            clipped.predictions.to_numpy(),
+            unclipped.predictions.clip(vmin, vmax).to_numpy(),
+        )
+
+
 def test_nmf_sgd_nan_divergence(simulate_wide_data):
     """A degenerate learning rate should make SGD diverge to NaN errors, which are caught and flagged rather than silently propagated or raised"""
     model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=2)

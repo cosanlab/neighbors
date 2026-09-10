@@ -398,11 +398,7 @@ class NNMF_mult(BaseNMF):
 
         predictions = self.W @ self.H
         if self.clip_predictions:
-            predictions = np.clip(
-                predictions,
-                self.masked_data.min().min(),
-                self.masked_data.max().max(),
-            )
+            predictions = self._clip_to_observed(predictions)
         self.predictions = pd.DataFrame(
             predictions, index=self.data.index, columns=self.data.columns
         )
@@ -609,11 +605,7 @@ class NNMF_sgd(BaseNMF):
             (predictions.T + self.user_bias).T + self.item_bias + self.global_bias
         )
         if self.clip_predictions:
-            predictions = np.clip(
-                predictions,
-                self.masked_data.min().min(),
-                self.masked_data.max().max(),
-            )
+            predictions = self._clip_to_observed(predictions)
         self.predictions = pd.DataFrame(
             predictions, index=self.data.index, columns=self.data.columns
         )

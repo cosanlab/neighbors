@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.2.1
+- Fix `NNMF_mult` and `NNMF_sgd` prediction clipping using the *dilated* training data to compute the rating range when fit with `dilate_by_nsamples`. Dilation averages neighbouring ratings, which shrinks the range and truncated legitimate predictions near the ends of the rating scale. Clip bounds now always come from the raw observed ratings
+
 ## 0.2.0
 - `NNMF_mult` and `NNMF_sgd` now clip predictions to the observed rating range by default (disable with `fit(clip_predictions=False)`), preventing out-of-range predictions such as negative values caused by unconstrained bias terms ([#47](https://github.com/cosanlab/neighbors/issues/47)). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions
 - Fix `estimate_performance` failing with `KeyError: 'user'` when the input dataframe's index was not named exactly "User" ([#38](https://github.com/cosanlab/neighbors/issues/38))
