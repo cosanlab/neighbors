@@ -130,8 +130,11 @@ def sgd(
 
 
 @nb.njit(cache=True, nogil=True)
-def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
-    """Lee & Seung (2001) multiplicative update rule"""
+def mult(X, M, W, H, data_range, eps, tol, n_iterations, verbose):
+    """Lee & Seung (2001) multiplicative update rule with missing values masked out following Zhu (2016).
+
+    X has missing entries set to 0 and M is a binary mask (1 = observed, 0 = missing). Multiplying the reconstruction W @ H by M in the denominators means missing entries contribute nothing to the update. Without it they would be fit as if they were observed zeros.
+    """
 
     last_e = 0
     error_history = np.zeros(n_iterations)
@@ -156,19 +159,19 @@ def mult(X, W, H, data_range, eps, tol, n_iterations, verbose):
 
         # Update H
         numer = W.T @ X
-        denom = W.T @ W @ H + eps
+        denom = W.T @ (M * (W @ H)) + eps
         H *= numer
         H /= denom
 
         # Update W
         numer = X @ H.T
-        denom = W @ H @ H.T + eps
+        denom = (M * (W @ H)) @ H.T + eps
         W *= numer
         W /= denom
 
-        # Make prediction and get error
-        errors = X - W @ H
-        rmse = np.sqrt(np.mean(np.power(errors, 2)))
+        # Make prediction and get error over observed entries only
+        errors = M * (X - W @ H)
+        rmse = np.sqrt(np.sum(np.power(errors, 2)) / np.sum(M))
 
         # Normalize current error with respect to max of dataset
         norm_rmse = rmse / data_range

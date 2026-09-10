@@ -272,7 +272,7 @@ class NNMF_mult(BaseNMF):
 
     The number of factors, convergence, and maximum iterations can be controlled with the `n_factors`, `tol`, and `max_iterations` arguments to the `.fit` method. By default the number of factors = the number items.
 
-    The implementation here follows closely that of Lee & Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf
+    The implementation here follows closely that of Lee & Seung, 2001 (eq 4): https://papers.nips.cc/paper/2000/file/f9d1152547c0bde01830b7e8bd60024c-Paper.pdf, with missing entries masked out of the update following Zhu, 2016: https://arxiv.org/pdf/1612.06037.pdf
 
     *Note*: `random_state` does not control the sgd fit, only the initialization of the factor matrices
     """
@@ -350,10 +350,11 @@ class NNMF_mult(BaseNMF):
             self.random_state.normal(scale=1.0 / n_factors, size=(n_factors, n_items))
         )
 
-        # Whereas in SGD we explity pass in indices of training data for fitting, here we set testing indices to 0 so they have no impact on the multiplicative update. See Zhu, 2016 for more details: https://arxiv.org/pdf/1612.06037.pdf
+        # Whereas in SGD we explicitly pass in indices of training data for fitting, here we exclude missing (test) entries from the multiplicative update by masking. The numerators use X with missing entries set to 0 and the denominators use M * (W @ H), so missing entries contribute nothing to either. See Zhu, 2016 for more details: https://arxiv.org/pdf/1612.06037.pdf
         self.dilate_mask(n_samples=dilate_by_nsamples)
 
-        # fillna(0) is equivalent to hadamard (element-wise) product with a binary mask
+        # Binary mask of training entries (respects dilation) and fillna(0) which is equivalent to hadamard (element-wise) product with that mask
+        M = (~self.masked_data.isnull()).to_numpy().astype(np.float64)
         X = self.masked_data.fillna(0).to_numpy()
 
         # Run multiplicative updating
@@ -362,6 +363,7 @@ class NNMF_mult(BaseNMF):
             warnings.filterwarnings("ignore", category=NumbaPerformanceWarning)
             error_history, converged, n_iter, delta, norm_rmse, W, H = mult(
                 X,
+                M,
                 self.W,
                 self.H,
                 self.data_range,

@@ -258,16 +258,15 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
         and not model.is_mask_dilated
         and n_iterations == 100
         and n_factors is None
-        and model.converged is True
     ):
         true_scores = np.array(
             [
-                -2.78597027e-02,
-                3.69112079e01,
-                4.80280757e01,
-                9.97852743e-01,
-                1.01301480e00,
-                1.93696252e00,
+                0.6645,
+                18.7424,
+                24.1340,
+                0.9973,
+                1.6227,
+                2.3367,
             ]
         )
     else:
@@ -278,6 +277,21 @@ def test_nmf_mult(model, dilate_by_nsamples, n_mask_items, n_factors, n_iteratio
     # Smoke test for plotting learning curves
     model.plot_learning()
     plt.close("all")
+
+
+def test_nmf_mult_ignores_missing_entries(simulate_wide_data):
+    """Missing entries must not act as observed zeros during multiplicative updating. Before the update denominators were masked, held-out predictions were dragged toward zero (mean ~14 vs a true mean ~38 on this fixture)"""
+    model = NNMF_mult(simulate_wide_data, n_mask_items=0.5, random_state=2)
+    model.fit(n_iterations=500, n_factors=10)
+    missing = ~model.mask.to_numpy()
+    truth = simulate_wide_data.to_numpy()[missing]
+    pred = model.predictions.to_numpy()[missing]
+    # Held-out predictions should be centered near the held-out truth, not near zero
+    assert np.isclose(pred.mean(), truth.mean(), rtol=0.25)
+    heldout_rmse = np.sqrt(np.mean((truth - pred) ** 2))
+    assert heldout_rmse < 30
+    # Training error is computed over observed entries only and should be lower than held-out error
+    assert model.score(metric="rmse", dataset="observed", by_user=False) < heldout_rmse
 
 
 def test_nmf_predictions_clipped_to_observed_range(simulate_wide_data):

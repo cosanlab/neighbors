@@ -1,6 +1,7 @@
 # Release Notes
 
 ## 0.2.1
+- Fix `NNMF_mult` treating missing (held-out) entries as observed zeros during multiplicative updating. Only the numerators of the update were masked; the denominators used the full reconstruction, so the model was also fitting the zeros in place of missing values and dragging held-out predictions toward zero. Both denominators now use the masked reconstruction following [Zhu (2016)](https://arxiv.org/pdf/1612.06037.pdf), and the training error is computed over observed entries only. **Note:** `NNMF_mult` results will differ (substantially more accurate on held-out data) from previous versions
 - Fix `NNMF_mult` and `NNMF_sgd` prediction clipping using the *dilated* training data to compute the rating range when fit with `dilate_by_nsamples`. Dilation averages neighbouring ratings, which shrinks the range and truncated legitimate predictions near the ends of the rating scale. Clip bounds now always come from the raw observed ratings
 
 ## 0.2.0
