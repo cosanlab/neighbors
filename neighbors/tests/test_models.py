@@ -334,6 +334,40 @@ def test_nmf_clip_bounds_ignore_dilation(simulate_wide_data):
         )
 
 
+def test_nmf_clip_range(simulate_wide_data):
+    """An explicit clip_range overrides the observed min/max, and is validated"""
+    for cls in [NNMF_mult, NNMF_sgd]:
+        unclipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        unclipped.fit(n_iterations=50, clip_predictions=False)
+        # Pick a range strictly inside the observed range so clipping is guaranteed to bite
+        lo, hi = 20.0, 100.0
+        assert unclipped.predictions.min().min() < lo
+        assert unclipped.predictions.max().max() > hi
+
+        clipped = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        clipped.fit(n_iterations=50, clip_range=(lo, hi))
+        assert clipped.clip_range == (lo, hi)
+        assert (clipped.predictions >= lo).all().all()
+        assert (clipped.predictions <= hi).all().all()
+        np.testing.assert_allclose(
+            clipped.predictions.to_numpy(),
+            unclipped.predictions.clip(lo, hi).to_numpy(),
+        )
+        # Default is the observed range
+        assert unclipped.clip_range is None
+
+        # Validation
+        model = cls(simulate_wide_data, n_mask_items=0.5, random_state=2)
+        with pytest.raises(ValueError, match="clip_predictions=False"):
+            model.fit(n_iterations=5, clip_predictions=False, clip_range=(lo, hi))
+        with pytest.raises(TypeError, match="tuple"):
+            model.fit(n_iterations=5, clip_range=5)
+        with pytest.raises(ValueError, match="min < max"):
+            model.fit(n_iterations=5, clip_range=(hi, lo))
+        with pytest.raises(ValueError, match="min < max"):
+            model.fit(n_iterations=5, clip_range=(lo, np.nan))
+
+
 def test_nmf_sgd_nan_divergence(simulate_wide_data):
     """A degenerate learning rate should make SGD diverge to NaN errors, which are caught and flagged rather than silently propagated or raised"""
     model = NNMF_sgd(simulate_wide_data, n_mask_items=0.5, random_state=2)

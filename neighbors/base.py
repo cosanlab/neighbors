@@ -650,10 +650,33 @@ class BaseNMF(Base):
         )
         self.error_history = []
 
-    def _clip_to_observed(self, predictions):
-        """Clip predictions to the range of the raw observed (training) ratings.
+    def _set_clipping(self, clip_predictions, clip_range):
+        """Validate and store the prediction clipping settings passed to `.fit()`.
 
-        Bounds are taken from `self.data[self.mask]` rather than `self.masked_data`. The two are identical unless the mask has been dilated, in which case `self.masked_data` holds a moving average of the observed ratings. Averaging pulls the extremes inward, so clipping to that range would truncate legitimate predictions near the ends of the rating scale.
+        Args:
+            clip_predictions (bool): whether to clip predictions at all
+            clip_range (tuple/list, None): explicit (min, max) bounds, or None to use the observed rating range
+        """
+        if clip_range is not None:
+            if not clip_predictions:
+                raise ValueError(
+                    "clip_range was provided but clip_predictions=False. Set clip_predictions=True to clip to clip_range, or drop clip_range."
+                )
+            if not isinstance(clip_range, (tuple, list)) or len(clip_range) != 2:
+                raise TypeError("clip_range must be a (min, max) tuple")
+            lo, hi = clip_range
+            if not (np.isfinite(lo) and np.isfinite(hi)) or lo >= hi:
+                raise ValueError(
+                    f"clip_range must satisfy min < max with finite values, got {clip_range}"
+                )
+            clip_range = (float(lo), float(hi))
+        self.clip_predictions = clip_predictions
+        self.clip_range = clip_range
+
+    def _clip_predictions(self, predictions):
+        """Clip predictions to `self.clip_range` if set, otherwise to the range of the raw observed (training) ratings.
+
+        Observed bounds are taken from `self.data[self.mask]` rather than `self.masked_data`. The two are identical unless the mask has been dilated, in which case `self.masked_data` holds a moving average of the observed ratings. Averaging pulls the extremes inward, so clipping to that range would truncate legitimate predictions near the ends of the rating scale.
 
         Args:
             predictions (np.ndarray): users x items array of predictions
@@ -661,8 +684,12 @@ class BaseNMF(Base):
         Returns:
             np.ndarray: clipped predictions
         """
-        observed = self.data[self.mask]
-        return np.clip(predictions, observed.min().min(), observed.max().max())
+        if self.clip_range is not None:
+            lo, hi = self.clip_range
+        else:
+            observed = self.data[self.mask]
+            lo, hi = observed.min().min(), observed.max().max()
+        return np.clip(predictions, lo, hi)
 
     def plot_learning(self, save=False):
         """

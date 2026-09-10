@@ -309,6 +309,7 @@ class NNMF_mult(BaseNMF):
         verbose=False,
         dilate_by_nsamples=None,
         clip_predictions=True,
+        clip_range=None,
         **kwargs,
     ):
         """Fit NNMF collaborative filtering model to train data using multiplicative updating.
@@ -322,7 +323,8 @@ class NNMF_mult(BaseNMF):
             eps (float; optiona): small value added to denominator of update rules to avoid divide-by-zero errors; Default 1e-6.
             verbose (bool, optional): print information about training. Defaults to False.
             dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
-            clip_predictions (bool, optional): clip predictions to the observed rating range, since factorization alone can produce predictions outside it. This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.
+            clip_predictions (bool, optional): clip predictions to the rating range, since factorization alone can produce predictions outside it. This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.
+            clip_range (tuple, optional): explicit (min, max) bounds to clip to, e.g. the full rating scale. Defaults to None which uses the min and max of the observed (training) ratings.
         """
 
         # Call parent fit which acts as a guard for non-masked data
@@ -339,7 +341,7 @@ class NNMF_mult(BaseNMF):
             n_factors = min([n_users, n_items])
 
         self.n_factors = n_factors
-        self.clip_predictions = clip_predictions
+        self._set_clipping(clip_predictions, clip_range)
 
         # Initialize W and H as non-negative scaled random values
         # We use random initialization scaled by the number of factors not unlike sklearn: https://github.com/scikit-learn/scikit-learn/blob/95119c13af77c76e150b753485c662b7c52a41a2/sklearn/decomposition/_nmf.py#L334
@@ -400,7 +402,7 @@ class NNMF_mult(BaseNMF):
 
         predictions = self.W @ self.H
         if self.clip_predictions:
-            predictions = self._clip_to_observed(predictions)
+            predictions = self._clip_predictions(predictions)
         self.predictions = pd.DataFrame(
             predictions, index=self.data.index, columns=self.data.columns
         )
@@ -454,6 +456,7 @@ class NNMF_sgd(BaseNMF):
         verbose=False,
         dilate_by_nsamples=None,
         clip_predictions=True,
+        clip_range=None,
         **kwargs,
     ):
         """
@@ -470,7 +473,8 @@ class NNMF_sgd(BaseNMF):
             tol (float, optional): Convergence criteria. Model is considered converged if the change in error during training < tol. Defaults to 0.001.
             verbose (bool, optional): print information about training. Defaults to False.
             dilate_by_nsamples (int, optional): How many items to dilate by prior to training. Defaults to None.
-            clip_predictions (bool, optional): clip predictions to the observed rating range, since the unconstrained bias terms can otherwise push predictions outside it (e.g. negative values despite all-positive ratings). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.
+            clip_predictions (bool, optional): clip predictions to the rating range, since the unconstrained bias terms can otherwise push predictions outside it (e.g. negative values despite all-positive ratings). This is the same approach the [Surprise](https://surpriselib.com/) package takes when making predictions. Defaults to True.
+            clip_range (tuple, optional): explicit (min, max) bounds to clip to, e.g. the full rating scale. Defaults to None which uses the min and max of the observed (training) ratings.
         """
 
         # Call parent fit which acts as a guard for non-masked data
@@ -488,7 +492,7 @@ class NNMF_sgd(BaseNMF):
             n_factors = min([n_users, n_items])
 
         self.n_factors = n_factors
-        self.clip_predictions = clip_predictions
+        self._set_clipping(clip_predictions, clip_range)
         self.item_fact_reg = item_fact_reg
         self.user_fact_reg = user_fact_reg
         self.item_bias_reg = item_bias_reg
@@ -607,7 +611,7 @@ class NNMF_sgd(BaseNMF):
             (predictions.T + self.user_bias).T + self.item_bias + self.global_bias
         )
         if self.clip_predictions:
-            predictions = self._clip_to_observed(predictions)
+            predictions = self._clip_predictions(predictions)
         self.predictions = pd.DataFrame(
             predictions, index=self.data.index, columns=self.data.columns
         )
