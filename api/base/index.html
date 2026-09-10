@@ -2681,6 +2681,20 @@ dilation.</p>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_history</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clip_to_observed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Clip predictions to the range of the raw observed (training) ratings.</span>
+
+<span class="sd">        Bounds are taken from `self.data[self.mask]` rather than `self.masked_data`. The two are identical unless the mask has been dilated, in which case `self.masked_data` holds a moving average of the observed ratings. Averaging pulls the extremes inward, so clipping to that range would truncate legitimate predictions near the ends of the rating scale.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            predictions (np.ndarray): users x items array of predictions</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: clipped predictions</span>
+<span class="sd">        """</span>
+        <span class="n">observed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">observed</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">observed</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_learning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot training error over iterations for diagnostic purposes</span>

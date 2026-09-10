@@ -488,6 +488,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#021" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.2.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#020" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -837,6 +848,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#021" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.2.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#020" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -923,6 +945,10 @@
 
 
 <h1 id="release-notes">Release Notes</h1>
+<h2 id="021">0.2.1</h2>
+<ul>
+<li>Fix <code>NNMF_mult</code> and <code>NNMF_sgd</code> prediction clipping using the <em>dilated</em> training data to compute the rating range when fit with <code>dilate_by_nsamples</code>. Dilation averages neighbouring ratings, which shrinks the range and truncated legitimate predictions near the ends of the rating scale. Clip bounds now always come from the raw observed ratings</li>
+</ul>
 <h2 id="020">0.2.0</h2>
 <ul>
 <li><code>NNMF_mult</code> and <code>NNMF_sgd</code> now clip predictions to the observed rating range by default (disable with <code>fit(clip_predictions=False)</code>), preventing out-of-range predictions such as negative values caused by unconstrained bias terms (<a href="https://github.com/cosanlab/neighbors/issues/47">#47</a>). This is the same approach the <a href="https://surpriselib.com/">Surprise</a> package takes when making predictions</li>
